@@ -1,0 +1,64 @@
+/* Tema visual do Nuzzo — variáveis CSS + overrides do MUI, no mesmo espírito
+   do gg-theme.css do ggmates: a marca vive em CSS, não num objeto de tema JS. */
+
+:root {
+    --nz-bg: #FBF7F1;
+    --nz-surface: #FFFFFF;
+    --nz-surface-2: #F3ECE0;
+    --nz-border: #E4D9C6;
+    --nz-primary: #C1683B;
+    --nz-primary-2: #DE8A5C;
+    --nz-text: #3A2E26;
+    --nz-text-2: #7A6A5C;
+    --nz-text-3: #A8988A;
+    --nz-success: #4C8C6B;
+    --nz-danger: #C0392B;
+    --nz-radius: 12px;
+    --nz-radius-lg: 18px;
+    --nz-card-shadow: 0 4px 18px rgba(58, 46, 38, 0.08);
+    --nz-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background: var(--nz-bg);
+    color: var(--nz-text);
+    font-family: var(--nz-font);
+}
+
+.MuiAppBar-root.nuzzo-navbar {
+    background: var(--nz-surface) !important;
+    color: var(--nz-text) !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--nz-border);
+}
+
+.nuzzo-nav-active {
+    color: var(--nz-primary) !important;
+    font-weight: 700 !important;
+}
+
+.MuiButton-contained {
+    background: var(--nz-primary) !important;
+    color: #fff !important;
+}
+
+.MuiButton-outlined {
+    border-color: var(--nz-primary) !important;
+    color: var(--nz-primary) !important;
+}
+
+.MuiCard-root {
+    border: 1px solid var(--nz-border) !important;
+    border-radius: var(--nz-radius-lg) !important;
+    box-shadow: var(--nz-card-shadow) !important;
+}
+
+.MuiChip-colorPrimary {
+    background: var(--nz-primary) !important;
+    color: #fff !important;
+}
+
+.nuzzo-footer {
+    background: var(--nz-surface-2);
+    border-top: 1px solid var(--nz-border);
+}

@@ -1,0 +1,7 @@
+/* Login / Register partilham este espaçamento comum. */
+.nuzzo-auth {
+    background: var(--nz-surface);
+    padding: 24px;
+    border-radius: var(--nz-radius-lg);
+    border: 1px solid var(--nz-border);
+}

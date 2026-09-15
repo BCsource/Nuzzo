@@ -1,0 +1,100 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+import {
+    Box, Typography, TextField, Button, Alert, Stack,
+    InputAdornment, IconButton, Link,
+} from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+function Login() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ defaultValues: { email: '', password: '' } });
+
+    const [serverError, setServerError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    async function onSubmit(data) {
+        setServerError('');
+        setLoading(true);
+        try {
+            await login(data.email, data.password);
+            navigate('/');
+        } catch (error) {
+            if (error.response?.status === 401) {
+                setServerError('Incorrect email or password.');
+            } else {
+                setServerError("Couldn't log in. Please try again later.");
+            }
+            console.error('Login failed:', error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            className="nuzzo-auth"
+            sx={{ maxWidth: 400, mx: 'auto', mt: 6 }}
+            noValidate
+        >
+            <Typography variant="h4" gutterBottom>Log in</Typography>
+
+            <Stack spacing={2}>
+                <TextField
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    {...register('email', { required: 'Insert email address' })}
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                />
+
+                <TextField
+                    label="Password"
+                    type={showPassword ? 'text' : 'password'}
+                    fullWidth
+                    {...register('password', { required: 'Write your password' })}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    slotProps={{
+                        input: {
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={() => setShowPassword((s) => !s)} edge="end" aria-label="show/hide password">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                />
+
+                {serverError && <Alert severity="error">{serverError}</Alert>}
+
+                <Button type="submit" variant="contained" disabled={loading}>
+                    {loading ? 'Logging in…' : 'Log in'}
+                </Button>
+
+                <Typography variant="body2" align="center">
+                    Not registered?{' '}
+                    <Link component={RouterLink} to="/register">Register</Link>
+                </Typography>
+            </Stack>
+        </Box>
+    );
+}
+
+export default Login;
