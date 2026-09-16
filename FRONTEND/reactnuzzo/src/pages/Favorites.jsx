@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import PostTable from '../components/PostTable';
 import { fetchFavoritePosts, setFavoritePost } from '../services/postService';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function Favorites() {
     const { currentUser } = useAuth();
@@ -11,11 +11,10 @@ function Favorites() {
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchFavoritePosts();
             setPosts(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load favorites. Please try again.");
             console.error(error);
@@ -24,7 +23,7 @@ function Favorites() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     // Fav = true. false remove da lista
 

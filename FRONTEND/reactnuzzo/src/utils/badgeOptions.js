@@ -8,8 +8,8 @@ export const BADGES = {
 
 export const BADGE_LABELS = {
     [BADGES.AFICIONADO]: 'Aficionado',
-    [BADGES.HEALTH_PROFESSIONAL]: 'Health Profissional',
-    [BADGES.CARE_PROFESSIONAL]: 'Care Profissional',
+    [BADGES.HEALTH_PROFESSIONAL]: 'Health Professional',
+    [BADGES.CARE_PROFESSIONAL]: 'Care Professional',
     [BADGES.SUPPLIER]: 'Supplier',
 };
 
@@ -32,3 +32,5 @@ export const USER_TYPES = {
     ADMIN: 'admin',
     MASTER_ADMIN: 'masterAdmin',
 };
+
+export const ADMIN_ROLES = [USER_TYPES.ADMIN, USER_TYPES.MASTER_ADMIN];

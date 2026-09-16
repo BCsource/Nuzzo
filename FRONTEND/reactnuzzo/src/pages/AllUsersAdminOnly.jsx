@@ -17,11 +17,10 @@ function AllUsersAdminOnly() {
     const [pendingRemoveId, setPendingRemoveId] = useState(null);
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchAllUsers();
             setUsers(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load users");
             console.error(error);
@@ -30,7 +29,7 @@ function AllUsersAdminOnly() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     const visibleUsers = users.filter((u) => {
         if (!search.trim()) return true;
@@ -105,7 +104,7 @@ function AllUsersAdminOnly() {
                                             color={u.userType === 'user' ? 'default' : 'primary'}
                                         />
                                     </TableCell>
-                                    <TableCell align="right">{u.Postnum ?? 0}</TableCell>
+                                    <TableCell align="right">{u.postCount ?? 0}</TableCell>
                                     <TableCell>
                                         <Stack direction="row" spacing={1}>
                                             {u.userType === 'user' && (

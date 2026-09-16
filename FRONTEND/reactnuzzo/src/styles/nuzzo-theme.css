@@ -1,6 +1,3 @@
-/* Tema visual do Nuzzo — variáveis CSS + overrides do MUI, no mesmo espírito
-   do gg-theme.css do ggmates: a marca vive em CSS, não num objeto de tema JS. */
-
 :root {
     --nz-bg: #FBF7F1;
     --nz-surface: #FFFFFF;

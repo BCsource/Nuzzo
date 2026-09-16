@@ -16,11 +16,10 @@ function HealthHistoryList({ petId, canWrite }) {
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchHealthHistory(petId);
             setEntries(data);
+            setError('');
         } catch (error) {
             setError("Couldn't download health history.");
             console.error(error);
@@ -29,7 +28,10 @@ function HealthHistoryList({ petId, canWrite }) {
         }
     }, [petId]);
 
-    useEffect(() => { load(); }, [load]);
+    // O fetch corre dentro de uma função async própria: assim não há setState síncrono no corpo do efeito.
+
+
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function handleAdd() {
         const text = content.trim();
@@ -91,7 +93,7 @@ function HealthHistoryList({ petId, canWrite }) {
                         <Paper key={entry.id} variant="outlined" sx={{ p: 1.5 }}>
                             <Typography variant="body2">{entry.content}</Typography>
                             <Typography variant="caption" color="text.secondary">
-                                {authorLabel(entry.author)} • {formatDate(entry.data, true)}
+                                {authorLabel(entry.author)} • {formatDate(entry.createdAt, true)}
                             </Typography>
                         </Paper>
                     ))}

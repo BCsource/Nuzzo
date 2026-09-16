@@ -2,12 +2,12 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import {
     POST_TYPES, POST_TYPE_LABELS, POST_TYPES_BY_BADGE, POST_CATEGORIES,
     MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH,
 } from '../utils/postOptions';
-import { BADGES } from '../utils/badgeOptions';
+import { REQUESTABLE_BADGES, BADGES } from '../utils/badgeOptions';
 
 import {
     Box, Typography, TextField, Button, FormControl, InputLabel, Select,
@@ -23,21 +23,19 @@ const EMPTY_POST = {
     available: true,
 };
 
+
 //Post types consoante os badges do User. Admin tem acesso total
 
 
 function allowedTypesFor({ isAdmin, hasBadge }) {
     if (isAdmin) return Object.values(POST_TYPES);
-    const allowed = new Set([POST_TYPES.REGULAR, POST_TYPES.POLL]);
-    if (hasBadge(BADGES.HEALTH_PROFESSIONAL)) {
-        POST_TYPES_BY_BADGE.healthprofessional.forEach((t) => allowed.add(t));
-    }
-    if (hasBadge(BADGES.CARE_PROFESSIONAL)) {
-        POST_TYPES_BY_BADGE.careprofessional.forEach((t) => allowed.add(t));
-    }
-    if (hasBadge(BADGES.SUPPLIER)) {
-        POST_TYPES_BY_BADGE.supplier.forEach((t) => allowed.add(t));
-    }
+
+    const allowed = new Set(POST_TYPES_BY_BADGE[BADGES.AFICIONADO]);
+    REQUESTABLE_BADGES.forEach((badge) => {
+        if (hasBadge(badge)) {
+            POST_TYPES_BY_BADGE[badge].forEach((type) => allowed.add(type));
+        }
+    });
     return Array.from(allowed);
 }
 
@@ -69,7 +67,8 @@ function PostForm({
             title: data.title.trim(),
             description: data.description.trim(),
             category: data.category,
-            price: data.price === '' ? null : Number(data.price),
+            // preço só é aplicado em produtos, no resto é null
+            price: !isProduct || data.price === '' ? null : Number(data.price),
             available: !!data.available,
         });
     }
@@ -84,7 +83,7 @@ function PostForm({
                 <Controller
                     name="type"
                     control={control}
-                    rules={{ required: 'Choose post category' }}
+                    rules={{ required: 'Choose a post type.' }}
                     render={({ field }) => (
                         <FormControl fullWidth error={!!errors.type}>
                             <InputLabel id="type-label">Type</InputLabel>
@@ -116,7 +115,7 @@ function PostForm({
                     multiline
                     minRows={3}
                     {...register('description', {
-                        required: 'Write a description',
+                        required: 'Write a description.',
                         minLength: { value: MIN_DESCRIPTION_LENGTH, message: `Must contain at least ${MIN_DESCRIPTION_LENGTH} characters.` },
                         maxLength: { value: MAX_DESCRIPTION_LENGTH, message: `Description must be shorter than ${MAX_DESCRIPTION_LENGTH} characters.` },
                     })}
@@ -146,10 +145,12 @@ function PostForm({
                         label="Price (€)"
                         type="number"
                         fullWidth
-                        inputProps={{ step: '0.01', min: 0 }}
-                        {...register('price', { min: { value: 0, message: 'Price must be greater than 0' } })}
+                        slotProps={{ htmlInput: { step: '0.01', min: 0 } }}
+                        {...register('price', {
+                            min: { value: 0, message: "Price can't be negative." },
+                        })}
                         error={!!errors.price}
-                        helperText={errors.price?.message || ' '}
+                        helperText={errors.price?.message || 'Optional.'}
                     />
                 )}
 

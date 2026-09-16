@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function NavBar() {
     const { currentUser, isAdmin, logout } = useAuth();

@@ -11,11 +11,10 @@ function InteractionThread({ postId }) {
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchInteractions(postId);
             setInteractions(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load comments.");
             console.error(error);
@@ -24,7 +23,9 @@ function InteractionThread({ postId }) {
         }
     }, [postId]);
 
-    useEffect(() => { load(); }, [load]);
+    // fetch func igual à healthHistoryList
+
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function handleSend() {
         const text = message.trim();
@@ -90,7 +91,7 @@ function InteractionThread({ postId }) {
                                 <Typography sx={{ fontWeight: 700 }}>{authorLabel(interaction.author)}</Typography>
                                 <Typography variant="body2">{interaction.content}</Typography>
                                 <Typography variant="caption" color="text.secondary">
-                                    {formatDate(interaction.Hourdate, true)}
+                                    {formatDate(interaction.createdAt, true)}
                                 </Typography>
                             </Box>
                         </Paper>

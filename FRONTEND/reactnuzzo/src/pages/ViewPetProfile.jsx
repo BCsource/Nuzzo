@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { fetchPetById } from '../services/petProfileService';
 import { HEALTH_HISTORY_WRITER_BADGES } from '../utils/badgeOptions';
 import HealthHistoryList from '../components/HealthHistoryList';
@@ -23,11 +23,10 @@ function ViewPetProfile() {
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchPetById(petId);
             setPet(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load pet.");
             console.error(error);
@@ -36,7 +35,7 @@ function ViewPetProfile() {
         }
     }, [petId]);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     if (loading) {
         return (
@@ -56,7 +55,7 @@ function ViewPetProfile() {
 
     const isOwner = !!(currentUser && pet.owner?.id === currentUser.id);
     const canWriteHealthHistory = isAdmin
-        || HEALTH_HISTORY_WRITER_BADGES.some((badge) => hasBadge(badge));
+        || (!isOwner && HEALTH_HISTORY_WRITER_BADGES.some((badge) => hasBadge(badge)));
 
     return (
         <Box sx={{ maxWidth: 560, mx: 'auto', mt: 2, px: 2, mb: 6 }}>
@@ -79,7 +78,7 @@ function ViewPetProfile() {
                         <Chip label={pet.species} color="primary" />
                         <Chip label={pet.breed} variant="outlined" />
                         <Chip label={pet.spayed ? 'Spayed' : 'Not Spayed'} variant="outlined" />
-                        <Chip label={pet.vacinated ? 'Vacinated' : 'Not vacinated'} variant="outlined" />
+                        <Chip label={pet.vaccinated ? 'Vaccinated' : 'Not vaccinated'} variant="outlined" />
                     </Stack>
 
                     <Typography variant="body2" color="text.secondary">Weight: {pet.weight} kg</Typography>
@@ -89,8 +88,7 @@ function ViewPetProfile() {
                 </CardContent>
             </Card>
 
-            {/* Histórico de Saúde: dono só visualiza; profissionais verificados e admin podem escrever. */}
-            <HealthHistoryList petId={petId} canWrite={!isOwner && canWriteHealthHistory} />
+            <HealthHistoryList petId={petId} canWrite={canWriteHealthHistory} />
         </Box>
     );
 }

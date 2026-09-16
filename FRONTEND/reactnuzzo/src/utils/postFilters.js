@@ -1,16 +1,18 @@
 // Filtragem e ordenação do feed de Posts.
-// Nota: quando a lista vem paginada do backend, estas funções deixam de ser
-// necessárias no cliente — ficam aqui já prontas para o caso de, entretanto,
-// se optar por filtrar/ordenar do lado do cliente (ex.: em "Os Meus Posts").
+// Nota: quando a listagem passar a vir paginada do backend, estas funções
+// deixam de ser necessárias no cliente — ficam prontas para uso local
+// (ex.: "My Posts", "Favorites"), onde as listas são pequenas.
+
+export const DEFAULT_SORT = 'date_desc';
 
 export const EMPTY_FILTERS = {
-    search: '',           // filtro de texto (categoria/título)
-    priceMin: '',         // 1º intervalo numérico
+    search: '',      // filtro de texto (título/categoria)
+    priceMin: '',    // 1.º intervalo numérico
     priceMax: '',
-    viewsMin: '', // 2º intervalo numérico
+    viewsMin: '',    // 2.º intervalo numérico
     viewsMax: '',
     type: '',
-    sortBy: 'data_desc',
+    sortBy: DEFAULT_SORT,
 };
 
 export const SORT_OPTIONS = [
@@ -47,7 +49,7 @@ function matchesFilters(post, filters) {
 function comparePosts(a, b, sortBy) {
     switch (sortBy) {
         case 'date_asc':
-            return new Date(a.publishDate || 0) - new Date(b.publishDate || 0);
+            return new Date(a.publishedAt || 0) - new Date(b.publishedAt || 0);
         case 'price_asc':
             return (Number(a.price) || 0) - (Number(b.price) || 0);
         case 'price_desc':
@@ -58,11 +60,13 @@ function comparePosts(a, b, sortBy) {
             return (a.title || '').localeCompare(b.title || '');
         case 'date_desc':
         default:
-            return new Date(b.publishDate || 0) - new Date(a.publishDate || 0);
+            return new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0);
     }
 }
 
 export function filterAndSortPosts(posts, filters) {
-    const f = { ...EMPTY_FILTERS, ...filters };
-    return posts.filter((p) => matchesFilters(p, f)).sort((a, b) => comparePosts(a, b, f.sortBy));
+    const merged = { ...EMPTY_FILTERS, ...filters };
+    return posts
+        .filter((post) => matchesFilters(post, merged))
+        .sort((a, b) => comparePosts(a, b, merged.sortBy));
 }

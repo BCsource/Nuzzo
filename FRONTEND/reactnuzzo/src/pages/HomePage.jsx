@@ -4,7 +4,7 @@ import PostFilters from '../components/PostFilters';
 import PostTable from '../components/PostTable';
 import { EMPTY_FILTERS, filterAndSortPosts } from '../utils/postFilters';
 import { fetchPosts, fetchFavoritePosts, setFavoritePost } from '../services/postService';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function HomePage() {
     const { currentUser } = useAuth();
@@ -15,8 +15,6 @@ function HomePage() {
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const [postsData, favoritesData] = await Promise.all([
                 fetchPosts(),
@@ -24,6 +22,7 @@ function HomePage() {
             ]);
             setPosts(postsData);
             setFavoritePostIds(favoritesData.map((p) => p.id));
+            setError('');
         } catch (error) {
             setError("Couldn't load feed. Please try again.");
             console.error(error);
@@ -32,7 +31,7 @@ function HomePage() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
 
     const visiblePosts = useMemo(() => filterAndSortPosts(posts, filters), [posts, filters]);

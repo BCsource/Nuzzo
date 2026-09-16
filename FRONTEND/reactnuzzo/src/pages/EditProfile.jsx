@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { updateOwnProfile } from '../services/userService';
 import { NAME_MIN_LENGTH, NAME_MAX_LENGTH, validateAge } from '../utils/validators';
 
@@ -18,7 +18,7 @@ function EditProfile() {
     } = useForm({
         defaultValues: {
             fName: currentUser?.fName || '',
-            lName: currentUser?.lname || '',
+            lName: currentUser?.lName || '',
             bio: currentUser?.bio || '',
             dateOfBirth: currentUser?.dateOfBirth?.slice(0, 10) || '',
         },

@@ -11,11 +11,11 @@ import {
 
 const EMPTY_PET = {
     name: '',
-    especies: '',
+    species: '',
     breed: '',
     weight: '',
     spayed: false,
-    vacinated: false,
+    vaccinated: false,
     dateOfBirth: '',
 };
 
@@ -39,8 +39,8 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
             breed: data.breed.trim(),
             weight: Number(data.weight),
             spayed: !!data.spayed,
-            vacinated: !!data.vacinated,
-            dateOfBirth: data.dateofbirth,
+            vaccinated: !!data.vaccinated,
+            dateOfBirth: data.dateOfBirth,
         });
     }
 
@@ -65,10 +65,10 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                     rules={{ required: 'What species is it?' }}
                     render={({ field }) => (
                         <FormControl fullWidth error={!!errors.species}>
-                            <InputLabel id="specie-label">Species</InputLabel>
-                            <Select labelId="specie-label" label="Species" {...field}>
-                                {SPECIES_OPTIONS.map((s) => (
-                                    <MenuItem key={s} value={s}>{s}</MenuItem>
+                            <InputLabel id="species-label">Species</InputLabel>
+                            <Select labelId="species-label" label="Species" {...field}>
+                                {SPECIES_OPTIONS.map((species) => (
+                                    <MenuItem key={species} value={species}>{species}</MenuItem>
                                 ))}
                             </Select>
                             <FormHelperText>{errors.species?.message}</FormHelperText>
@@ -88,10 +88,11 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                     label="Weight (kg)"
                     type="number"
                     fullWidth
-                    inputProps={{ step: '0.01', min: MIN_WEIGHT_KG, max: MAX_WEIGHT_KG }}
+                    slotProps={{ htmlInput: { step: '0.01', min: MIN_WEIGHT_KG, max: MAX_WEIGHT_KG } }}
                     {...register('weight', {
-                        required: "Set it's weight,",
+                        required: "Set your pet's weight.",
                         min: { value: MIN_WEIGHT_KG, message: 'Weight must be greater than 0.' },
+                        max: { value: MAX_WEIGHT_KG, message: 'Please check the value entered.' },
                     })}
                     error={!!errors.weight}
                     helperText={errors.weight?.message}
@@ -111,7 +112,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                 />
 
                 <Controller
-                    name="Spayed"
+                    name="spayed"
                     control={control}
                     render={({ field }) => (
                         <FormControlLabel
@@ -122,12 +123,12 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                 />
 
                 <Controller
-                    name="Vacinated"
+                    name="vaccinated"
                     control={control}
                     render={({ field }) => (
                         <FormControlLabel
                             control={<Switch checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />}
-                            label={`Vacinated: ${field.value ? 'Yes' : 'No'}`}
+                            label={`Vaccinated: ${field.value ? 'Yes' : 'No'}`}
                         />
                     )}
                 />

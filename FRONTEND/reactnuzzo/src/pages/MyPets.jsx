@@ -14,11 +14,10 @@ function MyPets() {
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchMyPets();
             setPets(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load pets. Please try again.");
             console.error(error);
@@ -27,7 +26,7 @@ function MyPets() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function confirmDelete() {
         const petId = pendingDeleteId;
@@ -61,7 +60,7 @@ function MyPets() {
                     {pets.map((pet) => (
                         <Card key={pet.id}>
                             <CardContent>
-                                <Typography variant="h6">{pet.nome}</Typography>
+                                <Typography variant="h6">{pet.name}</Typography>
                                 <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
                                     <Chip label={pet.species} size="small" />
                                     <Chip label={pet.breed} size="small" variant="outlined" />

@@ -28,12 +28,14 @@ function PostFilters({ value, onChange }) {
                     size="small"
                     value={value.search}
                     onChange={(e) => update('search', e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon fontSize="small" />
-                            </InputAdornment>
-                        ),
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        },
                     }}
                 />
 
@@ -87,12 +89,12 @@ function PostFilters({ value, onChange }) {
                                 <TextField
                                     label="Min" type="number" size="small" sx={{ width: 90 }}
                                     value={value.priceMin} onChange={(e) => update('priceMin', e.target.value)}
-                                    inputProps={{ min: 0 }}
+                                    slotProps={{ htmlInput: { min: 0 } }}
                                 />
                                 <TextField
                                     label="Max" type="number" size="small" sx={{ width: 90 }}
                                     value={value.priceMax} onChange={(e) => update('priceMax', e.target.value)}
-                                    inputProps={{ min: 0 }}
+                                    slotProps={{ htmlInput: { min: 0 } }}
                                 />
                             </Stack>
                         </Box>
@@ -105,12 +107,12 @@ function PostFilters({ value, onChange }) {
                                 <TextField
                                     label="Min" type="number" size="small" sx={{ width: 90 }}
                                     value={value.viewsMin} onChange={(e) => update('viewsMin', e.target.value)}
-                                    inputProps={{ min: 0 }}
+                                    slotProps={{ htmlInput: { min: 0 } }}
                                 />
                                 <TextField
                                     label="Max" type="number" size="small" sx={{ width: 90 }}
                                     value={value.viewsMax} onChange={(e) => update('viewsMax', e.target.value)}
-                                    inputProps={{ min: 0 }}
+                                    slotProps={{ htmlInput: { min: 0 } }}
                                 />
                             </Stack>
                         </Box>

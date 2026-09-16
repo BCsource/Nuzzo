@@ -1,7 +1,6 @@
 //uso do axios para todos os serviços. 
 //jwt token added a cada pedido para tratar da authentication de cada pedido/sessoes
 
-
 import axios from 'axios';
 import { getToken, clearToken } from '../utils/tokenStorage';
 
@@ -22,7 +21,7 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 400) {
+        if (error.response?.status === 401) {
             clearToken();
             if (window.location.pathname !== '/login') {
                 window.location.href = '/login';

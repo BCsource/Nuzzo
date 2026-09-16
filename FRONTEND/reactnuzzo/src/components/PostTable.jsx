@@ -43,7 +43,7 @@ function PostTable({ posts, currentUserId, favoritePostIds = [], onToggleFavorit
                                 <TableCell>{authorLabel(post.author)}</TableCell>
                                 <TableCell align="right">{formatPrice(post.price)}</TableCell>
                                 <TableCell align="right">{post.views ?? 0}</TableCell>
-                                <TableCell>{formatDate(post.dataPublish)}</TableCell>
+                                <TableCell>{formatDate(post.publishedAt)}</TableCell>
                                 <TableCell>
                                     <Stack direction="row" spacing={0.5}>
                                         <Tooltip title="Check post">

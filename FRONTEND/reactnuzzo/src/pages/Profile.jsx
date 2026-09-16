@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { deleteOwnAccount } from '../services/userService';
 import { BADGE_LABELS } from '../utils/badgeOptions';
 import { formatDate } from '../utils/postDisplay';

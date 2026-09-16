@@ -16,11 +16,10 @@ function BadgeRequestsQueue() {
     const [rejectReasons, setRejectReasons] = useState({});
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchPendingBadgeRequests();
             setRequests(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load requests.");
             console.error(error);
@@ -29,7 +28,7 @@ function BadgeRequestsQueue() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function handleApprove(requestId) {
         try {
@@ -78,7 +77,7 @@ function BadgeRequestsQueue() {
                                 {req.user?.fName} {req.user?.lName} ({req.user?.email})
                             </Typography>
                             <Stack direction="row" spacing={1} sx={{ my: 1, flexWrap: 'wrap' }}>
-                                {req.badgeRequest.map((b) => (
+                                {(req.requestedBadges || []).map((b) => (
                                     <Chip key={b} label={BADGE_LABELS[b] || b} size="small" />
                                 ))}
                             </Stack>
@@ -89,7 +88,7 @@ function BadgeRequestsQueue() {
                                 </Typography>
                             )}
                             <Typography variant="caption" color="text.secondary">
-                                Requested at {formatDate(req.data, true)}
+                                Requested at {formatDate(req.createdAt, true)}
                             </Typography>
 
                             <Divider sx={{ my: 1.5 }} />

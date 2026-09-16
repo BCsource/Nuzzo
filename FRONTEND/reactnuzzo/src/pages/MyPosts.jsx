@@ -4,7 +4,7 @@ import { Box, Typography, Button, CircularProgress, Alert, Stack } from '@mui/ma
 import PostTable from '../components/PostTable';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { fetchMyPosts, deletePost } from '../services/postService';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function MyPosts() {
     const { currentUser } = useAuth();
@@ -14,11 +14,10 @@ function MyPosts() {
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchMyPosts();
             setPosts(data);
+            setError('');
         } catch (error) {
             setError("Couldn't load posts.");
             console.error(error);
@@ -27,7 +26,7 @@ function MyPosts() {
         }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function confirmDelete() {
         const postId = pendingDeleteId;

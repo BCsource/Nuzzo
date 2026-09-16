@@ -1,4 +1,3 @@
-
 const TOKEN_KEY = 'nuzzo_token';
 const EXPIRES_AT_KEY = 'nuzzo_token_expires_at';
 

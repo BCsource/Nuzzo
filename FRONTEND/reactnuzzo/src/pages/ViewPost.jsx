@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { fetchPostById, setFavoritePost } from '../services/postService';
 import InteractionThread from '../components/InteractionThread';
 import { postTypeLabel, formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
@@ -25,12 +25,11 @@ function ViewPost() {
     const [isFav, setIsFav] = useState(false);
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError('');
         try {
             const data = await fetchPostById(postId);
             setPost(data);
             setIsFav(!!data.favorite);
+            setError('');
         } catch (error) {
             setError("Couldn't load post.");
             console.error(error);
@@ -39,7 +38,7 @@ function ViewPost() {
         }
     }, [postId]);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { (async () => { await load(); })(); }, [load]);
 
     async function toggleFav() {
         const next = !isFav;
@@ -102,7 +101,7 @@ function ViewPost() {
                     </Typography>
 
                     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                        <Chip label={postTypeLabel(post.tipo)} color="primary" />
+                        <Chip label={postTypeLabel(post.type)} color="primary" />
                         {post.category && <Chip label={post.category} variant="outlined" />}
                         <Chip
                             label={post.available ? 'Available' : 'Not available'}

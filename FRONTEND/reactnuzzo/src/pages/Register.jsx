@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import {
     EMAIL_PATTERN, NAME_MIN_LENGTH, NAME_MAX_LENGTH, validateAge, validatePasswordStrength,
 } from '../utils/validators';
@@ -53,7 +53,7 @@ function Register() {
             });
             navigate('/');
         } catch (error) {
-            if (error.response?.status === 400) {
+            if (error.response?.status === 409) {
                 setServerError('Email already registered.');
             } else {
                 setServerError("Couldn't create account. Please try again later.");
@@ -88,7 +88,7 @@ function Register() {
                 />
 
                 <TextField
-                    label="lName"
+                    label="Last Name"
                     fullWidth
                     {...register('lName', {
                         required: 'Family Name required',

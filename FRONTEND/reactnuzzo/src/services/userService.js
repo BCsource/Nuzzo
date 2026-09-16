@@ -32,10 +32,10 @@ export async function fetchPendingBadgeRequests() {
     return data;
 }
 
-export async function reviewBadgeRequest(requestId, { approved, rejectReasons }) {
+export async function reviewBadgeRequest(requestId, { approved, rejectReason }) {
     const { data } = await apiClient.patch(`/users/badge-requests/${requestId}`, {
         approved,
-        rejectReasons,
+        rejectReason,
     });
     return data;
 }
