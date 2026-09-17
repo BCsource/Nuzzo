@@ -77,7 +77,7 @@ function Register() {
                 className="nuzzo-auth nz-auth-card"
                 noValidate
             >
-                <Typography variant="h4" gutterBottom>Create Account</Typography>
+                <Typography variant="h4" gutterBottom>Create an Account</Typography>
 
                 <Stack spacing={2}>
                     <TextField

@@ -479,12 +479,31 @@
   display: block;
 }
 
-/*logo navbar*/
-.nuzzo-sidebar .nz-sidebar-logo {
-  width: 280px;
+.nz-sidebar-logo {
+  width: 100%;
+  max-width: 200px;
   height: auto;
   display: block;
   margin: 0 auto;
+}
+
+.nuzzo-sidebar .nz-sidebar-logo {
+  max-width: 240px;
+}
+
+.nuzzo-navbar .nz-sidebar-logo {
+  width: auto;
+  max-width: none;
+  height: 44px;
+  margin: 0;
+}
+
+.nuzzo-brand {
+  padding: var(--nz-space-4) var(--nz-space-3);
+}
+
+.nuzzo-navbar .nuzzo-brand {
+  padding: 0;
 }
 
 .nuzzo-nav-desktop .MuiButton-root {

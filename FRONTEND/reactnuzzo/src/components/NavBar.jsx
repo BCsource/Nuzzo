@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../context/useAuth';
 import logo from '../assets/img/Final Logo.png';
 
-export const SIDEBAR_WIDTH = 240;
+export const SIDEBAR_WIDTH = 280;
 
 function NavBar() {
     const { currentUser, isAdmin, logout } = useAuth();
@@ -80,7 +80,8 @@ function NavBar() {
         <Box
             component={RouterLink}
             to="/"
-            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', px: 2, py: 3 }}
+            className="nuzzo-brand"
+            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
         >
             <img src={logo} alt="Nuzzo" className="nz-sidebar-logo" />
         </Box>
@@ -122,7 +123,7 @@ function NavBar() {
                 onClose={() => setDrawerOpen(false)}
                 sx={{ display: { xs: 'block', md: 'none' } }}
             >
-                <Box sx={{ width: SIDEBAR_WIDTH }} role="presentation">
+                <Box sx={{ width: '80vw', maxWidth: SIDEBAR_WIDTH }} role="presentation">
                     {brand}
                     {navList}
                 </Box>
