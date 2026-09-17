@@ -1,0 +1,222 @@
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('../assets/fonts/ArchivoBlack-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo 2';
+  src: url('../assets/fonts/Exo2-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo 2';
+  src: url('../assets/fonts/Exo2-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ---- Surfaces ------------------------------------------------------- */
+  --nz-bg-page: #f0eeea;
+  /* the app background, behind every screen */
+  --nz-surface: #FDF2E2;
+  /* cards, navbar — the logo's own cream */
+
+  --nz-surface-field: #f5f5f5;
+  /* inputs, selects e dialogs — neutro, para destacar do cartão */
+  --nz-border: #E3DBC0;
+  /* hairlines between surface and page */
+
+  /* ---- Text ----------------------------------------------------------- */
+  --nz-ink: #0D0D0D;
+  /* primary text and icons */
+  --nz-ink-muted: #6B6660;
+  /* helper text, timestamps, meta — 4.7:1 on page */
+
+  /* ---- Brand (primary action) ----------------------------------------- */
+  --nz-brand: #134026;
+  --nz-brand-hover: #1B5636;
+  --nz-brand-pressed: #103622;
+  --nz-brand-tint: #DCD7CA;
+  /* selected/active background, hovered table row */
+  --nz-on-brand: var(--nz-surface);
+
+  /* ---- Accent (decorative only — never text) --------------------------- */
+  --nz-accent: #BFBB80;
+  --nz-accent-hover: #ACA873;
+  --nz-accent-tint: #DED6B7;
+  /* resting background for species/default tags */
+  --nz-on-accent: var(--nz-ink);
+
+  /* ---- Earth (secondary action) --------------------------------------- */
+  --nz-earth: #592F20;
+  --nz-earth-hover: #724E41;
+  --nz-earth-pressed: #4C281B;
+  --nz-earth-tint: #E7DCD3;
+  --nz-on-earth: var(--nz-surface);
+
+  /* ---- Status --------------------------------------------------------- */
+  --nz-success: #2E6B45;
+  --nz-success-tint: #C1C9B6;
+  --nz-on-success: var(--nz-surface);
+
+  --nz-warning: #A8792E;
+  --nz-warning-tint: #E0CCB1;
+  --nz-on-warning: var(--nz-ink);
+
+  --nz-danger: #8C3527;
+  --nz-danger-tint: #D9BBAF;
+  --nz-on-danger: var(--nz-surface);
+
+
+  --nz-font-display: 'Archivo Black', 'Exo 2', system-ui, sans-serif;
+  --nz-font-body: 'Exo 2', system-ui, sans-serif;
+
+
+  --nz-space-1: 4px;
+  --nz-space-2: 8px;
+  --nz-space-3: 12px;
+  --nz-space-4: 16px;
+  --nz-space-5: 24px;
+  --nz-space-6: 32px;
+  --nz-space-7: 48px;
+  --nz-space-8: 64px;
+  --nz-navbar-gap: 32px;
+
+
+  --nz-radius-sm: 6px;
+  /* inputs, checkboxes */
+  --nz-radius-md: 10px;
+  /* buttons */
+  --nz-radius-lg: 16px;
+  /* cards, dialogs, alerts */
+  --nz-radius-xl: 24px;
+  /* hero and empty-state surfaces */
+  --nz-radius-full: 9999px;
+  /* pills, avatars, badges */
+
+  --nz-shadow-sm: 0 1px 3px rgba(13, 13, 13, 0.08);
+  --nz-shadow-md: 0 4px 18px rgba(13, 13, 13, 0.10);
+  --nz-shadow-lg: 0 12px 32px rgba(13, 13, 13, 0.16);
+
+  /* ---- Layout --------------------------------------------------------- */
+  --nz-page-max: 1100px;
+  /* the feed's content width */
+  --nz-form-max: 460px;
+  /* single-column forms: login, badge request */
+}
+
+/* TYPE SCALE*/
+
+.nz-display-xl {
+  font-family: var(--nz-font-display);
+  font-size: 52px;
+  line-height: 54px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.nz-h1 {
+  font-family: var(--nz-font-display);
+  font-size: 38px;
+  line-height: 42px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.nz-h2 {
+  font-family: var(--nz-font-display);
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.nz-h3 {
+  font-family: var(--nz-font-display);
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.nz-h4 {
+  font-family: var(--nz-font-display);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 400;
+}
+
+.nz-body-lg {
+  font-family: var(--nz-font-body);
+  font-size: 17px;
+  line-height: 26px;
+  font-weight: 400;
+}
+
+.nz-body {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+}
+
+.nz-body-strong {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.nz-small {
+  font-family: var(--nz-font-body);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+}
+
+.nz-caption {
+  font-family: var(--nz-font-body);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.nz-label {
+  font-family: var(--nz-font-body);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.nz-button {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+
+.nz-text-muted {
+  color: var(--nz-ink-muted);
+}
+
+.nz-text-brand {
+  color: var(--nz-brand);
+}
+
+.nz-text-danger {
+  color: var(--nz-danger);
+}
+
+.nz-text-success {
+  color: var(--nz-success);
+}

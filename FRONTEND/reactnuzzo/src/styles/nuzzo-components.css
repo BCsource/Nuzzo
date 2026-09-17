@@ -1,0 +1,638 @@
+.nz-wordmark {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.nz-wordmark--lg {
+  height: 44px;
+}
+
+/* login, register, empty states */
+.nz-mark {
+  width: 96px;
+  height: 96px;
+  display: block;
+}
+
+/*NAVBAR + FOOTER*/
+
+.nz-navbar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: var(--nz-space-1);
+  padding: 0 var(--nz-space-6);
+  background: var(--nz-surface);
+  border-bottom: 1px solid var(--nz-border);
+  box-shadow: var(--nz-shadow-md);
+}
+
+.nz-navbar__brand {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+}
+
+
+.nz-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--nz-space-1);
+}
+
+.nz-navbar__menu-btn {
+  display: none;
+}
+
+.nz-nav-link {
+  padding: var(--nz-space-2) var(--nz-space-3);
+  border-radius: var(--nz-radius-md);
+  color: var(--nz-ink);
+  font-size: 15px;
+  line-height: 22px;
+  text-decoration: none;
+}
+
+.nz-nav-link:hover {
+  background: var(--nz-border);
+  text-decoration: none;
+}
+
+
+.nz-nav-link.is-active {
+  color: var(--nz-brand);
+  background: var(--nz-brand-tint);
+  font-weight: 600;
+}
+
+
+.nz-nav-link--quiet {
+  color: var(--nz-ink-muted);
+  margin-left: var(--nz-space-3);
+}
+
+.nz-footer {
+  background: var(--nz-surface);
+  border-top: 1px solid var(--nz-border);
+  padding: var(--nz-space-4) var(--nz-space-6);
+  text-align: center;
+  color: var(--nz-ink-muted);
+  font-size: 13px;
+  line-height: 18px;
+  flex-shrink: 0;
+}
+
+/* BUTTONS */
+
+
+.nz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nz-space-2);
+  padding: var(--nz-space-3) var(--nz-space-5);
+  border: none;
+  border-radius: var(--nz-radius-md);
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.nz-btn--primary {
+  background: var(--nz-brand);
+  color: var(--nz-on-brand);
+}
+
+.nz-btn--primary:hover {
+  background: var(--nz-brand-hover);
+}
+
+.nz-btn--primary:active {
+  background: var(--nz-brand-pressed);
+}
+
+.nz-btn--secondary {
+  background: var(--nz-earth);
+  color: var(--nz-on-earth);
+}
+
+.nz-btn--secondary:hover {
+  background: var(--nz-earth-hover);
+}
+
+.nz-btn--secondary:active {
+  background: var(--nz-earth-pressed);
+}
+
+.nz-btn--outline {
+  background: transparent;
+  color: var(--nz-brand);
+  border: 1.5px solid var(--nz-brand);
+  padding: calc(var(--nz-space-3) - 1.5px) calc(var(--nz-space-5) - 1.5px);
+}
+
+.nz-btn--outline:hover {
+  background: var(--nz-brand-tint);
+}
+
+.nz-btn--ghost {
+  background: transparent;
+  color: var(--nz-ink);
+}
+
+.nz-btn--ghost:hover {
+  background: var(--nz-border);
+}
+
+.nz-btn--danger {
+  background: var(--nz-danger);
+  color: var(--nz-on-danger);
+}
+
+.nz-btn--danger:hover {
+  background: #7A2D21;
+}
+
+.nz-btn:disabled,
+.nz-btn.is-disabled {
+  background: var(--nz-border);
+  color: var(--nz-ink-muted);
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+.nz-btn--sm {
+  padding: var(--nz-space-2) var(--nz-space-3);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+
+.nz-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--nz-radius-md);
+  background: transparent;
+  color: var(--nz-ink-muted);
+  cursor: pointer;
+}
+
+.nz-icon-btn:hover {
+  background: var(--nz-border);
+}
+
+.nz-icon-btn.is-active {
+  color: var(--nz-danger);
+}
+
+/* a favourited heart */
+
+/* TAGS AND BADGES*/
+
+.nz-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nz-space-1);
+  padding: 4px var(--nz-space-3);
+  border-radius: var(--nz-radius-full);
+  font-family: var(--nz-font-body);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Species, Aficionado, Regular and Poll posts */
+.nz-tag--species {
+  background: var(--nz-accent-tint);
+  color: var(--nz-on-accent);
+}
+
+/* Health and Care — the record-keeping post types */
+.nz-tag--health {
+  background: var(--nz-success-tint);
+  color: var(--nz-success);
+}
+
+/* Product */
+.nz-tag--product {
+  background: var(--nz-earth-tint);
+  color: var(--nz-earth);
+}
+
+/* Adoption */
+.nz-tag--adoption {
+  background: var(--nz-brand-tint);
+  color: var(--nz-brand);
+}
+
+/* Badge-request states */
+.nz-tag--pending {
+  background: var(--nz-warning-tint);
+  color: var(--nz-on-warning);
+}
+
+.nz-tag--approved {
+  background: var(--nz-success-tint);
+  color: var(--nz-success);
+}
+
+.nz-tag--rejected {
+  background: var(--nz-danger-tint);
+  color: var(--nz-danger);
+}
+
+
+.nz-tag--outline {
+  background: transparent;
+  border: 1px solid var(--nz-border);
+  color: var(--nz-ink-muted);
+}
+
+
+.nz-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--nz-space-3) 4px 4px;
+  border-radius: var(--nz-radius-full);
+  background: var(--nz-brand);
+  color: var(--nz-on-brand);
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.nz-badge__check {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nz-radius-full);
+  background: var(--nz-on-brand);
+  color: var(--nz-brand);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nz-badge--sm {
+  font-size: 12px;
+  line-height: 16px;
+  padding: 3px var(--nz-space-2) 3px 3px;
+}
+
+.nz-badge--sm .nz-badge__check {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+}
+
+/*CARDS*/
+
+.nz-card {
+  background: var(--nz-surface);
+  border: 1px solid var(--nz-border);
+  border-radius: var(--nz-radius-lg);
+  box-shadow: var(--nz-shadow-md);
+  overflow: hidden;
+}
+
+.nz-card--flat {
+  box-shadow: none;
+}
+
+.nz-card__media {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--nz-accent-tint), var(--nz-earth-tint));
+  color: var(--nz-ink-muted);
+  font-size: 12px;
+}
+
+.nz-card__body {
+  padding: var(--nz-space-4);
+}
+
+.nz-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nz-space-1);
+  margin-bottom: var(--nz-space-2);
+}
+
+.nz-card__title {
+  font-family: var(--nz-font-display);
+  font-size: 20px;
+  line-height: 26px;
+  margin: 0 0 4px;
+}
+
+.nz-card__meta {
+  color: var(--nz-ink-muted);
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0;
+}
+
+.nz-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nz-space-2);
+  padding: var(--nz-space-3) var(--nz-space-4);
+  border-top: 1px solid var(--nz-border);
+  color: var(--nz-ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.nz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  align-items: start;
+  /* cards keep their own height, never stretch */
+  gap: var(--nz-space-4);
+}
+
+/*TABLE*/
+
+.nz-table-wrap {
+  background: var(--nz-surface);
+  border: 1px solid var(--nz-border);
+  border-radius: var(--nz-radius-lg);
+  box-shadow: var(--nz-shadow-md);
+  overflow: hidden;
+}
+
+.nz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.nz-table th {
+  text-align: left;
+  padding: var(--nz-space-3) var(--nz-space-4);
+  border-bottom: 1px solid var(--nz-border);
+  color: var(--nz-ink-muted);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.nz-table td {
+  padding: var(--nz-space-3) var(--nz-space-4);
+  border-bottom: 1px solid var(--nz-border);
+  color: var(--nz-ink);
+}
+
+.nz-table tr:last-child td {
+  border-bottom: none;
+}
+
+.nz-table tbody tr:hover td {
+  background: var(--nz-brand-tint);
+}
+
+.nz-table .nz-num {
+  text-align: right;
+}
+
+
+.nz-table a {
+  color: var(--nz-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nz-table a:hover {
+  text-decoration: underline;
+}
+
+/*FORM FIELDS*/
+
+.nz-field {
+  margin-bottom: var(--nz-space-3);
+}
+
+.nz-field__label {
+  display: block;
+  margin-bottom: var(--nz-space-1);
+  color: var(--nz-ink);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.nz-input,
+.nz-textarea,
+.nz-select {
+  width: 100%;
+  padding: var(--nz-space-2) var(--nz-space-3);
+  background: var(--nz-surface-field);
+  border: 1.5px solid var(--nz-border);
+  border-radius: var(--nz-radius-sm);
+  color: var(--nz-ink);
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.nz-textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.nz-input::placeholder,
+.nz-textarea::placeholder {
+  color: var(--nz-ink-muted);
+}
+
+.nz-input:focus,
+.nz-textarea:focus,
+.nz-select:focus {
+  outline: none;
+  border-color: var(--nz-brand);
+  box-shadow: var(--nz-shadow-sm);
+}
+
+.nz-input.is-error,
+.nz-textarea.is-error,
+.nz-select.is-error {
+  border-color: var(--nz-danger);
+}
+
+.nz-field__help {
+  margin: var(--nz-space-1) 0 0;
+  color: var(--nz-ink-muted);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.nz-field__help.is-error {
+  color: var(--nz-danger);
+}
+
+.nz-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--nz-space-2);
+  margin-bottom: var(--nz-space-2);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.nz-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--nz-brand);
+  border-radius: 4px;
+}
+
+/*ALERTS*/
+
+.nz-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nz-space-2);
+  padding: var(--nz-space-3) var(--nz-space-4);
+  margin-bottom: var(--nz-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--nz-radius-lg);
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.nz-alert--error {
+  background: var(--nz-danger-tint);
+  color: var(--nz-danger);
+  border-color: var(--nz-danger);
+}
+
+.nz-alert--success {
+  background: var(--nz-success-tint);
+  color: var(--nz-success);
+  border-color: var(--nz-success);
+}
+
+.nz-alert--warning {
+  background: var(--nz-warning-tint);
+  color: var(--nz-on-warning);
+  border-color: var(--nz-warning);
+}
+
+.nz-alert__mark {
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+/*COMMENTS AND HEALTH-HISTORY ENTRIES*/
+
+.nz-comment {
+  display: flex;
+  gap: var(--nz-space-3);
+  padding: var(--nz-space-4);
+  margin-bottom: var(--nz-space-3);
+  background: var(--nz-surface);
+  border: 1px solid var(--nz-border);
+  border-radius: var(--nz-radius-lg);
+}
+
+.nz-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nz-radius-full);
+  background: var(--nz-brand);
+  color: var(--nz-on-brand);
+  font-weight: 700;
+}
+
+.nz-comment__name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.nz-comment__text {
+  margin: 2px 0 4px;
+}
+
+.nz-comment__time {
+  margin: 0;
+  color: var(--nz-ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/*EMPTY STATES*/
+
+.nz-empty {
+  padding: var(--nz-space-8) var(--nz-space-4);
+  text-align: center;
+}
+
+.nz-empty__title {
+  font-family: var(--nz-font-display);
+  font-size: 20px;
+  line-height: 26px;
+  margin: 0 0 var(--nz-space-2);
+}
+
+.nz-empty__text {
+  margin: 0;
+  color: var(--nz-ink-muted);
+}
+
+/*RESPONSIVENESS*/
+
+@media (max-width: 640px) {
+  .nz-navbar {
+    padding: 0 var(--nz-space-4);
+  }
+
+  .nz-navbar__links {
+    display: none;
+  }
+
+  .nz-navbar__menu-btn {
+    display: inline-flex;
+  }
+
+  .nz-page {
+    padding: var(--nz-space-5) var(--nz-space-4) var(--nz-space-6);
+  }
+
+  h1,
+  .nz-h1 {
+    font-size: 30px;
+    line-height: 36px;
+  }
+
+  h2,
+  .nz-h2 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}

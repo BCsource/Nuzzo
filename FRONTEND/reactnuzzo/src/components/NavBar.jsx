@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import {
-    AppBar, Toolbar, Button, Typography, Box, IconButton,
+    AppBar, Toolbar, Button, Box, IconButton,
     Drawer, List, ListItem, ListItemButton, ListItemText, Divider,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../context/useAuth';
+import wordmark from '../assets/img/nuzzo-wordmark.png';
+
+export const SIDEBAR_WIDTH = 240;
 
 function NavBar() {
     const { currentUser, isAdmin, logout } = useAuth();
@@ -41,71 +44,89 @@ function NavBar() {
 
     const links = currentUser ? loggedInLinks : loggedOutLinks;
 
-    return (
-        <AppBar position="static" className="nuzzo-navbar">
-            <Toolbar sx={{ minHeight: 72 }}>
-                <Box
-                    component={RouterLink}
-                    to="/"
-                    sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 1, flexGrow: 1 }}
-                >
-                    <Typography sx={{ fontWeight: 900, fontSize: 22, color: 'var(--nz-text)' }}>
-                        Nuzzo
-                    </Typography>
-                </Box>
+    const navList = (
+        <List className="nuzzo-nav-list">
+            {links.map((link) => (
+                <ListItem key={link.to} disablePadding>
+                    <ListItemButton
+                        component={RouterLink}
+                        to={link.to}
+                        selected={isActive(link.to)}
+                        className={`nuzzo-nav-item ${isActive(link.to) ? 'nuzzo-nav-active' : ''}`}
+                        onClick={() => setDrawerOpen(false)}
+                    >
+                        <ListItemText primary={link.label} />
+                    </ListItemButton>
+                </ListItem>
+            ))}
 
-                <Box className="nuzzo-nav-desktop" sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                    {links.map((l) => (
-                        <Button
-                            key={l.to}
-                            color="inherit"
-                            component={RouterLink}
-                            to={l.to}
-                            className={isActive(l.to) ? 'nuzzo-nav-active' : ''}
+            {currentUser && (
+                <>
+                    <Divider sx={{ my: 1 }} />
+                    <ListItem disablePadding>
+                        <ListItemButton
+                            className="nuzzo-nav-item"
+                            onClick={() => { setDrawerOpen(false); setConfirmLogout(true); }}
                         >
-                            {l.label}
-                        </Button>
-                    ))}
-                    {currentUser && (
-                        <Button color="inherit" onClick={() => setConfirmLogout(true)}>
-                            Log Off
-                        </Button>
-                    )}
-                </Box>
+                            <ListItemText primary="Log Off" />
+                        </ListItemButton>
+                    </ListItem>
+                </>
+            )}
+        </List>
+    );
 
-                <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                    <IconButton color="inherit" onClick={() => setDrawerOpen(true)} aria-label="abrir menu">
+    const brand = (
+        <Box
+            component={RouterLink}
+            to="/"
+            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', px: 2, py: 3 }}
+        >
+            <Typography sx={{ fontWeight: 900, fontSize: 22, color: 'var(--nz-text)' }}>
+                Nuzzo
+            </Typography>
+        </Box>
+    );
+
+    return (
+        <>
+            {/* DESKTOP — barra lateral fixa à esquerda */}
+            <Drawer
+                variant="permanent"
+                className="nuzzo-sidebar"
+                sx={{
+                    display: { xs: 'none', md: 'block' },
+                    width: SIDEBAR_WIDTH,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: SIDEBAR_WIDTH,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
+                {brand}
+                {navList}
+            </Drawer>
+
+            {/* TELEMÓVEL — barra no topo só com o menu */}
+            <AppBar position="sticky" className="nuzzo-navbar" sx={{ display: { xs: 'block', md: 'none' } }}>
+                <Toolbar sx={{ minHeight: 64 }}>
+                    <Box sx={{ flexGrow: 1 }}>{brand}</Box>
+                    <IconButton color="inherit" onClick={() => setDrawerOpen(true)} aria-label="open menu">
                         <MenuIcon />
                     </IconButton>
-                </Box>
-            </Toolbar>
+                </Toolbar>
+            </AppBar>
 
-            <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <Box sx={{ width: 250 }} role="presentation">
-                    <List>
-                        {links.map((l) => (
-                            <ListItem key={l.to} disablePadding>
-                                <ListItemButton
-                                    component={RouterLink}
-                                    to={l.to}
-                                    selected={isActive(l.to)}
-                                    onClick={() => setDrawerOpen(false)}
-                                >
-                                    <ListItemText primary={l.label} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                        {currentUser && (
-                            <>
-                                <Divider />
-                                <ListItem disablePadding>
-                                    <ListItemButton onClick={() => { setDrawerOpen(false); setConfirmLogout(true); }}>
-                                        <ListItemText primary="Log Off" />
-                                    </ListItemButton>
-                                </ListItem>
-                            </>
-                        )}
-                    </List>
+            <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                sx={{ display: { xs: 'block', md: 'none' } }}
+            >
+                <Box sx={{ width: SIDEBAR_WIDTH }} role="presentation">
+                    {brand}
+                    {navList}
                 </Box>
             </Drawer>
 
@@ -119,7 +140,7 @@ function NavBar() {
                     <Button color="error" onClick={handleLogout}>Log Off</Button>
                 </DialogActions>
             </Dialog>
-        </AppBar>
+        </>
     );
 }
 

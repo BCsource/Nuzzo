@@ -1,0 +1,561 @@
+/*TYPOGRAPHY*/
+
+.MuiTypography-root {
+  font-family: var(--nz-font-body);
+  color: var(--nz-ink);
+}
+
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4,
+.MuiTypography-h5,
+.MuiTypography-h6 {
+  font-family: var(--nz-font-display) !important;
+  font-weight: 400 !important;
+  color: var(--nz-ink);
+}
+
+.MuiTypography-h1 {
+  font-size: 52px;
+  line-height: 54px;
+  letter-spacing: -0.02em;
+}
+
+.MuiTypography-h2 {
+  font-size: 38px;
+  line-height: 42px;
+  letter-spacing: -0.015em;
+}
+
+.MuiTypography-h3 {
+  font-size: 30px;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+}
+
+.MuiTypography-h4 {
+  font-size: 38px;
+  line-height: 42px;
+  letter-spacing: -0.015em;
+}
+
+.MuiTypography-h5 {
+  font-size: 30px;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+}
+
+.MuiTypography-h6 {
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.01em;
+}
+
+.MuiTypography-body1 {
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.MuiTypography-body2 {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.MuiTypography-caption {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.MuiTypography-subtitle1,
+.MuiTypography-subtitle2 {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+}
+
+.MuiTypography-colorTextSecondary,
+.MuiTypography-root.MuiTypography-gutterBottom+.MuiTypography-body2 {
+  color: var(--nz-ink-muted);
+}
+
+
+.MuiTypography-root[class*="colorTextSecondary"],
+.MuiFormHelperText-root {
+  color: var(--nz-ink-muted);
+}
+
+.MuiPaper-root {
+  background-color: var(--nz-surface) !important;
+  color: var(--nz-ink);
+  background-image: none !important;
+}
+
+.MuiPaper-rounded {
+  border-radius: var(--nz-radius-lg) !important;
+}
+
+.MuiPaper-outlined,
+.MuiCard-root {
+  border: 1px solid var(--nz-border) !important;
+}
+
+.MuiCard-root {
+  border-radius: var(--nz-radius-lg) !important;
+  box-shadow: var(--nz-shadow-md) !important;
+}
+
+.MuiDialog-paper {
+  border-radius: var(--nz-radius-lg) !important;
+  box-shadow: var(--nz-shadow-lg) !important;
+}
+
+.MuiDialogTitle-root {
+  font-family: var(--nz-font-display);
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.MuiDialogContentText-root {
+  color: var(--nz-ink);
+}
+
+.MuiDrawer-paper {
+  background-color: var(--nz-surface) !important;
+  box-shadow: var(--nz-shadow-lg) !important;
+}
+
+/*BUTTONS*/
+
+.MuiButton-root {
+  font-family: var(--nz-font-body) !important;
+  font-size: 15px !important;
+  line-height: 20px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  border-radius: var(--nz-radius-md) !important;
+  padding: var(--nz-space-3) var(--nz-space-5) !important;
+  box-shadow: none !important;
+}
+
+.MuiButton-contained {
+  background-color: var(--nz-brand) !important;
+  color: var(--nz-on-brand) !important;
+}
+
+.MuiButton-contained:hover {
+  background-color: var(--nz-brand-hover) !important;
+}
+
+.MuiButton-contained:active {
+  background-color: var(--nz-brand-pressed) !important;
+}
+
+
+.MuiButton-contained.MuiButton-colorError,
+.MuiButton-containedError {
+  background-color: var(--nz-danger) !important;
+  color: var(--nz-on-danger) !important;
+}
+
+
+.MuiButton-contained.MuiButton-colorSecondary,
+.MuiButton-containedSecondary {
+  background-color: var(--nz-earth) !important;
+  color: var(--nz-on-earth) !important;
+}
+
+.MuiButton-contained.MuiButton-colorSecondary:hover,
+.MuiButton-containedSecondary:hover {
+  background-color: var(--nz-earth-hover) !important;
+}
+
+.MuiButton-outlined {
+  border: 1.5px solid var(--nz-brand) !important;
+  color: var(--nz-brand) !important;
+  background-color: transparent !important;
+}
+
+.MuiButton-outlined:hover {
+  background-color: var(--nz-brand-tint) !important;
+}
+
+.MuiButton-outlined.MuiButton-colorError,
+.MuiButton-outlinedError {
+  border-color: var(--nz-danger) !important;
+  color: var(--nz-danger) !important;
+}
+
+.MuiButton-text {
+  color: var(--nz-ink) !important;
+  background-color: transparent !important;
+}
+
+.MuiButton-text:hover {
+  background-color: var(--nz-border) !important;
+}
+
+.MuiButton-text.MuiButton-colorError,
+.MuiButton-textError {
+  color: var(--nz-danger) !important;
+}
+
+.MuiButton-root.Mui-disabled {
+  background-color: var(--nz-border) !important;
+  color: var(--nz-ink-muted) !important;
+  border-color: transparent !important;
+}
+
+.MuiButton-sizeSmall {
+  padding: var(--nz-space-2) var(--nz-space-3) !important;
+  font-size: 13px !important;
+}
+
+.MuiIconButton-root {
+  color: var(--nz-ink-muted);
+  border-radius: var(--nz-radius-md);
+}
+
+.MuiIconButton-root:hover {
+  background-color: var(--nz-border);
+}
+
+.MuiIconButton-colorError {
+  color: var(--nz-danger);
+}
+
+/* CHIPS (species, post type, badge state)*/
+
+.MuiChip-root {
+  font-family: var(--nz-font-body) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  height: auto !important;
+  padding: 4px 2px !important;
+  border-radius: var(--nz-radius-full) !important;
+  background-color: var(--nz-accent-tint);
+  color: var(--nz-on-accent);
+}
+
+.MuiChip-outlined {
+  background-color: transparent !important;
+  border: 1px solid var(--nz-border) !important;
+  color: var(--nz-ink-muted) !important;
+}
+
+.MuiChip-colorPrimary {
+  background-color: var(--nz-brand) !important;
+  color: var(--nz-on-brand) !important;
+}
+
+.MuiChip-colorSuccess {
+  background-color: var(--nz-success-tint) !important;
+  color: var(--nz-success) !important;
+}
+
+.MuiChip-colorWarning {
+  background-color: var(--nz-warning-tint) !important;
+  color: var(--nz-on-warning) !important;
+}
+
+.MuiChip-colorError {
+  background-color: var(--nz-danger-tint) !important;
+  color: var(--nz-danger) !important;
+}
+
+/* INPUT */
+
+.MuiOutlinedInput-root {
+  background-color: var(--nz-surface);
+  border-radius: var(--nz-radius-sm) !important;
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  color: var(--nz-ink);
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--nz-border) !important;
+  border-width: 1.5px !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--nz-accent-hover) !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--nz-brand) !important;
+}
+
+.MuiOutlinedInput-root.Mui-error .MuiOutlinedInput-notchedOutline {
+  border-color: var(--nz-danger) !important;
+}
+
+.MuiInputLabel-root {
+  font-family: var(--nz-font-body);
+  color: var(--nz-ink-muted);
+}
+
+.MuiInputLabel-root.Mui-focused {
+  color: var(--nz-brand) !important;
+}
+
+.MuiInputLabel-root.Mui-error {
+  color: var(--nz-danger) !important;
+}
+
+.MuiFormHelperText-root {
+  font-family: var(--nz-font-body);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.MuiFormHelperText-root.Mui-error {
+  color: var(--nz-danger) !important;
+}
+
+.MuiInputBase-input::placeholder {
+  color: var(--nz-ink-muted);
+  opacity: 1;
+}
+
+.MuiMenu-paper,
+.MuiPopover-paper {
+  border: 1px solid var(--nz-border) !important;
+  border-radius: var(--nz-radius-lg) !important;
+  box-shadow: var(--nz-shadow-lg) !important;
+}
+
+.MuiMenuItem-root {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+}
+
+.MuiMenuItem-root.Mui-selected {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-brand);
+}
+
+.MuiCheckbox-root {
+  color: var(--nz-ink-muted);
+}
+
+.MuiCheckbox-root.Mui-checked,
+.MuiRadio-root.Mui-checked {
+  color: var(--nz-brand) !important;
+}
+
+/* TABLE */
+
+.MuiTableContainer-root {
+  background-color: var(--nz-surface) !important;
+  border: 1px solid var(--nz-border);
+  border-radius: var(--nz-radius-lg);
+  box-shadow: var(--nz-shadow-md);
+  overflow: hidden;
+}
+
+.MuiTableCell-root {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--nz-ink);
+  border-bottom: 1px solid var(--nz-border);
+  padding: var(--nz-space-3) var(--nz-space-4);
+}
+
+.MuiTableCell-head {
+  color: var(--nz-ink-muted) !important;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.MuiTableRow-root:last-child .MuiTableCell-root {
+  border-bottom: none;
+}
+
+.MuiTableRow-hover:hover {
+  background-color: var(--nz-brand-tint) !important;
+}
+
+/* ALERTS */
+
+.MuiAlert-root {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+  line-height: 22px;
+  border-radius: var(--nz-radius-lg) !important;
+  border: 1px solid transparent;
+  padding: var(--nz-space-3) var(--nz-space-4);
+}
+
+.MuiAlert-standardError {
+  background-color: var(--nz-danger-tint) !important;
+  color: var(--nz-danger) !important;
+  border-color: var(--nz-danger);
+}
+
+.MuiAlert-standardSuccess {
+  background-color: var(--nz-success-tint) !important;
+  color: var(--nz-success) !important;
+  border-color: var(--nz-success);
+}
+
+.MuiAlert-standardWarning {
+  background-color: var(--nz-warning-tint) !important;
+  color: var(--nz-on-warning) !important;
+  border-color: var(--nz-warning);
+}
+
+.MuiAlert-standardInfo {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-brand) !important;
+  border-color: var(--nz-brand);
+}
+
+.MuiAlert-icon {
+  color: inherit !important;
+}
+
+
+.MuiLink-root {
+  color: var(--nz-brand);
+  text-decoration: none;
+}
+
+.MuiLink-root:hover {
+  text-decoration: underline;
+}
+
+.MuiAvatar-root {
+  background-color: var(--nz-brand);
+  color: var(--nz-on-brand);
+  font-family: var(--nz-font-body);
+  font-weight: 700;
+}
+
+.MuiCircularProgress-root {
+  color: var(--nz-brand) !important;
+}
+
+.MuiDivider-root {
+  border-color: var(--nz-border) !important;
+}
+
+.MuiTooltip-tooltip {
+  background-color: var(--nz-ink) !important;
+  color: var(--nz-surface) !important;
+  font-family: var(--nz-font-body);
+  font-size: 12px;
+  border-radius: var(--nz-radius-sm);
+}
+
+.MuiListItemButton-root.Mui-selected {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-brand);
+}
+
+.MuiListItemText-primary {
+  font-family: var(--nz-font-body);
+  font-size: 15px;
+}
+
+/* APP CLASSES */
+
+.MuiAppBar-root.nuzzo-navbar {
+  background-color: var(--nz-surface) !important;
+  color: var(--nz-ink) !important;
+  border-bottom: 1px solid var(--nz-border);
+  box-shadow: var(--nz-shadow-md) !important;
+  background-image: none !important;
+
+}
+
+.nuzzo-navbar .nz-wordmark {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.nuzzo-nav-desktop .MuiButton-root {
+  text-transform: none;
+  font-weight: 600;
+  padding: var(--nz-space-2) var(--nz-space-3) !important;
+  color: var(--nz-ink) !important;
+}
+
+.nuzzo-nav-desktop .MuiButton-root:hover {
+  background-color: var(--nz-border) !important;
+}
+
+.nuzzo-nav-active {
+  color: var(--nz-brand) !important;
+  background-color: var(--nz-brand-tint) !important;
+  font-weight: 700 !important;
+}
+
+.nuzzo-footer {
+  background-color: var(--nz-surface);
+  border-top: 1px solid var(--nz-border);
+  color: var(--nz-ink-muted);
+}
+
+.nuzzo-auth {
+  background-color: var(--nz-surface);
+  padding: var(--nz-space-5);
+  border: 1px solid var(--nz-border);
+  border-radius: var(--nz-radius-lg);
+  box-shadow: var(--nz-shadow-md);
+}
+
+.MuiOutlinedInput-root {
+  background-color: var(--nz-surface-field);
+}
+
+.MuiInput-root {
+  background-color: var(--nz-surface-field);
+}
+
+.MuiMenu-paper {
+  background-color: var(--nz-surface-field);
+}
+
+.MuiDialog-paper {
+  background-color: var(--nz-surface-field);
+}
+
+.MuiOutlinedInput-root input:-webkit-autofill,
+.MuiOutlinedInput-root input:-webkit-autofill:hover,
+.MuiOutlinedInput-root input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--nz-surface-field) inset;
+  -webkit-text-fill-color: var(--nz-ink);
+}
+
+
+.nuzzo-sidebar .MuiDrawer-paper {
+  background-color: var(--nz-surface);
+  border-right: 1px solid var(--nz-border);
+}
+
+.nuzzo-nav-item {
+  transition: transform 160ms ease, background-color 160ms ease;
+  transform-origin: left center;
+  border-radius: var(--nz-radius-sm);
+  margin: 2px 8px;
+}
+
+.nuzzo-nav-item:hover {
+  transform: scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuzzo-nav-item {
+    transition: none;
+  }
+
+  .nuzzo-nav-item:hover {
+    transform: none;
+  }
+}

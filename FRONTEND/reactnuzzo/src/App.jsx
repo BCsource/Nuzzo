@@ -31,11 +31,11 @@ function App() {
     const hideNav = pathname === '/login' || pathname === '/register';
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
             <CssBaseline />
             {!hideNav && <NavBar />}
             <SessionTimeout />
-
+            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}></Box>
             <Box component="main" sx={{ flex: 1 }}>
                 <Routes>
 
@@ -77,6 +77,8 @@ function App() {
 
             <Footer />
         </Box>
+        </Box >
+   
     );
 }
 

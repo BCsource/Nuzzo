@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import lockup from '../assets/img/nuzzo-lockup.png';
 
 function Register() {
     const navigate = useNavigate();
@@ -72,6 +73,9 @@ function Register() {
             sx={{ maxWidth: 420, mx: 'auto', mt: 4, mb: 6 }}
             noValidate
         >
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                <img src={lockup} alt="Nuzzo — Animal Hub" className="nz-wordmark nz-wordmark--lg" />
+            </Box>
             <Typography variant="h4" gutterBottom>Create Account</Typography>
 
             <Stack spacing={2}>

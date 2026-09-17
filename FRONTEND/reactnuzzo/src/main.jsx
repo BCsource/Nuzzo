@@ -1,15 +1,15 @@
 import { StyledEngineProvider } from '@mui/material';
 
-import './styles/nuzzo-theme.css';
-import './styles/navbar.css';
-import './styles/auth.css';
+import './styles/nuzzo-tokens.css';
+import './styles/nuzzo-base.css';
+import './styles/nuzzo-components.css';
+import './styles/nuzzo-mui.css';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import App from './App.jsx';
-import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import lockup from '../assets/img/nuzzo-lockup.png';
 
 function Login() {
     const navigate = useNavigate();
@@ -50,6 +51,9 @@ function Login() {
             sx={{ maxWidth: 400, mx: 'auto', mt: 6 }}
             noValidate
         >
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                <img src={lockup} alt="Nuzzo — Animal Hub" className="nz-wordmark nz-wordmark--lg" />
+            </Box>
             <Typography variant="h4" gutterBottom>Log in</Typography>
 
             <Stack spacing={2}>
