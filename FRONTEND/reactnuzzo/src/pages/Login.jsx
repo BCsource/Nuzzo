@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import lockup from '../assets/img/nuzzo-lockup.png';
+import logo from '../assets/img/Final Logo.png';
 
 function Login() {
     const navigate = useNavigate();
@@ -44,59 +44,61 @@ function Login() {
     }
 
     return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            className="nuzzo-auth"
-            sx={{ maxWidth: 400, mx: 'auto', mt: 6 }}
-            noValidate
-        >
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <img src={lockup} alt="Nuzzo — Animal Hub" className="nz-wordmark nz-wordmark--lg" />
+        <Box className="nz-auth-screen">
+            <Box className="nz-auth-brand">
+                <img src={logo} alt="Nuzzo — Animal Hub" className="nz-auth-logo" />
             </Box>
-            <Typography variant="h4" gutterBottom>Log in</Typography>
 
-            <Stack spacing={2}>
-                <TextField
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    {...register('email', { required: 'Insert email address' })}
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                />
+            <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmit)}
+                className="nuzzo-auth nz-auth-card"
+                noValidate
+            >
+                <Typography variant="h4" gutterBottom>Log in</Typography>
 
-                <TextField
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    fullWidth
-                    {...register('password', { required: 'Write your password' })}
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    slotProps={{
-                        input: {
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={() => setShowPassword((s) => !s)} edge="end" aria-label="show/hide password">
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
+                <Stack spacing={2}>
+                    <TextField
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        {...register('email', { required: 'Insert email address' })}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
 
-                {serverError && <Alert severity="error">{serverError}</Alert>}
+                    <TextField
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        fullWidth
+                        {...register('password', { required: 'Write your password' })}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        slotProps={{
+                            input: {
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => setShowPassword((s) => !s)} edge="end" aria-label="show/hide password">
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                    />
 
-                <Button type="submit" variant="contained" disabled={loading}>
-                    {loading ? 'Logging in…' : 'Log in'}
-                </Button>
+                    {serverError && <Alert severity="error">{serverError}</Alert>}
 
-                <Typography variant="body2" align="center">
-                    Not registered?{' '}
-                    <Link component={RouterLink} to="/register">Register</Link>
-                </Typography>
-            </Stack>
+                    <Button type="submit" variant="contained" disabled={loading}>
+                        {loading ? 'Logging in…' : 'Log in'}
+                    </Button>
+
+                    <Typography variant="body2" align="center">
+                        Not registered?{' '}
+                        <Link component={RouterLink} to="/register">Register</Link>
+                    </Typography>
+                </Stack>
+            </Box>
         </Box>
     );
 }

@@ -35,50 +35,52 @@ function App() {
             <CssBaseline />
             {!hideNav && <NavBar />}
             <SessionTimeout />
-            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}></Box>
-            <Box component="main" sx={{ flex: 1 }}>
-                <Routes>
+            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
 
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                {/* Espaco para a herozone*/}
 
+                <Box component="main" sx={{ flex: 1, pt: hideNav ? 0 : { xs: 4, md: 8 } }}>
+                    <Routes>
 
-                    <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-
-                    <Route path="/posts/new" element={<ProtectedRoute><NewPost /></ProtectedRoute>} />
-                    <Route path="/posts/:postId" element={<ProtectedRoute><ViewPost /></ProtectedRoute>} />
-                    <Route path="/posts/:postId/edit" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
-                    <Route path="/my-posts" element={<ProtectedRoute><MyPosts /></ProtectedRoute>} />
-                    <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
-
-                    <Route path="/pets/new" element={<ProtectedRoute><NewPetProfile /></ProtectedRoute>} />
-                    <Route path="/pets/:petId" element={<ProtectedRoute><ViewPetProfile /></ProtectedRoute>} />
-                    <Route path="/pets/:petId/edit" element={<ProtectedRoute><EditPetProfile /></ProtectedRoute>} />
-                    <Route path="/my-pets" element={<ProtectedRoute><MyPets /></ProtectedRoute>} />
-
-                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                    <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                    <Route path="/profile/badges" element={<ProtectedRoute><BadgeRequest /></ProtectedRoute>} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
 
 
-                    <Route
-                        path="/users"
-                        element={<RoleRoute roles={ADMIN_ROLES}><AllUsersAdminOnly /></RoleRoute>}
-                    />
-                    <Route
-                        path="/admin/badge-requests"
-                        element={<RoleRoute roles={ADMIN_ROLES}><BadgeRequestsQueue /></RoleRoute>}
-                    />
+                        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
 
-                    {/* rota desconhecida -> feed/login */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
+                        <Route path="/posts/new" element={<ProtectedRoute><NewPost /></ProtectedRoute>} />
+                        <Route path="/posts/:postId" element={<ProtectedRoute><ViewPost /></ProtectedRoute>} />
+                        <Route path="/posts/:postId/edit" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
+                        <Route path="/my-posts" element={<ProtectedRoute><MyPosts /></ProtectedRoute>} />
+                        <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+
+                        <Route path="/pets/new" element={<ProtectedRoute><NewPetProfile /></ProtectedRoute>} />
+                        <Route path="/pets/:petId" element={<ProtectedRoute><ViewPetProfile /></ProtectedRoute>} />
+                        <Route path="/pets/:petId/edit" element={<ProtectedRoute><EditPetProfile /></ProtectedRoute>} />
+                        <Route path="/my-pets" element={<ProtectedRoute><MyPets /></ProtectedRoute>} />
+
+                        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                        <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+                        <Route path="/profile/badges" element={<ProtectedRoute><BadgeRequest /></ProtectedRoute>} />
+
+
+                        <Route
+                            path="/users"
+                            element={<RoleRoute roles={ADMIN_ROLES}><AllUsersAdminOnly /></RoleRoute>}
+                        />
+                        <Route
+                            path="/admin/badge-requests"
+                            element={<RoleRoute roles={ADMIN_ROLES}><BadgeRequestsQueue /></RoleRoute>}
+                        />
+
+                        {/* rota desconhecida -> feed/login */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </Box>
+
+                <Footer />
             </Box>
-
-            <Footer />
         </Box>
-        </Box >
-   
     );
 }
 

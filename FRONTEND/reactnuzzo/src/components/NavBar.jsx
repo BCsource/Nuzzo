@@ -7,7 +7,7 @@ import {
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../context/useAuth';
-import wordmark from '../assets/img/nuzzo-wordmark.png';
+import logo from '../assets/img/Final Logo.png';
 
 export const SIDEBAR_WIDTH = 240;
 
@@ -82,15 +82,13 @@ function NavBar() {
             to="/"
             sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none', px: 2, py: 3 }}
         >
-            <Typography sx={{ fontWeight: 900, fontSize: 22, color: 'var(--nz-text)' }}>
-                Nuzzo
-            </Typography>
+            <img src={logo} alt="Nuzzo" className="nz-sidebar-logo" />
         </Box>
     );
 
     return (
         <>
-            {/* DESKTOP — barra lateral fixa à esquerda */}
+            {/*DESKTOP*/}
             <Drawer
                 variant="permanent"
                 className="nuzzo-sidebar"
@@ -108,7 +106,7 @@ function NavBar() {
                 {navList}
             </Drawer>
 
-            {/* TELEMÓVEL — barra no topo só com o menu */}
+            {/*TELEMÓVEL*/}
             <AppBar position="sticky" className="nuzzo-navbar" sx={{ display: { xs: 'block', md: 'none' } }}>
                 <Toolbar sx={{ minHeight: 64 }}>
                     <Box sx={{ flexGrow: 1 }}>{brand}</Box>

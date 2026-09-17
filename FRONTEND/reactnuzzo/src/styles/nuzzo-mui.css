@@ -479,6 +479,14 @@
   display: block;
 }
 
+/*logo navbar*/
+.nuzzo-sidebar .nz-sidebar-logo {
+  width: 280px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 .nuzzo-nav-desktop .MuiButton-root {
   text-transform: none;
   font-weight: 600;
@@ -547,7 +555,8 @@
 }
 
 .nuzzo-nav-item:hover {
-  transform: scale(1.06);
+  transform: scale(1.12);
+  background-color: var(--nz-brand-tint);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -557,5 +566,50 @@
 
   .nuzzo-nav-item:hover {
     transform: none;
+  }
+}
+
+
+/* login/register com logo e card */
+
+.nz-auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nz-space-9);
+  padding: var(--nz-space-6) var(--nz-space-4);
+  flex-wrap: wrap;
+}
+
+.nz-auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 380px;
+}
+
+.nz-auth-logo {
+  width: 200%;
+  max-width: 630px;
+  height: auto;
+  display: block;
+}
+
+.nz-auth-card {
+  flex: 0 1 420px;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* responsive para o telemovel */
+@media (max-width: 900px) {
+  .nz-auth-screen {
+    flex-direction: column;
+    gap: var(--nz-space-5);
+  }
+
+  .nz-auth-logo {
+    max-width: 360px;
   }
 }

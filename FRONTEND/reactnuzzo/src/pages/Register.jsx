@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import lockup from '../assets/img/nuzzo-lockup.png';
+import logo from '../assets/img/Final Logo.png';
 
 function Register() {
     const navigate = useNavigate();
@@ -66,111 +66,113 @@ function Register() {
     }
 
     return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            className="nuzzo-auth"
-            sx={{ maxWidth: 420, mx: 'auto', mt: 4, mb: 6 }}
-            noValidate
-        >
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <img src={lockup} alt="Nuzzo — Animal Hub" className="nz-wordmark nz-wordmark--lg" />
+        <Box className="nz-auth-screen">
+            <Box className="nz-auth-brand">
+                <img src={logo} alt="Nuzzo — Animal Hub" className="nz-auth-logo" />
             </Box>
-            <Typography variant="h4" gutterBottom>Create Account</Typography>
 
-            <Stack spacing={2}>
-                <TextField
-                    label="First Name"
-                    fullWidth
-                    {...register('fName', {
-                        required: 'Given Name required',
-                        minLength: NAME_MIN_LENGTH,
-                        maxLength: NAME_MAX_LENGTH,
-                    })}
-                    error={!!errors.fName}
-                    helperText={errors.fName?.message}
-                />
+            <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmit)}
+                className="nuzzo-auth nz-auth-card"
+                noValidate
+            >
+                <Typography variant="h4" gutterBottom>Create Account</Typography>
 
-                <TextField
-                    label="Last Name"
-                    fullWidth
-                    {...register('lName', {
-                        required: 'Family Name required',
-                        minLength: NAME_MIN_LENGTH,
-                        maxLength: NAME_MAX_LENGTH,
-                    })}
-                    error={!!errors.lName}
-                    helperText={errors.lName?.message}
-                />
+                <Stack spacing={2}>
+                    <TextField
+                        label="First Name"
+                        fullWidth
+                        {...register('fName', {
+                            required: 'Given Name required',
+                            minLength: NAME_MIN_LENGTH,
+                            maxLength: NAME_MAX_LENGTH,
+                        })}
+                        error={!!errors.fName}
+                        helperText={errors.fName?.message}
+                    />
 
-                <TextField
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    {...register('email', { required: 'Write a valid email address', pattern: EMAIL_PATTERN })}
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                />
+                    <TextField
+                        label="Last Name"
+                        fullWidth
+                        {...register('lName', {
+                            required: 'Family Name required',
+                            minLength: NAME_MIN_LENGTH,
+                            maxLength: NAME_MAX_LENGTH,
+                        })}
+                        error={!!errors.lName}
+                        helperText={errors.lName?.message}
+                    />
 
-                <TextField
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    fullWidth
-                    {...register('password', {
-                        required: 'Set a password.',
-                        validate: validatePasswordStrength,
-                    })}
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    slotProps={{
-                        input: {
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={() => setShowPassword((s) => !s)} edge="end" aria-label="show/hide password">
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        },
-                    }}
-                />
+                    <TextField
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        {...register('email', { required: 'Write a valid email address', pattern: EMAIL_PATTERN })}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
 
-                <TextField
-                    label="Confirm Password"
-                    type={showPassword ? 'text' : 'password'}
-                    fullWidth
-                    {...register('confirmPassword', {
-                        required: 'Confirm your password.',
-                        validate: (value) => value === password || "Passwords don't match.",
-                    })}
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword?.message}
-                />
+                    <TextField
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        fullWidth
+                        {...register('password', {
+                            required: 'Set a password.',
+                            validate: validatePasswordStrength,
+                        })}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        slotProps={{
+                            input: {
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => setShowPassword((s) => !s)} edge="end" aria-label="show/hide password">
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                    />
 
-                <TextField
-                    label="Date of Birth"
-                    type="date"
-                    fullWidth
-                    slotProps={{ inputLabel: { shrink: true } }}
-                    {...register('dateOfBirth', {
-                        required: 'Set your Birth Date',
-                        validate: validateAge,
-                    })}
-                    error={!!errors.dateOfBirth}
-                    helperText={errors.dateOfBirth?.message}
-                />
+                    <TextField
+                        label="Confirm Password"
+                        type={showPassword ? 'text' : 'password'}
+                        fullWidth
+                        {...register('confirmPassword', {
+                            required: 'Confirm your password.',
+                            validate: (value) => value === password || "Passwords don't match.",
+                        })}
+                        error={!!errors.confirmPassword}
+                        helperText={errors.confirmPassword?.message}
+                    />
 
-                {serverError && <Alert severity="error">{serverError}</Alert>}
+                    <TextField
+                        label="Date of Birth"
+                        type="date"
+                        fullWidth
+                        slotProps={{ inputLabel: { shrink: true } }}
+                        {...register('dateOfBirth', {
+                            required: 'Set your Birth Date',
+                            validate: validateAge,
+                        })}
+                        error={!!errors.dateOfBirth}
+                        helperText={errors.dateOfBirth?.message}
+                    />
 
-                <Button type="submit" variant="contained" disabled={loading}>
-                    {loading ? 'Creating account...' : 'Register'}
-                </Button>
+                    {serverError && <Alert severity="error">{serverError}</Alert>}
 
-                <Typography variant="body2" align="center">
-                    Already have an account?{' '}
-                    <Link component={RouterLink} to="/login">Sign in</Link>
-                </Typography>
-            </Stack>
+                    <Button type="submit" variant="contained" disabled={loading}>
+                        {loading ? 'Creating account...' : 'Register'}
+                    </Button>
+
+                    <Typography variant="body2" align="center">
+                        Already have an account?{' '}
+                        <Link component={RouterLink} to="/login">Sign in</Link>
+                    </Typography>
+                </Stack>
+            </Box>
         </Box>
     );
 }
