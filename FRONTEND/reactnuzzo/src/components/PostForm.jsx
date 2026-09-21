@@ -11,7 +11,7 @@ import { REQUESTABLE_BADGES, BADGES } from '../utils/badgeOptions';
 
 import {
     Box, Typography, TextField, Button, FormControl, InputLabel, Select,
-    MenuItem, Alert, Stack, FormHelperText, Switch, FormControlLabel,
+    MenuItem, Alert, Stack, FormHelperText,
 } from '@mui/material';
 
 const EMPTY_POST = {
@@ -20,7 +20,6 @@ const EMPTY_POST = {
     description: '',
     category: '',
     price: '',
-    available: true,
 };
 
 
@@ -69,7 +68,6 @@ function PostForm({
             category: data.category,
             // preço só é aplicado em produtos, no resto é null
             price: !isProduct || data.price === '' ? null : Number(data.price),
-            available: !!data.available,
         });
     }
 
@@ -153,17 +151,6 @@ function PostForm({
                         helperText={errors.price?.message || 'Optional.'}
                     />
                 )}
-
-                <Controller
-                    name="available"
-                    control={control}
-                    render={({ field }) => (
-                        <FormControlLabel
-                            control={<Switch checked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />}
-                            label={`Available: ${field.value ? 'Yes' : 'No'}`}
-                        />
-                    )}
-                />
 
                 {serverError && <Alert severity="error">{serverError}</Alert>}
 
