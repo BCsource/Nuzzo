@@ -14,21 +14,35 @@ exports.register = (req, res) => {
 
     const { email, password, fName, lName, dateOfBirth } = req.body;
 
-    const newUser = new UserModel({ email, password, fName, lName, dateOfBirth }); //Se meter req.body, qualquer pessoa se consegue registar como admin no postman
-    newUser.save()
+    const error = validateRegistration({ email, password, dateOfBirth });
+    if (error) {
+        return res.status(400).json({ message: error });
+    }
+
+    UserModel.findOne({ email })
+        .then((existingUser) => {
+            if (existingUser) {
+                res.status(409).json({ message: 'Email already in use.' });
+                return null;
+            }
+
+            const newUser = new UserModel({ email, password, fName, lName, dateOfBirth }); //Se meter req.body, qualquer pessoa se consegue registar como admin no postman
+            newUser.createdAt = new Date();
+            newUser.createdBy = newUser._id; // Para quando o user é criado por ele próprio e não no Mongodb por admin
+
+            return newUser.save();
+        })
         .then((user) => {
+            if (!user) return; //para nao duplicar mensagem de email existe
             res.status(201).json({
                 token: generateToken(user),
-                user, // VER A INFO QUE ESTA A PASSAR PARA O FE
+                user: { id: user._id, email: user.email },
             });
         })
-        .catch(err => {
-            if (err.code === 11000) {
-                res.status(400).json({ message: 'Email already in use.' }); // caso o email já esteja registrado
-            }
-            res.status(500).json({ message: 'Something went wrong. Please try again later.' }); // caso de erro, não dando muita informação.
+        .catch(() => {
+            res.status(500).json({ message: 'Something went wrong. Please try again later.' });
         });
-}
+};
 
 exports.login = (req, res) => {
     const { email, password } = req.body;
@@ -45,7 +59,7 @@ exports.login = (req, res) => {
             }
             res.status(200).json({
                 token: generateToken(user),
-                user,
+                user: { id: user._id, email: user.email },
             });
         })
         .catch(error => {

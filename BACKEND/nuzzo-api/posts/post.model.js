@@ -48,19 +48,22 @@ const PostSchema = new Schema({
         default: 0,
         min: 0,
     },
-},
-    // FALAR COM NUNO
-    {
-        timestamps: true,
-        versionKey: false,
-        toJSON: {
-            virtuals: true,
-            transform: (_doc, ret) => {
-                delete ret._id;
-                return ret;
-            },
-        },
-    }
-);
+    createdAt: {
+        type: Date,
+        required: true,
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+    },
+});
 
 module.exports = mongoose.model('post', PostSchema);

@@ -33,20 +33,28 @@ const BadgeRequestSchema = new Schema({
     rejectReason: {
         type: String,
     },
-},
-    {
-        timestamps: true,
-    });
+    createdAt: {
+        type: Date,
+        required: true,
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+    },
+    reviewedAt: {
+        type: Date,
+    },
+    reviewedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+    },
+});
 
 const UserSchema = new Schema({
     email: {
         type: String,
         required: [true, 'Email is required.'],
-        validate: {
-            validator: function (value) {
-                const regex??
-            }
-        },
         unique: true,
         trim: true
     },
@@ -74,18 +82,6 @@ const UserSchema = new Schema({
     dateOfBirth: {
         type: Date,
         required: [true, 'Date of Birth is required.'],
-        validate: {
-            validator: function (value) {
-                const today = new Date();
-                let age = today.getFullYear() - value.getFullYear();
-                const monthDiff = today.getMonth() - value.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < value.getDate())) {
-                    age--;
-                }
-                return age >= 18 && age <= 120;
-            },
-            message: 'You must be between 18 and 120 years old to register.',
-        }, //VER COM NUNO
     },
     userType: {
         type: String,
@@ -109,21 +105,24 @@ const UserSchema = new Schema({
         ref: 'post'
     }],
     badgeRequests: [BadgeRequestSchema],
-},
-    // VER PQ FALTA O CREATEDBY E UPDATEDBY
-    {
-        timestamps: true,
-        versionKey: false,
-        toJSON: {
-            virtuals: true,
-            transform: (_doc, ret) => {
-                delete ret._id;
-                delete ret.password;
-                return ret;
-            },
-        },
-    }
-);
+
+    createdAt: {
+        type: Date,
+        required: true,
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+    },
+});
 
 UserSchema.pre('save', function () {
     if (this.isModified('password')) {
