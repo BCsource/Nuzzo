@@ -1,6 +1,6 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
-const Schema = mongoose.schema;
+const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
     postType: {
@@ -13,10 +13,14 @@ const PostSchema = new Schema({
     title: {
         type: String,
         required: true,
+        minLength: [3, 'Title must be at least 3 characters long.'],
+        maxLength: [100, 'Title must not exceed 100 characters.'],
     },
     description: {
         type: String,
         required: true,
+        minLength: [10, 'Description must be at least 10 characters long.'],
+        maxLength: [5000, 'Description too long! Please summarize.'],
     },
     category: {
         type: String,
@@ -27,10 +31,25 @@ const PostSchema = new Schema({
     },
     price: {
         type: Number,
+        min: 0,
     },
-    author: {},
-    petId: {},
-    views: Number,
+    author: {
+        type: ObjectId,
+        ref: 'user',
+        required: true,
+    },
+    petId: {
+        taggedPets: [{
+            type: ObjectId,
+            ref: 'pet',
+        }]
+    },
+    views: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0,
+    },
     createdAt: Date,
     updatedAt: Date,
 });

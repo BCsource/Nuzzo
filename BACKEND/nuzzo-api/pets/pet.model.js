@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PetSchema = new Schema({
+    owner: {
+        type: ObjectId,
+        ref: 'user',
+        required: true
+    },
     name: {
         type: String,
         required: [true, 'Name is required.'],
@@ -23,14 +28,14 @@ const PetSchema = new Schema({
     weight: {
         type: Number,
         required: [true, 'Weight of pet is required.'],
-        minWeight: [0.01, 'Your pet must weight at least 0,01Kg.'],
-        maxWeight: [1500, 'Your pet weight must not exceed 1500Kg.'],
+        min: [0.01, 'Your pet must weight at least 0,01Kg.'],
+        max: [1500, 'Your pet weight must not exceed 1500Kg.'],
     },
     isSpayed: {
         type: Boolean,
         required: [true, 'Please confirm if pet has been spayed or neutered.'],
     },
-    isVacinated: {
+    isVaccinated: {
         type: Boolean,
         required: [true, 'Please confirm if pet has been vacinated.']
     },

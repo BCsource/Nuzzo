@@ -19,9 +19,9 @@ exports.authenticate = (req, res, next) => {
     });
 }
 
-exports.authorize = (...roles) => {
+exports.authorize = (...userType) => {
     return (req, res, next) => {
-        if (!req.user || !roles.includes(req.user.role)) {
+        if (!req.user || !userType.includes(req.user.userType)) {
             return res.status(403).json({ message: 'Not authorized.' });
         }
         next();

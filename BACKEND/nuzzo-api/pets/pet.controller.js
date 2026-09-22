@@ -3,7 +3,7 @@ const PetSchema = require('./pet.model');
 exports.createPet = (req, res) => {
     const newPet = new PetSchema({
         ...req.body,
-        user: req.user.id
+        owner: req.user.id
     });
     newPet.save()
         .then((pet) => {

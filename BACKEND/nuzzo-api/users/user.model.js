@@ -14,6 +14,8 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Password is required.'],
         minLength: [6, 'Your password must be at least 6 characters long.'],
+        select: false,
+        unique: true,
     },
     fName: {
         type: String,
@@ -25,7 +27,7 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Last name is required.'],
         trim: true,
-        minLength: [2, 'Your first name must be at least 2 characters long.'],
+        minLength: [2, 'Your last name must be at least 2 characters long.'],
     },
     bio: {
         type: String,
@@ -35,25 +37,29 @@ const UserSchema = new Schema({
         required: [true, 'You must be between 18 and 120 years old to register.'],
     },
     postsPublished: {
-        type: Number,
+        countDocuments: true
     },
     userType: {
         type: String,
         enum: {
-            values: ['user', 'admin', 'master admin'],
-            default: ['user'],
-        }
+            values: ['user', 'admin', 'masterAdmin'],
+        },
+        default: ['user'],
     },
-    Badges: {
+    badges: {
         type: [{
             type: String,
             enum: {
-                values: ['aficionado', 'health professional', 'care professional', 'supplier'],
+                values: ['aficionado', 'healthProfessional', 'careProfessional', 'supplier'],
                 message: ['Badges need permission from an Admin.'],
             }
         }],
         default: ['aficionado']
     },
+    favourites: [{
+        type: ObjectId,
+        ref: 'post'
+    }],
 
     createdAt: Date,
     updatedAt: Date
