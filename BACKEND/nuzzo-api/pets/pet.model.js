@@ -2,9 +2,25 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const HealthHistorySchema = new Schema({
+    content: {
+        type: String,
+        required: [true, 'The entry cannot be empty.'],
+        trim: true,
+    },
+    author: {
+        type: ObjectId,
+        ref: 'user',
+        required: true,
+    },
+},
+    {
+        timestamps: true,
+    });
+
 const PetSchema = new Schema({
     owner: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'user',
         required: true
     },
@@ -43,20 +59,23 @@ const PetSchema = new Schema({
         type: Date,
         required: [true, 'Your pet cannot be born in the future.'],
     },
-
-    createdAt: Date,
-    updatedAt: Date
-});
-
-PetSchema.pre('save', function () {
-    if (this.isNew) {
-        this.createdAt = new Date();
+    healthHistory: [HealthHistorySchema],
+},
+    // FALAR COM NUNO
+    {
+        timestamps: true,
+        versionKey: false,
+        toJSON: {
+            virtuals: true,
+            transform: (_doc, ret) => {
+                delete ret._id;
+                return ret;
+            },
+        },
     }
-});
+);
 
-PetSchema.pre(/^find/, function () {
-    this.select('-__v');
-});
+
 
 
 module.exports = mongoose.model('pet', PetSchema);

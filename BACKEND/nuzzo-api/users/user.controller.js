@@ -1,10 +1,10 @@
 const UserModel = require('./user.model');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET, JWT_EXPIRATION } = require('./../../shared/config');
+const { JWT_SECRET, JWT_EXPIRATION } = require('../../shared/config');
 
 const generateToken = (user) => {
     return jwt.sign(
-        { id: user._id, email: user.email, isAdmin },
+        { id: user._id, email: user.email, userType: user.userType },
         JWT_SECRET,
         { expiresIn: JWT_EXPIRATION }
     );
@@ -54,3 +54,16 @@ exports.me = (req, res) => {
             res.status(500).json(error);
         });
 }
+
+// criar um pedido de badge request
+user.badgeRequests.push({ requestedBadges, message, fileUrl });
+await user.save();
+
+// encontrar um pedido pelo id
+const request = user.badgeRequests.id(req.params.requestId);
+request.status = 'approved';
+await user.save();
+
+//count postsPublished
+
+PostModel.countDocuments({ author: user.id })

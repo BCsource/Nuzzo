@@ -34,35 +34,33 @@ const PostSchema = new Schema({
         min: 0,
     },
     author: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'user',
         required: true,
     },
-    petId: {
-        taggedPets: [{
-            type: ObjectId,
-            ref: 'pet',
-        }]
-    },
+    taggedPets: [{
+        type: Schema.Types.ObjectId,
+        ref: 'pet',
+    }],
     views: {
         type: Number,
         required: true,
         default: 0,
         min: 0,
     },
-    createdAt: Date,
-    updatedAt: Date,
-});
-
-PostSchema.pre('save', function () {
-    if (this.isNew) {
-        this.createdAt = new Date();
+},
+    // FALAR COM NUNO
+    {
+        timestamps: true,
+        versionKey: false,
+        toJSON: {
+            virtuals: true,
+            transform: (_doc, ret) => {
+                delete ret._id;
+                return ret;
+            },
+        },
     }
-});
-
-PostSchema.pre(/^find/, function () {
-    this.select('-__v');
-});
-
+);
 
 module.exports = mongoose.model('post', PostSchema);
