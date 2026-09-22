@@ -42,6 +42,11 @@ const UserSchema = new Schema({
     email: {
         type: String,
         required: [true, 'Email is required.'],
+        validate: {
+            validator: function (value) {
+                const regex??
+            }
+        },
         unique: true,
         trim: true
     },
@@ -68,7 +73,19 @@ const UserSchema = new Schema({
     },
     dateOfBirth: {
         type: Date,
-        required: [true, 'You must be between 18 and 120 years old to register.'],
+        required: [true, 'Date of Birth is required.'],
+        validate: {
+            validator: function (value) {
+                const today = new Date();
+                let age = today.getFullYear() - value.getFullYear();
+                const monthDiff = today.getMonth() - value.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < value.getDate())) {
+                    age--;
+                }
+                return age >= 18 && age <= 120;
+            },
+            message: 'You must be between 18 and 120 years old to register.',
+        }, //VER COM NUNO
     },
     userType: {
         type: String,
@@ -93,7 +110,7 @@ const UserSchema = new Schema({
     }],
     badgeRequests: [BadgeRequestSchema],
 },
-    // FALAR COM NUNO
+    // VER PQ FALTA O CREATEDBY E UPDATEDBY
     {
         timestamps: true,
         versionKey: false,
