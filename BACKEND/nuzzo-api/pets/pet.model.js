@@ -9,7 +9,7 @@ const HealthHistorySchema = new Schema({
         trim: true,
     },
     author: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'user',
         required: true,
     },

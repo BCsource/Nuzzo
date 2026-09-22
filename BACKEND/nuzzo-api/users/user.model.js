@@ -101,6 +101,7 @@ const UserSchema = new Schema({
             virtuals: true,
             transform: (_doc, ret) => {
                 delete ret._id;
+                delete ret.password;
                 return ret;
             },
         },
