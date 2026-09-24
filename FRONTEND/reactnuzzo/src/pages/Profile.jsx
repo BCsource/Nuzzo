@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { deleteAccount } from '../services/userService';
+import { disableAccount } from '../services/userService';
 import { BADGE_LABELS } from '../utils/badgeOptions';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
@@ -20,11 +20,11 @@ function Profile() {
     async function handleDeleteAccount() {
         setConfirmDelete(false);
         try {
-            await deleteAccount(currentUser.id);
+            await disableAccount(currentUser.id);
             logout();
             navigate('/login');
         } catch (error) {
-            setError(getErrorMessage(error, "Couldn't delete your account. Please try again."));
+            setError(getErrorMessage(error, "Couldn't deactivate your account. Please try again."));
         }
     }
 
@@ -61,13 +61,13 @@ function Profile() {
                 <Button component={RouterLink} to="/profile/badges" variant="outlined">Request Badges</Button>
             </Stack>
 
-            <Button color="error" onClick={() => setConfirmDelete(true)}>Delete Account</Button>
+            <Button color="error" onClick={() => setConfirmDelete(true)}>Deactivate Account</Button>
 
             <ConfirmDialog
                 open={confirmDelete}
-                title="Delete your account?"
-                message="Your pets, posts and messages will be deleted too. This can't be undone."
-                confirmLabel="Delete Account"
+                title="Deactivate your account?"
+                message="You won't be able to log in anymore. Your posts and pets stay saved, and an admin can reactivate your account."
+                confirmLabel="Deactivate"
                 onConfirm={handleDeleteAccount}
                 onCancel={() => setConfirmDelete(false)}
             />

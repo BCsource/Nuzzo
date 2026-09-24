@@ -90,6 +90,9 @@ exports.login = (req, res) => {
             if (!user || !user.comparePassword(password)) {
                 return res.status(401).json({ message: 'Invalid email or password.' });
             }
+            if (user.disabled) {
+                return res.status(403).json({ message: 'This account has been deactivated.' });
+            }
             res.status(200).json({
                 token: generateToken(user),
                 user: {

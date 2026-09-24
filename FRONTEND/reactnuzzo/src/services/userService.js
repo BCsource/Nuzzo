@@ -12,8 +12,16 @@ export async function updateProfile(userId, payload) {
     return data;
 }
 
-export async function deleteAccount(userId) {
-    await apiClient.delete(`/users/${userId}`);
+// Soft delete-> a conta fica desativada, não é apagada
+export async function disableAccount(userId) {
+    const { data } = await apiClient.put(`/users/${userId}/disable`);
+    return data;
+}
+
+// Só admin
+export async function reactivateAccount(userId) {
+    const { data } = await apiClient.put(`/users/${userId}/reactivate`);
+    return data;
 }
 
 // Pedido Badges
@@ -36,11 +44,11 @@ export async function fetchPendingBadgeRequests() {
 }
 
 export async function reviewBadgeRequest(requestId, approved, rejectReason) {
-    const { data } = await apiClient.patch(`/users/badge-requests/${requestId}`, { approved, rejectReason });
+    const { data } = await apiClient.put(`/users/badge-requests/${requestId}`, { approved, rejectReason });
     return data;
 }
 
 export async function promoteToAdmin(userId) {
-    const { data } = await apiClient.patch(`/users/${userId}/promote-admin`);
+    const { data } = await apiClient.put(`/users/${userId}/promote-admin`);
     return data;
 }

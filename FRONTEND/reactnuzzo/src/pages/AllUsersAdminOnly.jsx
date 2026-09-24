@@ -4,7 +4,7 @@ import {
     TableRow, Paper, Chip, Button, CircularProgress, Alert, Stack,
     FormControl, InputLabel, Select, MenuItem,
 } from '@mui/material';
-import { fetchAllUsers, promoteToAdmin, deleteAccount } from '../services/userService';
+import { fetchAllUsers, promoteToAdmin, disableAccount, reactivateAccount } from '../services/userService';
 import { useAuth } from '../context/useAuth';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { BADGE_LABELS } from '../utils/badgeOptions';
@@ -26,7 +26,7 @@ function AllUsersAdminOnly() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [pendingRemoveId, setPendingRemoveId] = useState(null);
+    const [pendingDisableId, setPendingDisableId] = useState(null);
 
     const load = useCallback(async () => {
         try {
@@ -53,14 +53,28 @@ function AllUsersAdminOnly() {
         }
     }
 
-    async function confirmRemove() {
-        const userId = pendingRemoveId;
-        setPendingRemoveId(null);
+    // Soft delete -> a conta fica desativada e continua na lista.
+    async function confirmDisable() {
+        const userId = pendingDisableId;
+        setPendingDisableId(null);
+        setSuccess('');
         try {
-            await deleteAccount(userId);
-            setUsers((prev) => prev.filter((u) => u.id !== userId));
+            const data = await disableAccount(userId);
+            setSuccess(data.message);
+            await load();
         } catch (error) {
-            setError(getErrorMessage(error, 'Could not remove this user.'));
+            setError(getErrorMessage(error, 'Could not deactivate this user.'));
+        }
+    }
+
+    async function handleReactivate(userId) {
+        setSuccess('');
+        try {
+            const data = await reactivateAccount(userId);
+            setSuccess(data.message);
+            await load();
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not reactivate this user.'));
         }
     }
 
@@ -94,6 +108,7 @@ function AllUsersAdminOnly() {
                                 <TableCell>Date of birth</TableCell>
                                 <TableCell>Badges</TableCell>
                                 <TableCell>Admin</TableCell>
+                                <TableCell>Status</TableCell>
                                 <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
@@ -112,12 +127,20 @@ function AllUsersAdminOnly() {
                                     </TableCell>
                                     <TableCell>{user.isAdmin ? <Chip label="Admin" size="small" color="primary" /> : '—'}</TableCell>
                                     <TableCell>
+                                        {user.disabled
+                                            ? <Chip label="Deactivated" size="small" color="error" variant="outlined" />
+                                            : <Chip label="Active" size="small" variant="outlined" />}
+                                    </TableCell>
+                                    <TableCell>
                                         <Stack direction="row" spacing={1}>
                                             {permissions.canPromoteAdmins && !user.isAdmin && (
                                                 <Button size="small" onClick={() => handlePromote(user.id)}>Make admin</Button>
                                             )}
-                                            {user.id !== currentUser.id && (
-                                                <Button size="small" color="error" onClick={() => setPendingRemoveId(user.id)}>Remove</Button>
+                                            {user.id !== currentUser.id && !user.disabled && (
+                                                <Button size="small" color="error" onClick={() => setPendingDisableId(user.id)}>Deactivate</Button>
+                                            )}
+                                            {user.disabled && (
+                                                <Button size="small" onClick={() => handleReactivate(user.id)}>Reactivate</Button>
                                             )}
                                         </Stack>
                                     </TableCell>
@@ -129,12 +152,12 @@ function AllUsersAdminOnly() {
             )}
 
             <ConfirmDialog
-                open={!!pendingRemoveId}
-                title="Remove this user?"
-                message="Their pets, posts and messages will be deleted too. This can't be undone."
-                confirmLabel="Remove"
-                onConfirm={confirmRemove}
-                onCancel={() => setPendingRemoveId(null)}
+                open={!!pendingDisableId}
+                title="Deactivate this user?"
+                message="They won't be able to log in. Their content stays saved and you can reactivate the account later."
+                confirmLabel="Deactivate"
+                onConfirm={confirmDisable}
+                onCancel={() => setPendingDisableId(null)}
             />
         </Box>
     );

@@ -27,12 +27,10 @@ app.use('/api/pets', petRouter);
 mongoose.connect(process.env.MONGO_CONNECTION_STRING)
     .then(() => console.log('Connected to MongoDB'))
     .catch((error) => console.error('Could not connect to MongoDB:', error.message));
-
-/* PARA QUANDO METER NO VERCEL
 if (!process.env.VERCEL) {
     app.listen(process.env.PORT, () => {
         console.log('Server is running on port', process.env.PORT);
     });
 }
 
-module.exports = app; */
+module.exports = app;

@@ -1,8 +1,4 @@
 const UserModel = require('./user.model');
-const PetModel = require('../pets/pet.model');
-const PostModel = require('../posts/post.model');
-const MessageModel = require('../messages/message.model');
-const CommentModel = require('../comments/comment.model');
 const { isAdmin } = require('../../shared/permissions');
 const { preparePagination, prepareSort, prepareFilter } = require('../../shared/pagination-utils');
 
@@ -14,7 +10,7 @@ exports.getAllUsers = (req, res) => {
     const filter = prepareFilter(req.query, UserModel);
 
     UserModel.find(filter)
-        .select('fName lName email dateOfBirth badges userType createdAt')
+        .select('fName lName email dateOfBirth badges userType disabled createdAt')
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(Number(limit))
@@ -135,7 +131,69 @@ exports.updateUser = (req, res) => {
         });
 };
 
+//soft delete
+exports.disableUser = (req, res) => {
+    if (req.user.id !== req.params.id && !isAdmin(req.user)) {
+        return res.status(403).json({ message: 'You can only deactivate your own account.' });
+    }
 
+    UserModel.findById(req.params.id)
+        .then((user) => {
+            if (!user) {
+                res.status(404).json({ message: 'User not found.' });
+                return null;
+            }
+            if (user.disabled) {
+                res.status(400).json({ message: 'This account is already deactivated.' });
+                return null;
+            }
+            if (user.userType === 'masterAdmin') {
+                res.status(403).json({ message: 'The master admin account cannot be deactivated.' });
+                return null;
+            }
+
+            user.disabled = true;
+            user.disabledAt = new Date();
+            user.disabledBy = req.user._id;
+            user.updatedAt = new Date();
+            user.updatedBy = req.user._id;
+            return user.save();
+        })
+        .then((user) => {
+            if (!user) return;
+            res.status(200).json({ message: 'Account deactivated.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not deactivate this account.' });
+        });
+};
+exports.reactivateUser = (req, res) => {
+    UserModel.findById(req.params.id)
+        .then((user) => {
+            if (!user) {
+                res.status(404).json({ message: 'User not found.' });
+                return null;
+            }
+            if (!user.disabled) {
+                res.status(400).json({ message: 'This account is already active.' });
+                return null;
+            }
+
+            user.disabled = false;
+            user.disabledAt = null;
+            user.disabledBy = null;
+            user.updatedAt = new Date();
+            user.updatedBy = req.user._id;
+            return user.save();
+        })
+        .then((user) => {
+            if (!user) return;
+            res.status(200).json({ message: 'Account reactivated.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not reactivate this account.' });
+        });
+};
 
 exports.submitBadgeRequest = (req, res) => {
     const { requestedBadges, message, fileUrl } = req.body;

@@ -21,6 +21,9 @@ exports.authenticate = (req, res, next) => {
                 if (!user) {
                     return res.status(401).json({ message: 'This account no longer exists.' });
                 }
+                if (user.disabled) {
+                    return res.status(401).json({ message: 'This account has been deactivated.' });
+                }
                 req.user = user;
                 next();
             })

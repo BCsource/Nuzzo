@@ -110,6 +110,19 @@ const UserSchema = new Schema({
     }],
     badgeRequests: [BadgeRequestSchema],
 
+    // Soft delete: a conta não é apagada, fica desativada. só admin pode reativar
+    disabled: {
+        type: Boolean,
+        default: false,
+    },
+    disabledAt: {
+        type: Date,
+    },
+    disabledBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+    },
+
     createdAt: {
         type: Date,
         required: true,

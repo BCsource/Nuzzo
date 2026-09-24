@@ -13,7 +13,8 @@ userRouter.put('/badge-requests/:requestId', authenticate, authorize('admin', 'm
 
 userRouter.get('/:id', authenticate, userController.getUserById);
 userRouter.put('/:id', authenticate, userController.updateUser);
-userRouter.delete('/:id', authenticate, userController.deleteUser);
+userRouter.put('/:id/disable', authenticate, userController.disableUser);
+userRouter.put('/:id/reactivate', authenticate, authorize('admin', 'masterAdmin'), userController.reactivateUser);
 userRouter.put('/:id/promote-admin', authenticate, authorize('masterAdmin'), userController.promoteToAdmin);
 
 module.exports = userRouter;
