@@ -19,8 +19,10 @@ const BadgeRequestSchema = new Schema({
         required: [true, 'Tell us about your experience.'],
         trim: true,
     },
-    fileUrl: {
-        type: String,
+    certificate: {
+        type: Schema.Types.ObjectId,
+        ref: 'certificate',
+        required: [true, 'Upload your certificate.'],
     },
     status: {
         type: String,

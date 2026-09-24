@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
     Box, Typography, Paper, Stack, Chip, Button, CircularProgress,
-    Alert, TextField, Divider, Link,
+    Alert, TextField, Divider,
 } from '@mui/material';
-import { fetchPendingBadgeRequests, reviewBadgeRequest } from '../services/userService';
+import { fetchPendingBadgeRequests, reviewBadgeRequest, fetchCertificate } from '../services/userService';
 import { BADGE_LABELS } from '../utils/badgeOptions';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
@@ -27,6 +27,16 @@ function BadgeRequestsQueue() {
     }, []);
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
+
+    async function handleViewCertificate(requestId) {
+        try {
+            const file = await fetchCertificate(requestId);
+            const fileUrl = URL.createObjectURL(file);
+            window.open(fileUrl, '_blank');
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not open the certificate.'));
+        }
+    }
 
     async function handleReview(requestId, approved) {
         try {
@@ -66,11 +76,9 @@ function BadgeRequestsQueue() {
                                 ))}
                             </Stack>
                             <Typography variant="body2" sx={{ mb: 1 }}>{request.message}</Typography>
-                            {request.fileUrl && (
-                                <Typography variant="body2" sx={{ mb: 1 }}>
-                                    <Link href={request.fileUrl} target="_blank" rel="noreferrer">View credential</Link>
-                                </Typography>
-                            )}
+                            <Button size="small" variant="outlined" sx={{ mb: 1 }} onClick={() => handleViewCertificate(request.id)}>
+                                View certificate
+                            </Button>
                             <Typography variant="caption" color="text.secondary">
                                 Requested on {formatDate(request.createdAt, true)}
                             </Typography>

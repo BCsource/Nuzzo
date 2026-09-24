@@ -1,4 +1,5 @@
 const UserModel = require('./user.model');
+const CertificateModel = require('./certificate.model');
 const { isAdmin } = require('../../shared/permissions');
 const { preparePagination, prepareSort, prepareFilter } = require('../../shared/pagination-utils');
 
@@ -196,7 +197,11 @@ exports.reactivateUser = (req, res) => {
 };
 
 exports.submitBadgeRequest = (req, res) => {
-    const { requestedBadges, message, fileUrl } = req.body;
+    const { message } = req.body;
+    let requestedBadges = req.body.requestedBadges;
+    if (typeof requestedBadges === 'string') {
+        requestedBadges = [requestedBadges];
+    }
 
     if (!requestedBadges || requestedBadges.length === 0) {
         return res.status(400).json({ message: 'Choose at least one badge.' });
@@ -204,17 +209,37 @@ exports.submitBadgeRequest = (req, res) => {
     if (!message || message.trim() === '') {
         return res.status(400).json({ message: 'Tell us about your experience.' });
     }
+    if (!req.file) {
+        return res.status(400).json({ message: 'Upload your certificate (PDF or image).' });
+    }
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ message: 'The certificate must be a PDF, JPG or PNG file.' });
+    }
+    if (req.file.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'The certificate must be smaller than 2 MB.' });
+    }
 
-    const user = req.user;
-    user.badgeRequests.push({
-        requestedBadges: requestedBadges,
-        message: message,
-        fileUrl: fileUrl,
-        createdAt: new Date(),
-        createdBy: user._id,
+    const newCertificate = new CertificateModel({
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+        fileName: req.file.originalname,
     });
+    newCertificate.owner = req.user._id;
+    newCertificate.createdAt = new Date();
 
-    user.save()
+    newCertificate.save()
+        .then((certificate) => {
+            const user = req.user;
+            user.badgeRequests.push({
+                requestedBadges: requestedBadges,
+                message: message,
+                certificate: certificate._id,
+                createdAt: new Date(),
+                createdBy: user._id,
+            });
+            return user.save();
+        })
         .then(() => {
             res.status(201).json({ message: 'Badge request submitted. An admin will review it soon.' });
         })
@@ -223,6 +248,30 @@ exports.submitBadgeRequest = (req, res) => {
                 return res.status(400).json({ message: error.message });
             }
             res.status(500).json({ message: 'Could not submit your request.' });
+        });
+};
+
+exports.getCertificate = (req, res) => {
+    UserModel.findOne({ 'badgeRequests._id': req.params.requestId })
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ message: 'Badge request not found.' });
+            }
+
+            const request = user.badgeRequests.id(req.params.requestId);
+
+            return CertificateModel.findById(request.certificate)
+                .then((certificate) => {
+                    if (!certificate) {
+                        return res.status(404).json({ message: 'Certificate not found.' });
+                    }
+                    res.set('Content-Type', certificate.contentType);
+                    res.set('Content-Disposition', 'inline; filename="' + certificate.fileName + '"');
+                    res.status(200).send(certificate.data);
+                });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not load the certificate.' });
         });
 };
 
@@ -239,7 +288,6 @@ exports.getPendingBadgeRequests = (req, res) => {
                             user: { id: user._id, fName: user.fName, lName: user.lName, email: user.email },
                             requestedBadges: request.requestedBadges,
                             message: request.message,
-                            fileUrl: request.fileUrl,
                             createdAt: request.createdAt,
                         });
                     }

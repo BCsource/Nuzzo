@@ -13,7 +13,7 @@ function BadgeRequest() {
     const navigate = useNavigate();
     const [requestedBadges, setRequestedBadges] = useState([]);
     const [message, setMessage] = useState('');
-    const [fileUrl, setFileUrl] = useState('');
+    const [certificate, setCertificate] = useState(null);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -36,14 +36,29 @@ function BadgeRequest() {
             setError('Tell us about your experience.');
             return;
         }
+        // As mesmas regras do backend, para o alerta aparecer logo.
+        if (!certificate) {
+            setError('Upload your certificate (PDF or image).');
+            return;
+        }
+        if (!['application/pdf', 'image/jpeg', 'image/png'].includes(certificate.type)) {
+            setError('The certificate must be a PDF, JPG or PNG file.');
+            return;
+        }
+        if (certificate.size > 2 * 1024 * 1024) {
+            setError('The certificate must be smaller than 2 MB.');
+            return;
+        }
 
         setSubmitting(true);
         try {
-            const data = await submitBadgeRequest({
-                requestedBadges,
-                message: message.trim(),
-                fileUrl: fileUrl.trim(),
-            });
+            // Com um ficheiro o pedido vai como form-data em vez de JSON.
+            const formData = new FormData();
+            requestedBadges.forEach((badge) => formData.append('requestedBadges', badge));
+            formData.append('message', message.trim());
+            formData.append('certificate', certificate);
+
+            const data = await submitBadgeRequest(formData);
             setSuccess(data.message);
             setTimeout(() => navigate('/profile'), 1500);
         } catch (submitError) {
@@ -80,14 +95,20 @@ function BadgeRequest() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-// ver do upload file
-                <TextField
-                    label="Link to your credential (optional)"
-                    placeholder="https://…"
-                    fullWidth
-                    value={fileUrl}
-                    onChange={(e) => setFileUrl(e.target.value)}
-                />
+                <Box>
+                    <Button variant="outlined" component="label">
+                        {certificate ? 'Choose another file' : 'Upload certificate'}
+                        <input
+                            type="file"
+                            hidden
+                            accept="application/pdf,image/jpeg,image/png"
+                            onChange={(e) => setCertificate(e.target.files[0] || null)}
+                        />
+                    </Button>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        {certificate ? certificate.name : 'PDF, JPG or PNG, up to 2 MB.'}
+                    </Typography>
+                </Box>
 
                 {error && <Alert severity="error">{error}</Alert>}
                 {success && <Alert severity="success">{success}</Alert>}

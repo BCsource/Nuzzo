@@ -26,9 +26,17 @@ export async function reactivateAccount(userId) {
 
 // Pedido Badges
 
-export async function submitBadgeRequest(payload) {
-    const { data } = await apiClient.post('/users/badge-requests', payload);
+export async function submitBadgeRequest(formData) {
+    const { data } = await apiClient.post('/users/badge-requests', formData);
     return data;
+}
+
+// Só admin
+export async function fetchCertificate(requestId) {
+    const response = await apiClient.get(`/users/badge-requests/${requestId}/certificate`, {
+        responseType: 'blob',
+    });
+    return response.data;
 }
 
 // area Admin-> all users 
