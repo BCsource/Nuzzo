@@ -30,7 +30,7 @@ function AllUsersAdminOnly() {
 
     const load = useCallback(async () => {
         try {
-            const data = await fetchAllUsers();
+            const data = await fetchAllUsers({ sort, limit: 100 });
             setUsers(data);
             setError('');
         } catch (error) {
@@ -38,7 +38,7 @@ function AllUsersAdminOnly() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [sort]);
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
 

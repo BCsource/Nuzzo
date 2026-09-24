@@ -33,6 +33,7 @@ function NavBar() {
         { to: '/my-posts', label: 'My Posts' },
         { to: '/my-pets', label: 'My Pets' },
         { to: '/favorites', label: 'Favorites' },
+        { to: '/messages', label: 'Messages' },
         { to: '/profile', label: 'Profile' },
         //admin link
         ...(permissions.canManageUsers

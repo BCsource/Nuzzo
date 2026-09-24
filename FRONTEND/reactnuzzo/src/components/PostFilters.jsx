@@ -40,8 +40,8 @@ function PostFilters({ value, onChange }) {
                     <Select
                         labelId="sort-label"
                         label="Sort by"
-                        value={value.sortBy}
-                        onChange={(e) => update('sortBy', e.target.value)}
+                        value={value.sort}
+                        onChange={(e) => update('sort', e.target.value)}
                     >
                         {SORT_OPTIONS.map((opt) => (
                             <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
@@ -66,8 +66,8 @@ function PostFilters({ value, onChange }) {
                         <Select
                             labelId="filter-type-label"
                             label="Type"
-                            value={value.type}
-                            onChange={(e) => update('type', e.target.value)}
+                            value={value.postType}
+                            onChange={(e) => update('postType', e.target.value)}
                         >
                             <MenuItem value="">Any type</MenuItem>
                             {Object.values(POST_TYPES).map((t) => (

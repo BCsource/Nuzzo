@@ -1,18 +1,15 @@
 import apiClient from './apiClient';
 
-// Autor do post-> todas as conversas
-export async function fetchConversations(postId) {
-    const { data } = await apiClient.get(`/posts/${postId}/messages`);
+// inbox
+export async function fetchMyConversations() {
+    const { data } = await apiClient.get('/conversations');
+    return data;
+}
+export async function fetchConversation(postId, participantId) {
+    const { data } = await apiClient.get(`/posts/${postId}/messages/${participantId}`);
     return data;
 }
 
-// outro user -> conversa com autor
-export async function fetchMyConversation(postId, userId) {
-    const { data } = await apiClient.get(`/posts/${postId}/messages/${userId}`);
-    return data;
-}
-
-// para distingir o autor do user que conversou
 export async function sendMessage(postId, content, participantId) {
     const { data } = await apiClient.post(`/posts/${postId}/messages`, { content, participantId });
     return data;

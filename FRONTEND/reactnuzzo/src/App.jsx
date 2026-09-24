@@ -18,6 +18,7 @@ import NewPetProfile from './pages/NewPetProfile';
 import ViewPetProfile from './pages/ViewPetProfile';
 import EditPetProfile from './pages/EditPetProfile';
 import MyPets from './pages/MyPets';
+import Messages from './pages/Messages';
 
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -58,6 +59,9 @@ function App() {
                         <Route path="/pets/:petId" element={<ProtectedRoute><ViewPetProfile /></ProtectedRoute>} />
                         <Route path="/pets/:petId/edit" element={<ProtectedRoute><EditPetProfile /></ProtectedRoute>} />
                         <Route path="/my-pets" element={<ProtectedRoute><MyPets /></ProtectedRoute>} />
+
+                        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+                        <Route path="/messages/:postId/:participantId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
 
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />

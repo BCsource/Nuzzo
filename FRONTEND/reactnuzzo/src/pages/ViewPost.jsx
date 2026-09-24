@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { fetchPostById, addFavourite, removeFavourite } from '../services/postService';
-import MessageThread from '../components/MessageThread';
+import CommentThread from '../components/CommentThread';
+import { useAuth } from '../context/useAuth';
 import { getErrorMessage } from '../utils/apiErrors';
 import { postTypeLabel, formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
 
@@ -13,10 +14,12 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 function ViewPost() {
     const { postId } = useParams();
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -27,8 +30,8 @@ function ViewPost() {
             const data = await fetchPostById(postId);
             setPost(data);
             setError('');
-        } catch (loadError) {
-            setError(getErrorMessage(loadError, "Couldn't load this post."));
+        } catch (error) {
+            setError(getErrorMessage(error, "Couldn't load this post."));
         } finally {
             setLoading(false);
         }
@@ -44,8 +47,8 @@ function ViewPost() {
                 await addFavourite(post.id);
             }
             setPost((prev) => ({ ...prev, isFavourite: !prev.isFavourite }));
-        } catch (toggleError) {
-            setError(getErrorMessage(toggleError, 'Could not update your favourites.'));
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not update your favourites.'));
         }
     }
 
@@ -95,8 +98,7 @@ function ViewPost() {
                     </Stack>
 
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Published by {authorLabel(post.author)}
-                        {post.author?.email && ` (${post.author.email})`} • {formatDate(post.createdAt)}
+                        Published by {authorLabel(post.author)} • {formatDate(post.createdAt)}
                         {post.updatedAt && ` • edited ${formatDate(post.updatedAt)}`}
                     </Typography>
 
@@ -118,7 +120,23 @@ function ViewPost() {
                 </CardContent>
             </Card>
 
-            {post.author && <MessageThread postId={post.id} isOwner={post.isOwner} />}
+            {post.author && !post.isOwner && (
+                <Button
+                    variant="outlined"
+                    startIcon={<ChatBubbleOutlineIcon />}
+                    component={RouterLink}
+                    to={`/messages/${post.id}/${currentUser.id}`}
+                >
+                    Message {post.author.fName} privately
+                </Button>
+            )}
+            {post.isOwner && (
+                <Button variant="outlined" startIcon={<ChatBubbleOutlineIcon />} component={RouterLink} to="/messages">
+                    See private messages
+                </Button>
+            )}
+
+            <CommentThread postId={post.id} />
         </Box>
     );
 }
