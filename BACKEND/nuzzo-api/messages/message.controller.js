@@ -39,7 +39,7 @@ exports.getSenderMessages = (req, res) => {
     let post = null;
 
     PostModel.findById(req.params.postId)
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .then((foundPost) => {
             if (!foundPost) {
                 res.status(404).json({ message: 'Post not found.' });
@@ -55,7 +55,7 @@ exports.getSenderMessages = (req, res) => {
             }
 
             return MessageModel.find({ post: post._id, participant: req.params.senderId })
-                .populate('participant', 'fName lName')
+                .populate('participant', 'fName lName profilePicture')
                 .sort({ createdAt: 'asc' });
         })
         .then((messages) => {
@@ -157,8 +157,8 @@ exports.addMessage = (req, res) => {
 exports.getMyConversations = (req, res) => {
     MessageModel.find()
         .populate('post', 'title')
-        .populate('participant', 'fName lName')
-        .populate('postAuthor', 'fName lName')
+        .populate('participant', 'fName lName profilePicture')
+        .populate('postAuthor', 'fName lName profilePicture')
         .sort({ createdAt: 'desc' })
         .then((messages) => {
             const conversations = [];

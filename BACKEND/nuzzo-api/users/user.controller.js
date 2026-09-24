@@ -11,7 +11,7 @@ exports.getAllUsers = (req, res) => {
     const filter = prepareFilter(req.query, UserModel);
 
     UserModel.find(filter)
-        .select('fName lName email dateOfBirth badges userType disabled createdAt')
+        .select('fName lName email dateOfBirth badges userType disabled profilePicture createdAt')
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(Number(limit))
@@ -59,7 +59,7 @@ exports.promoteToAdmin = (req, res) => {
 //profile
 exports.getUserById = (req, res) => {
     UserModel.findById(req.params.id)
-        .select('fName lName bio dateOfBirth badges createdAt')
+        .select('fName lName bio dateOfBirth badges profilePicture createdAt')
         .then((user) => {
             if (!user) {
                 return res.status(404).json({ message: 'User not found.' });
@@ -76,7 +76,7 @@ exports.updateUser = (req, res) => {
         return res.status(403).json({ message: 'You can only edit your own profile.' });
     }
 
-    const { fName, lName, bio, dateOfBirth, password } = req.body;
+    const { fName, lName, bio, dateOfBirth, password, profilePicture } = req.body;
 
     if (!fName || !lName || !dateOfBirth) {
         return res.status(400).json({ message: 'First name, last name and date of birth are required.' });
@@ -113,6 +113,7 @@ exports.updateUser = (req, res) => {
             user.lName = lName;
             user.bio = bio;
             user.dateOfBirth = dateOfBirth;
+            user.profilePicture = profilePicture;
             if (password) {
                 user.password = password;
             }
@@ -285,7 +286,7 @@ exports.getPendingBadgeRequests = (req, res) => {
                     if (request.status === 'pending') {
                         pending.push({
                             id: request._id,
-                            user: { id: user._id, fName: user.fName, lName: user.lName, email: user.email },
+                            user: { id: user._id, fName: user.fName, lName: user.lName, email: user.email, profilePicture: user.profilePicture },
                             requestedBadges: request.requestedBadges,
                             message: request.message,
                             createdAt: request.createdAt,

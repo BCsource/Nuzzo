@@ -10,6 +10,9 @@ const messageRouter = require('./nuzzo-api/messages/message.router');
 const conversationRouter = require('./nuzzo-api/messages/conversation.router');
 const commentRouter = require('./nuzzo-api/comments/comment.router');
 const petRouter = require('./nuzzo-api/pets/pet.router');
+const imageRouter = require('./nuzzo-api/images/image.router');
+const activationRouter = require('./nuzzo-api/activation/activation.router');
+const notificationRouter = require('./nuzzo-api/notifications/notification.router');
 
 const app = express();
 app.use(cors());
@@ -23,6 +26,9 @@ app.use('/api/posts/:postId/messages', messageRouter);
 app.use('/api/conversations', conversationRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/pets', petRouter);
+app.use('/api/images', imageRouter);
+app.use('/api/activation-requests', activationRouter);
+app.use('/api/notifications', notificationRouter);
 
 mongoose.connect(process.env.MONGO_CONNECTION_STRING)
     .then(() => console.log('Connected to MongoDB'))

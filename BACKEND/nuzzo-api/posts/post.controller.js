@@ -26,7 +26,7 @@ exports.getAllPosts = (req, res) => {
     }
 
     PostModel.find(filter)
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(Number(limit))
@@ -44,7 +44,7 @@ exports.getAllPosts = (req, res) => {
 
 exports.getMyPosts = (req, res) => {
     PostModel.find({ author: req.user._id })
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .sort({ createdAt: 'desc' })
         .then((posts) => {
             const result = [];
@@ -62,7 +62,7 @@ exports.getFavouritePosts = (req, res) => {
     const favouriteIds = req.user.favourites.map((id) => id.toString());
 
     PostModel.find()
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .sort({ createdAt: 'desc' })
         .then((posts) => {
             const result = [];
@@ -80,7 +80,7 @@ exports.getFavouritePosts = (req, res) => {
 
 exports.getPostById = (req, res) => {
     PostModel.findById(req.params.id)
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .then((post) => {
             if (!post) {
                 res.status(404).json({ message: 'Post not found.' });
@@ -100,12 +100,11 @@ exports.getPostById = (req, res) => {
 
 
 exports.createPost = (req, res) => {
-    const { postType, title, description, category, price, taggedPets } = req.body;
+    const { postType, title, description, category, price, taggedPets, image, videoUrl } = req.body;
 
     if (!postType) {
         return res.status(400).json({ message: 'Choose a post type.' });
     }
-    // Os badges decidem que tipos de post podes publicar.
     if (!getAllowedPostTypes(req.user).includes(postType)) {
         return res.status(403).json({ message: 'Your badges do not allow this type of post.' });
     }
@@ -113,7 +112,7 @@ exports.createPost = (req, res) => {
         return res.status(400).json({ message: "Price can't be negative." });
     }
 
-    const newPost = new PostModel({ postType, title, description, category, price, taggedPets });
+    const newPost = new PostModel({ postType, title, description, category, price, taggedPets, image, videoUrl });
     newPost.author = req.user._id;
     newPost.createdAt = new Date();
     newPost.createdBy = req.user._id;

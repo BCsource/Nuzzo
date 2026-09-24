@@ -16,7 +16,7 @@ const addCommentFlags = (comment, user) => {
 
 exports.getComments = (req, res) => {
     CommentModel.find({ post: req.params.postId })
-        .populate('author', 'fName lName')
+        .populate('author', 'fName lName profilePicture')
         .sort({ createdAt: 'asc' })
         .then((comments) => {
             const result = [];
@@ -53,7 +53,7 @@ exports.addComment = (req, res) => {
         })
         .then((comment) => {
             if (!comment) return;
-            return comment.populate('author', 'fName lName')
+            return comment.populate('author', 'fName lName profilePicture')
                 .then((populated) => res.status(201).json(addCommentFlags(populated, req.user)));
         })
         .catch((error) => {
@@ -89,7 +89,7 @@ exports.updateComment = (req, res) => {
         })
         .then((comment) => {
             if (!comment) return;
-            return comment.populate('author', 'fName lName')
+            return comment.populate('author', 'fName lName profilePicture')
                 .then((populated) => res.status(200).json(addCommentFlags(populated, req.user)));
         })
         .catch((error) => {

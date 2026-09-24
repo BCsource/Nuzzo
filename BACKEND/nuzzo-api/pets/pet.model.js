@@ -39,7 +39,20 @@ const PetSchema = new Schema({
     name: {
         type: String,
         required: [true, 'Name is required.'],
-        trim: true
+        trim: true,
+        minLength: [2, "Your pet's name must be at least 2 characters long."],
+    },
+    gender: {
+        type: String,
+        enum: {
+            values: ['female', 'male', 'unknown'],
+            message: 'Invalid gender.',
+        },
+        required: [true, "Choose your pet's gender."],
+    },
+    profilePicture: {
+        type: Schema.Types.ObjectId,
+        ref: 'image',
     },
     species: {
         type: String,

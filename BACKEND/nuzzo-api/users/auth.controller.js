@@ -65,6 +65,7 @@ exports.register = (req, res) => {
                     bio: user.bio,
                     dateOfBirth: user.dateOfBirth,
                     badges: user.badges,
+                    profilePicture: user.profilePicture,
                     permissions: getUserPermissions(user),
                 },
             });
@@ -103,6 +104,7 @@ exports.login = (req, res) => {
                     bio: user.bio,
                     dateOfBirth: user.dateOfBirth,
                     badges: user.badges,
+                    profilePicture: user.profilePicture,
                     permissions: getUserPermissions(user),
                 },
             });
@@ -122,6 +124,7 @@ exports.me = (req, res) => {
         bio: user.bio,
         dateOfBirth: user.dateOfBirth,
         badges: user.badges,
+        profilePicture: user.profilePicture,
         permissions: getUserPermissions(user),
     });
 };

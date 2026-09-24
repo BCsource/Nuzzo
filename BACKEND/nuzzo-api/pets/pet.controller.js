@@ -16,11 +16,14 @@ const addPetPermissions = (pet, user) => {
 
 // pets
 exports.createPet = (req, res) => {
-    const { name, species, breed, weight, isSpayed, isVaccinated, dateOfBirth } = req.body;
+    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture } = req.body;
 
 
-    if (!name || !species || !breed || !weight || !dateOfBirth) {
-        return res.status(400).json({ message: 'Name, species, breed, weight and date of birth are required.' });
+    if (!name || !species || !breed || !gender || !weight || !dateOfBirth) {
+        return res.status(400).json({ message: 'Name, species, breed, gender, weight and date of birth are required.' });
+    }
+    if (name.trim().length < 2) {
+        return res.status(400).json({ message: "Your pet's name must be at least 2 characters long." });
     }
     if (weight <= 0) {
         return res.status(400).json({ message: 'Weight must be greater than 0.' });
@@ -33,7 +36,7 @@ exports.createPet = (req, res) => {
         return res.status(400).json({ message: 'Your pet cannot be born in the future.' });
     }
 
-    const newPet = new PetModel({ name, species, breed, weight, isSpayed, isVaccinated, dateOfBirth });
+    const newPet = new PetModel({ name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture });
     newPet.owner = req.user._id;
     newPet.createdAt = new Date();
     newPet.createdBy = req.user._id;
@@ -82,11 +85,14 @@ exports.getPetById = (req, res) => {
 };
 
 exports.updatePet = (req, res) => {
-    const { name, species, breed, weight, isSpayed, isVaccinated, dateOfBirth } = req.body;
+    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture } = req.body;
 
 
-    if (!name || !species || !breed || !weight || !dateOfBirth) {
-        return res.status(400).json({ message: 'Name, species, breed, weight and date of birth are required.' });
+    if (!name || !species || !breed || !gender || !weight || !dateOfBirth) {
+        return res.status(400).json({ message: 'Name, species, breed, gender, weight and date of birth are required.' });
+    }
+    if (name.trim().length < 2) {
+        return res.status(400).json({ message: "Your pet's name must be at least 2 characters long." });
     }
     if (weight <= 0) {
         return res.status(400).json({ message: 'Weight must be greater than 0.' });
@@ -114,10 +120,12 @@ exports.updatePet = (req, res) => {
             pet.name = name;
             pet.species = species;
             pet.breed = breed;
+            pet.gender = gender;
             pet.weight = weight;
             pet.isSpayed = isSpayed;
             pet.isVaccinated = isVaccinated;
             pet.dateOfBirth = dateOfBirth;
+            pet.profilePicture = profilePicture;
             pet.updatedAt = new Date();
             pet.updatedBy = req.user._id;
             return pet.save();

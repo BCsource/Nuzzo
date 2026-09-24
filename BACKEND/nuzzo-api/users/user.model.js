@@ -111,6 +111,17 @@ const UserSchema = new Schema({
         ref: 'post'
     }],
     badgeRequests: [BadgeRequestSchema],
+    profilePicture: {
+        type: Schema.Types.ObjectId,
+        ref: 'image',
+    },
+
+    lastSeenMessagesAt: {
+        type: Date,
+    },
+    lastSeenCommentsAt: {
+        type: Date,
+    },
 
     // Soft delete: a conta não é apagada, fica desativada. só admin pode reativar
     disabled: {

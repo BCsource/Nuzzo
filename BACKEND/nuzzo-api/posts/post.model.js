@@ -37,6 +37,14 @@ const PostSchema = new Schema({
         type: Number,
         min: [0, "Price can't be negative."],
     },
+    image: {
+        type: Schema.Types.ObjectId,
+        ref: 'image',
+    },
+    videoUrl: {
+        type: String,
+        trim: true,
+    },
     author: {
         type: Schema.Types.ObjectId,
         ref: 'user',
