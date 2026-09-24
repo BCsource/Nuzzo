@@ -66,7 +66,7 @@ function Profile() {
             <ConfirmDialog
                 open={confirmDelete}
                 title="Deactivate your account?"
-                message="You won't be able to log in anymore. Your posts and pets stay saved, and an admin can reactivate your account."
+                message="You won't be able to log in anymore and only an admin can reactivate your account."
                 confirmLabel="Deactivate"
                 onConfirm={handleDeleteAccount}
                 onCancel={() => setConfirmDelete(false)}
