@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import PetProfileForm from '../components/PetProfileForm';
 import { createPet } from '../services/petProfileService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function NewPetProfile() {
     const navigate = useNavigate();
@@ -16,8 +17,7 @@ function NewPetProfile() {
             const created = await createPet(payload);
             navigate(`/pets/${created.id}`);
         } catch (error) {
-            setServerError("Couldn't save pet. Please try again.");
-            console.error(error);
+            setServerError(getErrorMessage(error, "Couldn't save your pet. Please try again."));
         } finally {
             setSubmitting(false);
         }
@@ -25,8 +25,7 @@ function NewPetProfile() {
 
     return (
         <Box sx={{ px: 2, py: 3 }}>
-            {serverError && <Alert severity="error" sx={{ maxWidth: 480, mx: 'auto', mb: 2 }}>{serverError}</Alert>}
-            <PetProfileForm mode="create" submitting={submitting} onSubmit={handleSubmit} />
+            <PetProfileForm mode="create" submitting={submitting} serverError={serverError} onSubmit={handleSubmit} />
         </Box>
     );
 }

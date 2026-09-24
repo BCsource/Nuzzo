@@ -1,4 +1,4 @@
-// Formulário partilhado entre "New Pet" e "Edit Pet" (mesmo espírito do PostForm).
+// Formulário partilhado entre "New Pet" e "Edit Pet"
 
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +14,8 @@ const EMPTY_PET = {
     species: '',
     breed: '',
     weight: '',
-    spayed: false,
-    vaccinated: false,
+    isSpayed: false,
+    isVaccinated: false,
     dateOfBirth: '',
 };
 
@@ -30,7 +30,13 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
         handleSubmit,
         control,
         formState: { errors },
-    } = useForm({ defaultValues: { ...EMPTY_PET, ...defaultValues } });
+    } = useForm({
+        defaultValues: {
+            ...EMPTY_PET,
+            ...defaultValues,
+            dateOfBirth: defaultValues?.dateOfBirth ? defaultValues.dateOfBirth.slice(0, 10) : ''
+        }
+    });
 
     function submit(data) {
         onSubmit({
@@ -38,8 +44,8 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
             species: data.species,
             breed: data.breed.trim(),
             weight: Number(data.weight),
-            spayed: !!data.spayed,
-            vaccinated: !!data.vaccinated,
+            isSpayed: !!data.isSpayed,
+            isVaccinated: !!data.isVaccinated,
             dateOfBirth: data.dateOfBirth,
         });
     }
@@ -112,7 +118,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                 />
 
                 <Controller
-                    name="spayed"
+                    name="isSpayed"
                     control={control}
                     render={({ field }) => (
                         <FormControlLabel
@@ -123,7 +129,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                 />
 
                 <Controller
-                    name="vaccinated"
+                    name="isVaccinated"
                     control={control}
                     render={({ field }) => (
                         <FormControlLabel
@@ -137,7 +143,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
 
                 <Stack direction="row" spacing={2}>
                     <Button type="submit" variant="contained" disabled={submitting}>
-                        {submitting ? 'Saving…' : mode === 'edit' ? 'Update Pet' : 'Save Pet'}
+                        {submitting ? 'Saving…' : mode === 'edit' ? 'Update Pet info' : 'Save Pet info'}
                     </Button>
                     <Button variant="outlined" onClick={() => navigate(-1)} disabled={submitting}>
                         Cancel

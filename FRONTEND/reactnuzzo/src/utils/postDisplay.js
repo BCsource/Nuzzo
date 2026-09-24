@@ -1,7 +1,7 @@
 import { POST_TYPE_LABELS } from './postOptions';
 
-export function postTypeLabel(type) {
-    return POST_TYPE_LABELS[type] || type;
+export function postTypeLabel(postType) {
+    return POST_TYPE_LABELS[postType] || postType;
 }
 
 export function formatPrice(price) {
@@ -26,14 +26,8 @@ export function truncateText(text, maxLength = 160) {
 }
 
 // Conta disabled/softdelete
-export const DELETED_AUTHOR_LABEL = 'User Disabled/Removed';
-
-export function isDeletedAuthor(author) {
-    return !author;
-}
-
 export function authorLabel(author) {
-    if (isDeletedAuthor(author)) return DELETED_AUTHOR_LABEL;
+    if (!author) return 'Removed user';
     return `${author.fName || ''} ${author.lName || ''}`.trim() || 'User';
 }
 

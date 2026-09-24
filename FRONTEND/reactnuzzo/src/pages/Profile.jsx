@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { deleteOwnAccount } from '../services/userService';
+import { deleteAccount } from '../services/userService';
 import { BADGE_LABELS } from '../utils/badgeOptions';
+import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -19,12 +20,11 @@ function Profile() {
     async function handleDeleteAccount() {
         setConfirmDelete(false);
         try {
-            await deleteOwnAccount(currentUser.id);
+            await deleteAccount(currentUser.id);
             logout();
             navigate('/login');
         } catch (error) {
-            setError("Couldn't delete account. Please try again.");
-            console.error(error);
+            setError(getErrorMessage(error, "Couldn't delete your account. Please try again."));
         }
     }
 
@@ -41,14 +41,14 @@ function Profile() {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">{currentUser.email}</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                        Birthday: {formatDate(currentUser.dateOfBirth)}
+                        Date of birth: {formatDate(currentUser.dateOfBirth)}
                     </Typography>
 
                     {currentUser.bio && (
                         <Typography variant="body1" sx={{ mb: 1.5 }}>{currentUser.bio}</Typography>
                     )}
 
-                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
                         {(currentUser.badges || []).map((badge) => (
                             <Chip key={badge} label={BADGE_LABELS[badge] || badge} size="small" />
                         ))}
@@ -65,9 +65,9 @@ function Profile() {
 
             <ConfirmDialog
                 open={confirmDelete}
-                title="Delete account?"
-                message="This action is permanent and cannot be undone."
-                confirmLabel="Delete account"
+                title="Delete your account?"
+                message="Your pets, posts and messages will be deleted too. This can't be undone."
+                confirmLabel="Delete Account"
                 onConfirm={handleDeleteAccount}
                 onCancel={() => setConfirmDelete(false)}
             />

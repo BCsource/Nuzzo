@@ -1,23 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import PostTable from '../components/PostTable';
-import { fetchFavoritePosts, setFavoritePost } from '../services/postService';
-import { useAuth } from '../context/useAuth';
+import { fetchFavouritePosts, removeFavourite } from '../services/postService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function Favorites() {
-    const { currentUser } = useAuth();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     const load = useCallback(async () => {
         try {
-            const data = await fetchFavoritePosts();
+            const data = await fetchFavouritePosts();
             setPosts(data);
             setError('');
         } catch (error) {
-            setError("Couldn't load favorites. Please try again.");
-            console.error(error);
+            setError(getErrorMessage(error, 'Could not load your favourites.'));
         } finally {
             setLoading(false);
         }
@@ -25,21 +23,19 @@ function Favorites() {
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
 
-    // Fav = true. false remove da lista
 
-    async function handleRemove(postId) {
-        setPosts((prev) => prev.filter((p) => p.id !== postId));
+    async function handleRemove(post) {
         try {
-            await setFavoritePost(postId, false);
+            await removeFavourite(post.id);
+            setPosts((prev) => prev.filter((p) => p.id !== post.id));
         } catch (error) {
-            console.error(error);
-            load();
+            setError(getErrorMessage(error, 'Could not remove this favourite.'));
         }
     }
 
     return (
         <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, py: 3 }}>
-            <Typography variant="h4" gutterBottom>Favorites</Typography>
+            <Typography variant="h4" gutterBottom>Favourites</Typography>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
@@ -48,14 +44,9 @@ function Favorites() {
                     <CircularProgress />
                 </Box>
             ) : posts.length === 0 ? (
-                <Typography color="text.secondary">No favorite posts.</Typography>
+                <Typography color="text.secondary">You have no favourite posts yet.</Typography>
             ) : (
-                <PostTable
-                    posts={posts}
-                    currentUserId={currentUser?.id}
-                    favoritePostIds={posts.map((p) => p.id)}
-                    onToggleFavorite={handleRemove}
-                />
+                <PostTable posts={posts} onToggleFavourite={handleRemove} />
             )}
         </Box>
     );

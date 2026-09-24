@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import PostForm from '../components/PostForm';
 import { createPost } from '../services/postService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function NewPost() {
     const navigate = useNavigate();
@@ -16,8 +17,7 @@ function NewPost() {
             const created = await createPost(payload);
             navigate(`/posts/${created.id}`);
         } catch (error) {
-            setServerError("Couldn't publish post. Please try again.");
-            console.error(error);
+            setServerError(getErrorMessage(error, "Couldn't publish your post. Please try again."));
         } finally {
             setSubmitting(false);
         }
@@ -25,8 +25,7 @@ function NewPost() {
 
     return (
         <Box sx={{ px: 2, py: 3 }}>
-            {serverError && <Alert severity="error" sx={{ maxWidth: 520, mx: 'auto', mb: 2 }}>{serverError}</Alert>}
-            <PostForm mode="create" submitting={submitting} onSubmit={handleSubmit} />
+            <PostForm mode="create" submitting={submitting} serverError={serverError} onSubmit={handleSubmit} />
         </Box>
     );
 }

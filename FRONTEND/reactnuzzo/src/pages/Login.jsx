@@ -10,6 +10,7 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import logo from '../assets/img/Final Logo.png';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function Login() {
     const navigate = useNavigate();
@@ -32,12 +33,7 @@ function Login() {
             await login(data.email, data.password);
             navigate('/');
         } catch (error) {
-            if (error.response?.status === 401) {
-                setServerError('Incorrect email or password.');
-            } else {
-                setServerError("Couldn't log in. Please try again later.");
-            }
-            console.error('Login failed:', error);
+            setServerError(getErrorMessage(error, "Couldn't log in. Please try again later."));
         } finally {
             setLoading(false);
         }

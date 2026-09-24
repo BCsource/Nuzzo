@@ -7,10 +7,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from '@mui/icons-material/Edit';
 import { postTypeLabel, formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
 
 
-function PostTable({ posts, currentUserId, favoritePostIds = [], onToggleFavorite, onDelete }) {
+function PostTable({ posts, onToggleFavourite, onDelete }) {
     return (
         <TableContainer component={Paper}>
             <Table size="small">
@@ -22,63 +23,69 @@ function PostTable({ posts, currentUserId, favoritePostIds = [], onToggleFavorit
                         <TableCell>Author</TableCell>
                         <TableCell align="right">Price</TableCell>
                         <TableCell align="right">Views</TableCell>
-                        <TableCell>Publish</TableCell>
+                        <TableCell>Published</TableCell>
                         <TableCell>Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {posts.map((post) => {
-                        const isMine = post.author?.id === currentUserId || post.authorId === currentUserId;
-                        const isFav = favoritePostIds.includes(post.id);
+                    {posts.map((post) => (
+                        <TableRow key={post.id} hover>
+                            <TableCell>
+                                <Link component={RouterLink} to={`/posts/${post.id}`} underline="hover">
+                                    {post.title}
+                                </Link>
+                            </TableCell>
+                            <TableCell>{postTypeLabel(post.postType)}</TableCell>
+                            <TableCell>{post.category || '—'}</TableCell>
+                            <TableCell>
+                                {authorLabel(post.author)}
+                            </TableCell>
+                            <TableCell align="right">{formatPrice(post.price)}</TableCell>
+                            <TableCell align="right">{post.views ?? 0}</TableCell>
+                            <TableCell>{formatDate(post.createdAt)}</TableCell>
+                            <TableCell>
+                                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                                    <Tooltip title="View post">
+                                        <IconButton size="small" component={RouterLink} to={`/posts/${post.id}`} aria-label="view post">
+                                            <VisibilityIcon fontSize="small" />
+                                        </IconButton>
+                                    </Tooltip>
 
-                        return (
-                            <TableRow key={post.id} hover>
-                                <TableCell>
-                                    <Link component={RouterLink} to={`/posts/${post.id}`} underline="hover">
-                                        {post.title}
-                                    </Link>
-                                </TableCell>
-                                <TableCell>{postTypeLabel(post.type)}</TableCell>
-                                <TableCell>{post.category || '—'}</TableCell>
-                                <TableCell>{authorLabel(post.author)}</TableCell>
-                                <TableCell align="right">{formatPrice(post.price)}</TableCell>
-                                <TableCell align="right">{post.views ?? 0}</TableCell>
-                                <TableCell>{formatDate(post.publishedAt)}</TableCell>
-                                <TableCell>
-                                    <Stack direction="row" spacing={0.5}>
-                                        <Tooltip title="Check post">
-                                            <IconButton size="small" component={RouterLink} to={`/posts/${post.id}`} aria-label="check post">
-                                                <VisibilityIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-
-                                        {onDelete && isMine && (
+                                    {onDelete && post.canEdit && (
+                                        <>
+                                            <Tooltip title="Edit post">
+                                                <IconButton size="small" component={RouterLink} to={`/posts/${post.id}/edit`} aria-label="edit post">
+                                                    <EditIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
                                             <Tooltip title="Delete post">
                                                 <IconButton size="small" onClick={() => onDelete(post.id)} aria-label="delete post">
                                                     <DeleteOutlineIcon fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
-                                        )}
+                                        </>
+                                    )}
 
-                                        {!onDelete && (isMine ? (
-                                            <Chip label="Yours" size="small" variant="outlined" />
-                                        ) : (
-                                            <Tooltip title={isFav ? 'Remove from favorites' : 'Add to favorites'}>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => onToggleFavorite(post.id)}
-                                                    color={isFav ? 'error' : 'default'}
-                                                    aria-label="switch favorite"
-                                                >
-                                                    {isFav ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
-                                                </IconButton>
-                                            </Tooltip>
-                                        ))}
-                                    </Stack>
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })}
+                                    {!onDelete && post.isOwner && (
+                                        <Chip label="Yours" size="small" variant="outlined" />
+                                    )}
+
+                                    {!onDelete && !post.isOwner && onToggleFavourite && (
+                                        <Tooltip title={post.isFavourite ? 'Remove from favourites' : 'Add to favourites'}>
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => onToggleFavourite(post)}
+                                                color={post.isFavourite ? 'error' : 'default'}
+                                                aria-label="toggle favourite"
+                                            >
+                                                {post.isFavourite ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+                                            </IconButton>
+                                        </Tooltip>
+                                    )}
+                                </Stack>
+                            </TableCell>
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         </TableContainer>

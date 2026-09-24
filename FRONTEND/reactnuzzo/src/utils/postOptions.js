@@ -1,4 +1,4 @@
-import { BADGES } from './badgeOptions';
+//valores iguais aos schemas, apenas para aparecer logo no ui
 
 export const POST_TYPES = {
     REGULAR: 'regular',
@@ -16,18 +16,6 @@ export const POST_TYPE_LABELS = {
     [POST_TYPES.PRODUCT]: 'Product',
     [POST_TYPES.ADOPTION]: 'Adoption',
     [POST_TYPES.POLL]: 'Poll',
-};
-
-export const POST_TYPES_BY_BADGE = {
-    [BADGES.AFICIONADO]: [POST_TYPES.REGULAR, POST_TYPES.POLL],
-    [BADGES.HEALTH_PROFESSIONAL]: [
-        POST_TYPES.REGULAR, POST_TYPES.POLL, POST_TYPES.HEALTH,
-        POST_TYPES.CARE, POST_TYPES.ADOPTION,
-    ],
-    [BADGES.CARE_PROFESSIONAL]: [
-        POST_TYPES.REGULAR, POST_TYPES.POLL, POST_TYPES.CARE, POST_TYPES.ADOPTION,
-    ],
-    [BADGES.SUPPLIER]: [POST_TYPES.REGULAR, POST_TYPES.POLL, POST_TYPES.PRODUCT],
 };
 
 export const MIN_TITLE_LENGTH = 3;

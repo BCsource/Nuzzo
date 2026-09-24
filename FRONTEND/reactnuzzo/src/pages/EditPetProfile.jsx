@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Alert, CircularProgress } from '@mui/material';
 import PetProfileForm from '../components/PetProfileForm';
 import { fetchPetById, updatePet } from '../services/petProfileService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function EditPetProfile() {
     const { petId } = useParams();
@@ -14,18 +15,10 @@ function EditPetProfile() {
     const [serverError, setServerError] = useState('');
 
     useEffect(() => {
-        async function load() {
-            try {
-                const data = await fetchPetById(petId);
-                setPet(data);
-            } catch (error) {
-                setServerError("Couldn't load pet.");
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        load();
+        fetchPetById(petId)
+            .then((data) => setPet(data))
+            .catch((error) => setServerError(getErrorMessage(error, "Couldn't load this pet.")))
+            .finally(() => setLoading(false));
     }, [petId]);
 
     async function handleSubmit(payload) {
@@ -35,8 +28,7 @@ function EditPetProfile() {
             await updatePet(petId, payload);
             navigate(`/pets/${petId}`);
         } catch (error) {
-            setServerError("Couldnt't update pet. Please try again.");
-            console.error(error);
+            setServerError(getErrorMessage(error, "Couldn't update this pet. Please try again."));
         } finally {
             setSubmitting(false);
         }
@@ -58,10 +50,17 @@ function EditPetProfile() {
         );
     }
 
+    if (!pet.permissions.canEdit) {
+        return (
+            <Box sx={{ maxWidth: 480, mx: 'auto', mt: 4 }}>
+                <Alert severity="warning">You can only edit your own pets.</Alert>
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ px: 2, py: 3 }}>
-            {serverError && <Alert severity="error" sx={{ maxWidth: 480, mx: 'auto', mb: 2 }}>{serverError}</Alert>}
-            <PetProfileForm mode="edit" defaultValues={pet} submitting={submitting} onSubmit={handleSubmit} />
+            <PetProfileForm mode="edit" defaultValues={pet} submitting={submitting} serverError={serverError} onSubmit={handleSubmit} />
         </Box>
     );
 }

@@ -1,5 +1,6 @@
 import apiClient from './apiClient';
 
+// params-> os filtros já traduzidos pelo buildPostQuery
 export async function fetchPosts(params) {
     const { data } = await apiClient.get('/posts', { params });
     return data;
@@ -20,8 +21,8 @@ export async function createPost(payload) {
     return data;
 }
 
-export async function updatePost(postId, payload) {
-    const { data } = await apiClient.put(`/posts/${postId}`, payload);
+export async function updatePost(postId, { title, description }) {
+    const { data } = await apiClient.put(`/posts/${postId}`, { title, description });
     return data;
 }
 
@@ -29,15 +30,17 @@ export async function deletePost(postId) {
     await apiClient.delete(`/posts/${postId}`);
 }
 
-export async function fetchFavoritePosts() {
-    const { data } = await apiClient.get('/posts/favorites');
+// favs
+
+export async function fetchFavouritePosts() {
+    const { data } = await apiClient.get('/posts/favourites');
     return data;
 }
 
-export async function setFavoritePost(postId, shouldAdd) {
-    if (shouldAdd) {
-        await apiClient.post(`/posts/${postId}/favorite`);
-    } else {
-        await apiClient.delete(`/posts/${postId}/favorite`);
-    }
+export async function addFavourite(postId) {
+    await apiClient.post(`/posts/${postId}/favourite`);
+}
+
+export async function removeFavourite(postId) {
+    await apiClient.delete(`/posts/${postId}/favourite`);
 }

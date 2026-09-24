@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Alert, CircularProgress } from '@mui/material';
 import PostForm from '../components/PostForm';
 import { fetchPostById, updatePost } from '../services/postService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function EditPost() {
     const { postId } = useParams();
@@ -14,18 +15,10 @@ function EditPost() {
     const [serverError, setServerError] = useState('');
 
     useEffect(() => {
-        async function load() {
-            try {
-                const data = await fetchPostById(postId);
-                setPost(data);
-            } catch (error) {
-                setServerError("Couldn't load post.");
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        load();
+        fetchPostById(postId)
+            .then((data) => setPost(data))
+            .catch((error) => setServerError(getErrorMessage(error, "Couldn't load this post.")))
+            .finally(() => setLoading(false));
     }, [postId]);
 
     async function handleSubmit(payload) {
@@ -35,8 +28,7 @@ function EditPost() {
             await updatePost(postId, payload);
             navigate(`/posts/${postId}`);
         } catch (error) {
-            setServerError("Couldn't update post. Please try again.");
-            console.error(error);
+            setServerError(getErrorMessage(error, "Couldn't update this post. Please try again."));
         } finally {
             setSubmitting(false);
         }
@@ -58,10 +50,17 @@ function EditPost() {
         );
     }
 
+    if (!post.canEdit) {
+        return (
+            <Box sx={{ maxWidth: 520, mx: 'auto', mt: 4 }}>
+                <Alert severity="warning">You can only edit your own posts.</Alert>
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ px: 2, py: 3 }}>
-            {serverError && <Alert severity="error" sx={{ maxWidth: 520, mx: 'auto', mb: 2 }}>{serverError}</Alert>}
-            <PostForm mode="edit" defaultValues={post} submitting={submitting} onSubmit={handleSubmit} />
+            <PostForm mode="edit" defaultValues={post} submitting={submitting} serverError={serverError} onSubmit={handleSubmit} />
         </Box>
     );
 }

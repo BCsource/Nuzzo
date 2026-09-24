@@ -12,7 +12,7 @@ import logo from '../assets/img/Final Logo.png';
 export const SIDEBAR_WIDTH = 280;
 
 function NavBar() {
-    const { currentUser, isAdmin, logout } = useAuth();
+    const { currentUser, permissions, logout } = useAuth();
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const isActive = (to) => (to === '/' ? pathname === '/' : pathname.startsWith(to));
@@ -34,7 +34,13 @@ function NavBar() {
         { to: '/my-pets', label: 'My Pets' },
         { to: '/favorites', label: 'Favorites' },
         { to: '/profile', label: 'Profile' },
-        ...(isAdmin ? [{ to: '/users', label: 'Users' }] : []),
+        //admin link
+        ...(permissions.canManageUsers
+            ? [
+                { to: '/users', label: 'Users' },
+                { to: '/admin/badge-requests', label: 'Badge Requests' },
+            ]
+            : []),
     ];
 
     const loggedOutLinks = [
@@ -107,7 +113,7 @@ function NavBar() {
                 {navList}
             </Drawer>
 
-            {/*TELEMÓVEL*/}
+            {/*TELEMOVEL*/}
             <AppBar position="sticky" className="nuzzo-navbar" sx={{ display: { xs: 'block', md: 'none' } }}>
                 <Toolbar sx={{ minHeight: 64 }}>
                     <Box sx={{ flexGrow: 1 }}>{brand}</Box>

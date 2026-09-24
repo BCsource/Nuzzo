@@ -23,8 +23,3 @@ export async function updatePet(petId, payload) {
 export async function deletePet(petId) {
     await apiClient.delete(`/pets/${petId}`);
 }
-
-export async function requestOwnershipTransfer(petId, emailReceiver) {
-    const { data } = await apiClient.post(`/pets/${petId}/transfer-requests`, { emailReceiver });
-    return data;
-}

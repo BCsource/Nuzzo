@@ -13,6 +13,7 @@ import {
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import logo from '../assets/img/Final Logo.png';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function Register() {
     const navigate = useNavigate();
@@ -43,8 +44,7 @@ function Register() {
         setServerError('');
         setLoading(true);
         try {
-            // Badge afficionado é default para novo user
-
+            // badge aficionado é default na criação de user
             await registerUser({
                 fName: data.fName.trim(),
                 lName: data.lName.trim(),
@@ -54,12 +54,7 @@ function Register() {
             });
             navigate('/');
         } catch (error) {
-            if (error.response?.status === 409) {
-                setServerError('Email already registered.');
-            } else {
-                setServerError("Couldn't create account. Please try again later.");
-            }
-            console.error('Register failed:', error);
+            setServerError(getErrorMessage(error, "Couldn't create account. Please try again later."));
         } finally {
             setLoading(false);
         }

@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Box, Typography, TextField, Button, Stack, Alert, CircularProgress, Paper } from '@mui/material';
 import { fetchHealthHistory, addHealthHistoryEntry } from '../services/healthHistoryService';
 import { formatDate, authorLabel } from '../utils/postDisplay';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function HealthHistoryList({ petId, canWrite }) {
     const [entries, setEntries] = useState([]);
@@ -21,14 +22,11 @@ function HealthHistoryList({ petId, canWrite }) {
             setEntries(data);
             setError('');
         } catch (error) {
-            setError("Couldn't download health history.");
-            console.error(error);
+            setError(getErrorMessage(error, "Couldn't download health history."));
         } finally {
             setLoading(false);
         }
     }, [petId]);
-
-    // O fetch corre dentro de uma função async própria: assim não há setState síncrono no corpo do efeito.
 
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
@@ -36,7 +34,7 @@ function HealthHistoryList({ petId, canWrite }) {
     async function handleAdd() {
         const text = content.trim();
         if (!text) {
-            setError("Text required.");
+            setError("Entry cannot be empty.");
             return;
         }
         setError('');
@@ -46,7 +44,7 @@ function HealthHistoryList({ petId, canWrite }) {
             setContent('');
             await load();
         } catch (error) {
-            setError("Couldn't save note.");
+            setError(getErrorMessage("Couldn't save entry."));
             console.error(error);
         } finally {
             setSending(false);
@@ -70,7 +68,7 @@ function HealthHistoryList({ petId, canWrite }) {
             {canWrite && (
                 <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
                     <TextField
-                        label="New note:"
+                        label="New entry"
                         fullWidth
                         multiline
                         minRows={2}
@@ -86,7 +84,7 @@ function HealthHistoryList({ petId, canWrite }) {
             )}
 
             {entries.length === 0 ? (
-                <Typography color="text.secondary">No entries.</Typography>
+                <Typography color="text.secondary">No entries yet.</Typography>
             ) : (
                 <Stack spacing={1.5}>
                     {entries.map((entry) => (

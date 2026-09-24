@@ -5,9 +5,8 @@ import { useAuth } from '../context/useAuth';
 
 //protege páginas restritas para badge/admin only.
 
-
-function RoleRoute({ children, roles = [], badges = [] }) {
-    const { currentUser, loading, isAdmin, hasBadge } = useAuth();
+function RoleRoute({ children, permission }) {
+    const { currentUser, permissions, loading } = useAuth();
 
     if (loading) {
         return (
@@ -21,16 +20,7 @@ function RoleRoute({ children, roles = [], badges = [] }) {
         return <Navigate to="/login" replace />;
     }
 
-    let allowed = isAdmin;
-
-    if (!allowed && roles.length > 0) {
-        allowed = roles.includes(currentUser.userType);
-    }
-    if (!allowed && badges.length > 0) {
-        allowed = badges.some((badge) => hasBadge(badge));
-    }
-
-    if (!allowed) {
+    if (!permissions[permission]) {
         return <Navigate to="/" replace />;
     }
 

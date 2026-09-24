@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { fetchMyPets, deletePet } from '../services/petProfileService';
+import { getErrorMessage } from '../utils/apiErrors';
 
 function MyPets() {
     const [pets, setPets] = useState([]);
@@ -19,8 +20,7 @@ function MyPets() {
             setPets(data);
             setError('');
         } catch (error) {
-            setError("Couldn't load pets. Please try again.");
-            console.error(error);
+            setError(getErrorMessage(error, 'Could not load your pets.'));
         } finally {
             setLoading(false);
         }
@@ -35,8 +35,7 @@ function MyPets() {
             await deletePet(petId);
             setPets((prev) => prev.filter((p) => p.id !== petId));
         } catch (error) {
-            setError("Couldn't delete pet.");
-            console.error(error);
+            setError(getErrorMessage(error, 'Could not delete this pet.'));
         }
     }
 
@@ -54,7 +53,7 @@ function MyPets() {
                     <CircularProgress />
                 </Box>
             ) : pets.length === 0 ? (
-                <Typography color="text.secondary">No pets added.</Typography>
+                <Typography color="text.secondary">You haven't added any pets yet.</Typography>
             ) : (
                 <Stack spacing={2}>
                     {pets.map((pet) => (
@@ -67,9 +66,13 @@ function MyPets() {
                                 </Stack>
                             </CardContent>
                             <CardActions>
-                                <Button size="small" component={RouterLink} to={`/pets/${pet.id}`}>Check</Button>
-                                <Button size="small" component={RouterLink} to={`/pets/${pet.id}/edit`}>Edit</Button>
-                                <Button size="small" color="error" onClick={() => setPendingDeleteId(pet.id)}>Delete</Button>
+                                <Button size="small" component={RouterLink} to={`/pets/${pet.id}`}>View</Button>
+                                {pet.permissions.canEdit && (
+                                    <>
+                                        <Button size="small" component={RouterLink} to={`/pets/${pet.id}/edit`}>Edit</Button>
+                                        <Button size="small" color="error" onClick={() => setPendingDeleteId(pet.id)}>Delete</Button>
+                                    </>
+                                )}
                             </CardActions>
                         </Card>
                     ))}
@@ -78,8 +81,8 @@ function MyPets() {
 
             <ConfirmDialog
                 open={!!pendingDeleteId}
-                title="Delete pet?"
-                message="This action cannot be undone. Do you want to proceed?"
+                title="Delete this pet?"
+                message="Its health history will be deleted too. This can't be undone."
                 confirmLabel="Delete"
                 onConfirm={confirmDelete}
                 onCancel={() => setPendingDeleteId(null)}

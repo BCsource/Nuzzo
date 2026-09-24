@@ -2,23 +2,24 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitBadgeRequest } from '../services/userService';
 import { REQUESTABLE_BADGES, BADGE_LABELS } from '../utils/badgeOptions';
+import { getErrorMessage } from '../utils/apiErrors';
 
 import {
     Box, Typography, TextField, Button, Alert, Stack, FormGroup,
-    FormControlLabel, Checkbox, FormHelperText, Input,
+    FormControlLabel, Checkbox,
 } from '@mui/material';
 
 function BadgeRequest() {
     const navigate = useNavigate();
-    const [selectedBadges, setSelectedBadges] = useState([]);
+    const [requestedBadges, setRequestedBadges] = useState([]);
     const [message, setMessage] = useState('');
-    const [file, setFile] = useState(null);
+    const [fileUrl, setFileUrl] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
 
     function toggleBadge(badge) {
-        setSelectedBadges((prev) =>
+        setRequestedBadges((prev) =>
             prev.includes(badge) ? prev.filter((b) => b !== badge) : [...prev, badge]
         );
     }
@@ -27,32 +28,26 @@ function BadgeRequest() {
         e.preventDefault();
         setError('');
 
-        if (selectedBadges.length === 0) {
-            setError('Choose at least one Badge,');
+        if (requestedBadges.length === 0) {
+            setError('Choose at least one badge.');
             return;
         }
         if (!message.trim()) {
-            setError('Please explain briefly your request.');
+            setError('Tell us about your experience.');
             return;
         }
-        if (!file) {
-            setError('Add a certificate or credential.');
-            return;
-        }
-
-        const formData = new FormData();
-        selectedBadges.forEach((b) => formData.append('requestedBadges[]', b));
-        formData.append('message', message.trim());
-        formData.append('file', file);
 
         setSubmitting(true);
         try {
-            await submitBadgeRequest(formData);
-            setSuccess(true);
+            const data = await submitBadgeRequest({
+                requestedBadges,
+                message: message.trim(),
+                fileUrl: fileUrl.trim(),
+            });
+            setSuccess(data.message);
             setTimeout(() => navigate('/profile'), 1500);
-        } catch (error) {
-            setError("Couldn't submit request. Please try again.");
-            console.error(error);
+        } catch (submitError) {
+            setError(getErrorMessage(submitError, "Couldn't submit your request. Please try again."));
         } finally {
             setSubmitting(false);
         }
@@ -60,9 +55,9 @@ function BadgeRequest() {
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 460, mx: 'auto', px: 2, py: 3 }} noValidate>
-            <Typography variant="h4" gutterBottom>Badge Request</Typography>
+            <Typography variant="h4" gutterBottom>Request Badges</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Your request will remain pending until an Admin reviews it.
+                Your request stays pending until an admin reviews it.
             </Typography>
 
             <Stack spacing={2}>
@@ -70,12 +65,7 @@ function BadgeRequest() {
                     {REQUESTABLE_BADGES.map((badge) => (
                         <FormControlLabel
                             key={badge}
-                            control={
-                                <Checkbox
-                                    checked={selectedBadges.includes(badge)}
-                                    onChange={() => toggleBadge(badge)}
-                                />
-                            }
+                            control={<Checkbox checked={requestedBadges.includes(badge)} onChange={() => toggleBadge(badge)} />}
                             label={BADGE_LABELS[badge]}
                         />
                     ))}
@@ -83,22 +73,24 @@ function BadgeRequest() {
 
                 <TextField
                     label="Message"
-                    placeholder="Give us some context about your request (ex. experience)."
+                    placeholder="Tell us about your experience or speciality"
                     fullWidth
                     multiline
                     minRows={3}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-
-                <Box>
-                    <Typography variant="body2" sx={{ mb: 0.5 }}>Certificate/Credential</Typography>
-                    <Input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} fullWidth />
-                    <FormHelperText>PDF or image file that verifies your Badge request.</FormHelperText>
-                </Box>
+// ver do upload file
+                <TextField
+                    label="Link to your credential (optional)"
+                    placeholder="https://…"
+                    fullWidth
+                    value={fileUrl}
+                    onChange={(e) => setFileUrl(e.target.value)}
+                />
 
                 {error && <Alert severity="error">{error}</Alert>}
-                {success && <Alert severity="success">Request sent! We will notify you when reviewed.</Alert>}
+                {success && <Alert severity="success">{success}</Alert>}
 
                 <Button type="submit" variant="contained" disabled={submitting}>
                     {submitting ? 'Sending…' : 'Submit Request'}

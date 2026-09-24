@@ -1,26 +1,29 @@
 import apiClient from './apiClient';
 
-// ---------- Perfil user ----------
+// Perfil user 
 
-export async function updateOwnProfile(userId, payload) {
+export async function fetchUserById(userId) {
+    const { data } = await apiClient.get(`/users/${userId}`);
+    return data;
+}
+
+export async function updateProfile(userId, payload) {
     const { data } = await apiClient.put(`/users/${userId}`, payload);
     return data;
 }
 
-export async function deleteOwnAccount(userId) {
+export async function deleteAccount(userId) {
     await apiClient.delete(`/users/${userId}`);
 }
 
-// ---------- Pedido Badges ----------
+// Pedido Badges
 
-export async function submitBadgeRequest(formData) {
-    const { data } = await apiClient.post('/users/badge-requests', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
+export async function submitBadgeRequest(payload) {
+    const { data } = await apiClient.post('/users/badge-requests', payload);
     return data;
 }
 
-// ---------- Área Admin: Todos os Users ----------
+// area Admin-> all users 
 
 export async function fetchAllUsers(params) {
     const { data } = await apiClient.get('/users', { params });
@@ -32,19 +35,12 @@ export async function fetchPendingBadgeRequests() {
     return data;
 }
 
-export async function reviewBadgeRequest(requestId, { approved, rejectReason }) {
-    const { data } = await apiClient.patch(`/users/badge-requests/${requestId}`, {
-        approved,
-        rejectReason,
-    });
+export async function reviewBadgeRequest(requestId, approved, rejectReason) {
+    const { data } = await apiClient.patch(`/users/badge-requests/${requestId}`, { approved, rejectReason });
     return data;
 }
 
 export async function promoteToAdmin(userId) {
     const { data } = await apiClient.patch(`/users/${userId}/promote-admin`);
     return data;
-}
-
-export async function removeUser(userId) {
-    await apiClient.delete(`/users/${userId}`);
 }

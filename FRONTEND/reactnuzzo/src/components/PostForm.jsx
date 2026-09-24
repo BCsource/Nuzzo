@@ -4,18 +4,18 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import {
-    POST_TYPES, POST_TYPE_LABELS, POST_TYPES_BY_BADGE, POST_CATEGORIES,
+    POST_TYPES, POST_TYPE_LABELS, POST_CATEGORIES,
     MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH,
 } from '../utils/postOptions';
-import { REQUESTABLE_BADGES, BADGES } from '../utils/badgeOptions';
+import { formatPrice, postTypeLabel } from '../utils/postDisplay';
 
 import {
     Box, Typography, TextField, Button, FormControl, InputLabel, Select,
-    MenuItem, Alert, Stack, FormHelperText,
+    MenuItem, Alert, Stack, FormHelperText, Chip,
 } from '@mui/material';
 
 const EMPTY_POST = {
-    type: POST_TYPES.REGULAR,
+    postType: POST_TYPES.REGULAR,
     title: '',
     description: '',
     category: '',
@@ -25,19 +25,6 @@ const EMPTY_POST = {
 
 //Post types consoante os badges do User. Admin tem acesso total
 
-
-function allowedTypesFor({ isAdmin, hasBadge }) {
-    if (isAdmin) return Object.values(POST_TYPES);
-
-    const allowed = new Set(POST_TYPES_BY_BADGE[BADGES.AFICIONADO]);
-    REQUESTABLE_BADGES.forEach((badge) => {
-        if (hasBadge(badge)) {
-            POST_TYPES_BY_BADGE[badge].forEach((type) => allowed.add(type));
-        }
-    });
-    return Array.from(allowed);
-}
-
 function PostForm({
     mode = 'create',
     defaultValues,
@@ -46,8 +33,9 @@ function PostForm({
     onSubmit,
 }) {
     const navigate = useNavigate();
-    const { isAdmin, hasBadge } = useAuth();
-    const typeOptions = allowedTypesFor({ isAdmin, hasBadge });
+    const { permissions } = useAuth();
+    const typeOptions = permissions.allowedPostTypes || [];
+    const isEdit = mode === 'edit';
 
     const {
         register,
@@ -57,16 +45,22 @@ function PostForm({
         formState: { errors },
     } = useForm({ defaultValues: { ...EMPTY_POST, ...defaultValues } });
 
-    const type = watch('type');
-    const isProduct = type === POST_TYPES.PRODUCT;
+    const postType = watch('postType');
+    const isProduct = postType === POST_TYPES.PRODUCT;
 
     function submit(data) {
+        if (isEdit) {
+            onSubmit({
+                title: data.title.trim(),
+                description: data.description.trim(),
+            });
+            return;
+        }
         onSubmit({
-            type: data.type,
+            postType: data.postType,
             title: data.title.trim(),
             description: data.description.trim(),
             category: data.category,
-            // preço só é aplicado em produtos, no resto é null
             price: !isProduct || data.price === '' ? null : Number(data.price),
         });
     }
@@ -78,22 +72,33 @@ function PostForm({
             </Typography>
 
             <Stack spacing={2}>
-                <Controller
-                    name="type"
-                    control={control}
-                    rules={{ required: 'Choose a post type.' }}
-                    render={({ field }) => (
-                        <FormControl fullWidth error={!!errors.type}>
-                            <InputLabel id="type-label">Type</InputLabel>
-                            <Select labelId="type-label" label="Type" {...field}>
-                                {typeOptions.map((t) => (
-                                    <MenuItem key={t} value={t}>{POST_TYPE_LABELS[t]}</MenuItem>
-                                ))}
-                            </Select>
-                            <FormHelperText>{errors.type?.message}</FormHelperText>
-                        </FormControl>
-                    )}
-                />
+                {isEdit ? (
+                    // no edit o type, a categoria e o preço são imutaveis
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
+                        <Chip label={postTypeLabel(defaultValues?.postType)} color="primary" />
+                        {defaultValues?.category && <Chip label={defaultValues.category} variant="outlined" />}
+                        {defaultValues?.price !== null && defaultValues?.price !== undefined && (
+                            <Chip label={formatPrice(defaultValues.price)} variant="outlined" />
+                        )}
+                    </Stack>
+                ) : (
+                    <Controller
+                        name="postType"
+                        control={control}
+                        rules={{ required: 'Choose a post type.' }}
+                        render={({ field }) => (
+                            <FormControl fullWidth error={!!errors.postType}>
+                                <InputLabel id="post-type-label">Type</InputLabel>
+                                <Select labelId="post-type-label" label="Type" {...field}>
+                                    {typeOptions.map((type) => (
+                                        <MenuItem key={type} value={type}>{POST_TYPE_LABELS[type]}</MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText>{errors.postType?.message}</FormHelperText>
+                            </FormControl>
+                        )}
+                    />
+                )}
 
                 <TextField
                     label="Title"
@@ -121,24 +126,26 @@ function PostForm({
                     helperText={errors.description?.message}
                 />
 
-                <Controller
-                    name="category"
-                    control={control}
-                    rules={{ required: 'Choose a category.' }}
-                    render={({ field }) => (
-                        <FormControl fullWidth error={!!errors.category}>
-                            <InputLabel id="category-label">Category</InputLabel>
-                            <Select labelId="category-label" label="Category" {...field}>
-                                {POST_CATEGORIES.map((c) => (
-                                    <MenuItem key={c} value={c}>{c}</MenuItem>
-                                ))}
-                            </Select>
-                            <FormHelperText>{errors.category?.message}</FormHelperText>
-                        </FormControl>
-                    )}
-                />
+                {!isEdit && (
+                    <Controller
+                        name="category"
+                        control={control}
+                        rules={{ required: 'Choose a category.' }}
+                        render={({ field }) => (
+                            <FormControl fullWidth error={!!errors.category}>
+                                <InputLabel id="category-label">Category</InputLabel>
+                                <Select labelId="category-label" label="Category" {...field}>
+                                    {POST_CATEGORIES.map((category) => (
+                                        <MenuItem key={category} value={category}>{category}</MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText>{errors.category?.message}</FormHelperText>
+                            </FormControl>
+                        )}
+                    />
+                )}
 
-                {isProduct && (
+                {!isEdit && isProduct && (
                     <TextField
                         label="Price (€)"
                         type="number"
@@ -156,7 +163,7 @@ function PostForm({
 
                 <Stack direction="row" spacing={2}>
                     <Button type="submit" variant="contained" disabled={submitting}>
-                        {submitting ? 'Saving…' : mode === 'edit' ? 'Update Post' : 'Publish Post'}
+                        {submitting ? 'Saving…' : isEdit ? 'Update Post' : 'Publish Post'}
                     </Button>
                     <Button variant="outlined" onClick={() => navigate(-1)} disabled={submitting}>
                         Cancel

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../context/useAuth';
-import { fetchPostById, setFavoritePost } from '../services/postService';
-import InteractionThread from '../components/InteractionThread';
+import { fetchPostById, addFavourite, removeFavourite } from '../services/postService';
+import MessageThread from '../components/MessageThread';
+import { getErrorMessage } from '../utils/apiErrors';
 import { postTypeLabel, formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
 
 import {
@@ -16,23 +16,19 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 function ViewPost() {
     const { postId } = useParams();
-    const { currentUser } = useAuth();
     const navigate = useNavigate();
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [isFav, setIsFav] = useState(false);
 
     const load = useCallback(async () => {
         try {
             const data = await fetchPostById(postId);
             setPost(data);
-            setIsFav(!!data.favorite);
             setError('');
-        } catch (error) {
-            setError("Couldn't load post.");
-            console.error(error);
+        } catch (loadError) {
+            setError(getErrorMessage(loadError, "Couldn't load this post."));
         } finally {
             setLoading(false);
         }
@@ -40,14 +36,16 @@ function ViewPost() {
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
 
-    async function toggleFav() {
-        const next = !isFav;
-        setIsFav(next);
+    async function toggleFavourite() {
         try {
-            await setFavoritePost(postId, next);
-        } catch (error) {
-            setIsFav(!next);
-            console.error(error);
+            if (post.isFavourite) {
+                await removeFavourite(post.id);
+            } else {
+                await addFavourite(post.id);
+            }
+            setPost((prev) => ({ ...prev, isFavourite: !prev.isFavourite }));
+        } catch (toggleError) {
+            setError(getErrorMessage(toggleError, 'Could not update your favourites.'));
         }
     }
 
@@ -59,7 +57,7 @@ function ViewPost() {
         );
     }
 
-    if (error || !post) {
+    if (!post) {
         return (
             <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, px: 2 }}>
                 <Alert severity="error">{error || 'Post not found.'}</Alert>
@@ -67,13 +65,13 @@ function ViewPost() {
         );
     }
 
-    const isAuthor = !!(currentUser && post.author?.id === currentUser.id);
-
     return (
         <Box sx={{ maxWidth: 640, mx: 'auto', mt: 2, px: 2, mb: 6 }}>
-            <IconButton onClick={() => navigate(-1)} aria-label="back" sx={{ mb: 1 }}>
+            <IconButton onClick={() => navigate(-1)} aria-label="go back" sx={{ mb: 1 }}>
                 <ArrowBackIcon />
             </IconButton>
+
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
             <Card sx={{ mb: 2 }}>
                 <CardContent>
@@ -81,14 +79,14 @@ function ViewPost() {
                         <Typography variant="h4" gutterBottom>{post.title}</Typography>
 
                         <Stack direction="row" sx={{ alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
-                            {!isAuthor && (
-                                <Tooltip title={isFav ? 'Remove from favorites' : 'Add to favorites'}>
-                                    <IconButton size="small" onClick={toggleFav} color={isFav ? 'error' : 'default'} aria-label="switch favorite">
-                                        {isFav ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                            {!post.isOwner && (
+                                <Tooltip title={post.isFavourite ? 'Remove from favourites' : 'Add to favourites'}>
+                                    <IconButton size="small" onClick={toggleFavourite} color={post.isFavourite ? 'error' : 'default'} aria-label="toggle favourite">
+                                        {post.isFavourite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                                     </IconButton>
                                 </Tooltip>
                             )}
-                            {isAuthor && (
+                            {post.canEdit && (
                                 <Button component={RouterLink} to={`/posts/${post.id}/edit`} startIcon={<EditIcon />} size="small">
                                     Edit
                                 </Button>
@@ -97,17 +95,14 @@ function ViewPost() {
                     </Stack>
 
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Posted by {authorLabel(post.author)} • {formatDate(post.publishDate)}
+                        Published by {authorLabel(post.author)}
+                        {post.author?.email && ` (${post.author.email})`} • {formatDate(post.createdAt)}
+                        {post.updatedAt && ` • edited ${formatDate(post.updatedAt)}`}
                     </Typography>
 
                     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                        <Chip label={postTypeLabel(post.type)} color="primary" />
+                        <Chip label={postTypeLabel(post.postType)} color="primary" />
                         {post.category && <Chip label={post.category} variant="outlined" />}
-                        <Chip
-                            label={post.available ? 'Available' : 'Not available'}
-                            color={post.available ? 'success' : 'default'}
-                            variant={post.available ? 'filled' : 'outlined'}
-                        />
                         {post.price !== null && post.price !== undefined && (
                             <Chip label={formatPrice(post.price)} variant="outlined" />
                         )}
@@ -123,7 +118,7 @@ function ViewPost() {
                 </CardContent>
             </Card>
 
-            <InteractionThread postId={postId} />
+            {post.author && <MessageThread postId={post.id} isOwner={post.isOwner} />}
         </Box>
     );
 }

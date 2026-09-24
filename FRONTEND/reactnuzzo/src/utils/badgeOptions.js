@@ -1,3 +1,4 @@
+//apenas para ser visivel no ui, regras e permissoes do lado do be
 
 export const BADGES = {
     AFICIONADO: 'aficionado',
@@ -13,24 +14,8 @@ export const BADGE_LABELS = {
     [BADGES.SUPPLIER]: 'Supplier',
 };
 
-// Badges que precisam de ser pedidos
 export const REQUESTABLE_BADGES = [
     BADGES.HEALTH_PROFESSIONAL,
     BADGES.CARE_PROFESSIONAL,
     BADGES.SUPPLIER,
 ];
-
-// Badges que podem editar pet health history
-export const HEALTH_HISTORY_WRITER_BADGES = [
-    BADGES.HEALTH_PROFESSIONAL,
-    BADGES.CARE_PROFESSIONAL,
-];
-
-// user types
-export const USER_TYPES = {
-    USER: 'user',
-    ADMIN: 'admin',
-    MASTER_ADMIN: 'masterAdmin',
-};
-
-export const ADMIN_ROLES = [USER_TYPES.ADMIN, USER_TYPES.MASTER_ADMIN];

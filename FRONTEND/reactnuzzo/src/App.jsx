@@ -19,7 +19,6 @@ import ViewPetProfile from './pages/ViewPetProfile';
 import EditPetProfile from './pages/EditPetProfile';
 import MyPets from './pages/MyPets';
 
-import { ADMIN_ROLES } from './utils/badgeOptions';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -67,11 +66,11 @@ function App() {
 
                         <Route
                             path="/users"
-                            element={<RoleRoute roles={ADMIN_ROLES}><AllUsersAdminOnly /></RoleRoute>}
+                            element={<RoleRoute permission="canManageUsers"><AllUsersAdminOnly /></RoleRoute>}
                         />
                         <Route
                             path="/admin/badge-requests"
-                            element={<RoleRoute roles={ADMIN_ROLES}><BadgeRequestsQueue /></RoleRoute>}
+                            element={<RoleRoute permission="canManageUsers"><BadgeRequestsQueue /></RoleRoute>}
                         />
 
                         {/* rota desconhecida -> feed/login */}
