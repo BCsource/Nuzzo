@@ -24,7 +24,11 @@ const HealthHistorySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user',
     },
-});
+},
+    {
+        // para o fe saber o id user
+        toJSON: { virtuals: true },
+    });
 
 const PetSchema = new Schema({
     owner: {
@@ -61,11 +65,11 @@ const PetSchema = new Schema({
     },
     isVaccinated: {
         type: Boolean,
-        required: [true, 'Please confirm if pet has been vacinated.']
+        required: [true, 'Please confirm if pet has been vaccinated.']
     },
     dateOfBirth: {
         type: Date,
-        required: [true, 'Your pet cannot be born in the future.'],
+        required: [true, 'Date of birth is required.'],
     },
     healthHistory: [HealthHistorySchema],
     createdAt: {
@@ -84,7 +88,11 @@ const PetSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user',
     },
-});
+},
+    {
+        // para o fe saber o id user
+        toJSON: { virtuals: true },
+    });
 
 
 

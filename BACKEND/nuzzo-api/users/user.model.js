@@ -49,7 +49,11 @@ const BadgeRequestSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user',
     },
-});
+},
+    {
+        // para o fe saber o id user
+        toJSON: { virtuals: true },
+    });
 
 const UserSchema = new Schema({
     email: {
@@ -122,7 +126,11 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user',
     },
-});
+},
+    {
+        // para o fe saber o id usesr
+        toJSON: { virtuals: true },
+    });
 
 UserSchema.pre('save', function () {
     if (this.isModified('password')) {

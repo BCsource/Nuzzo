@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('./config');
+const UserModel = require('../nuzzo-api/users/user.model');
 
 exports.authenticate = (req, res, next) => {
     const header = req.headers.authorization;
@@ -12,18 +13,28 @@ exports.authenticate = (req, res, next) => {
 
     jwt.verify(token, JWT_SECRET, (error, decoded) => {
         if (error) {
-            return res.status(401).json({ message: 'Invalid Token.' });
+            return res.status(401).json({ message: 'Your session has expired. Please log in again.' });
         }
-        req.user = decoded;
-        next();
-    });
-}
 
-exports.authorize = (...userType) => {
+        UserModel.findById(decoded.id)
+            .then((user) => {
+                if (!user) {
+                    return res.status(401).json({ message: 'This account no longer exists.' });
+                }
+                req.user = user;
+                next();
+            })
+            .catch(() => {
+                res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+            });
+    });
+};
+
+exports.authorize = (...userTypes) => {
     return (req, res, next) => {
-        if (!req.user || !userType.includes(req.user.userType)) {
-            return res.status(403).json({ message: 'Not authorized.' });
+        if (!req.user || !userTypes.includes(req.user.userType)) {
+            return res.status(403).json({ message: 'You are not allowed to do this.' });
         }
         next();
-    }
-}
+    };
+};

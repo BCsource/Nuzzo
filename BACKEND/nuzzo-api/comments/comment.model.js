@@ -2,29 +2,20 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const MessageSchema = new Schema({
+
+const CommentSchema = new Schema({
     content: {
         type: String,
-        required: [true, 'Message cannot be empty.'],
+        required: [true, 'Comment cannot be empty.'],
         trim: true,
-        maxLength: [2000, 'Message is too long.'],
+        maxLength: [1000, 'Comment is too long.'],
     },
     post: {
         type: Schema.Types.ObjectId,
         ref: 'post',
         required: true,
     },
-    sender: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
-        required: true,
-    },
-    participant: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
-        required: true,
-    },
-    postAuthor: {
+    author: {
         type: Schema.Types.ObjectId,
         ref: 'user',
         required: true,
@@ -33,10 +24,17 @@ const MessageSchema = new Schema({
         type: Date,
         required: true,
     },
+    updatedAt: {
+        type: Date,
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+    },
 },
     {
-        // Para o fe saber quem é o id user
+        //para o fe saber o id user
         toJSON: { virtuals: true },
     });
 
-module.exports = mongoose.model('message', MessageSchema);
+module.exports = mongoose.model('comment', CommentSchema);
