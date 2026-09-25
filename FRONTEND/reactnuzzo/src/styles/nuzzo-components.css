@@ -208,31 +208,31 @@
   white-space: nowrap;
 }
 
-/* Species, Aficionado, Regular and Poll posts */
+/* species, aficionado, regular, poll posts */
 .nz-tag--species {
   background: var(--nz-accent-tint);
   color: var(--nz-on-accent);
 }
 
-/* Health and Care  */
+/* health and care  */
 .nz-tag--health {
   background: var(--nz-success-tint);
   color: var(--nz-success);
 }
 
-/* Product */
+/* product */
 .nz-tag--product {
   background: var(--nz-earth-tint);
   color: var(--nz-earth);
 }
 
-/* Adoption */
+/* adoption */
 .nz-tag--adoption {
   background: var(--nz-brand-tint);
   color: var(--nz-brand);
 }
 
-/* Badge-request states */
+/* badgerequest states */
 .nz-tag--pending {
   background: var(--nz-warning-tint);
   color: var(--nz-on-warning);
@@ -366,7 +366,7 @@
   gap: var(--nz-space-4);
 }
 
-/*TABLE*/
+/*TABLE admin*/
 
 .nz-table-wrap {
   background: var(--nz-surface);
@@ -642,7 +642,7 @@
   border-radius: 999px;
 }
 
-/* Tipos de post */
+/* post types */
 .nz-chip--regular {
   background-color: var(--nz-brand-tint) !important;
   color: var(--nz-ink) !important;
@@ -673,7 +673,7 @@
   color: var(--nz-brand-pressed) !important;
 }
 
-/* Badges */
+/* badges */
 .nz-chip--aficionado {
   background-color: var(--nz-brand-tint) !important;
   color: var(--nz-ink) !important;
@@ -689,7 +689,7 @@
   color: var(--nz-earth-pressed) !important;
 }
 
-/* Admins */
+/* admin */
 .nz-chip--admin {
   background-color: var(--nz-brand) !important;
   color: var(--nz-on-brand) !important;
@@ -721,7 +721,7 @@
   color: var(--nz-earth-pressed) !important;
 }
 
-/* Pets */
+/* pets */
 .nz-chip--species {
   background-color: var(--nz-brand) !important;
   color: var(--nz-on-brand) !important;
@@ -835,4 +835,122 @@
   padding: 0 var(--nz-space-3) var(--nz-space-3);
   border-bottom: 1px solid var(--nz-border);
   margin-bottom: var(--nz-space-2);
+}
+
+/* PROFILE HEADER */
+
+.nz-profile-header {
+  overflow: hidden;
+  border-radius: var(--nz-radius-lg, 18px);
+}
+
+.nz-profile-header__banner {
+  height: 120px;
+  background: linear-gradient(120deg, var(--nz-brand) 0%, var(--nz-accent) 100%);
+}
+
+.nz-profile-header__body {
+  padding: 0 var(--nz-space-4) var(--nz-space-4);
+}
+
+.nz-profile-header__avatar {
+  margin-top: -60px;
+  margin-bottom: var(--nz-space-3);
+}
+
+.nz-profile-header__avatar .MuiAvatar-root {
+  border: 4px solid var(--nz-surface);
+  background-color: var(--nz-brand);
+  color: var(--nz-on-brand);
+  font-size: 2.5rem;
+}
+
+.nz-profile-facts__item {
+  padding-right: var(--nz-space-4);
+  margin-right: var(--nz-space-4);
+  border-right: 1px solid var(--nz-border);
+  margin-bottom: var(--nz-space-2);
+}
+
+.nz-profile-facts__item:last-child {
+  border-right: 0;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.nz-user-text {
+  white-space: pre-wrap;
+}
+
+.nz-post-card {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.nz-post-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--nz-brand) !important;
+  box-shadow: 0 8px 24px rgba(13, 13, 13, 0.14) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nz-post-card {
+    transition: none;
+  }
+
+  .nz-post-card:hover {
+    transform: none;
+  }
+}
+
+.nz-chip--new-activity {
+  background-color: var(--nz-danger) !important;
+  color: var(--nz-on-danger) !important;
+}
+
+.nz-chip--new-activity .MuiChip-icon {
+  color: inherit !important;
+}
+
+.nuzzo-nav-item .MuiBadge-root {
+  margin-left: var(--nz-space-2);
+}
+
+.nuzzo-nav-item .MuiListItemText-root {
+  flex: 0 1 auto;
+}
+
+/* MOBILE NAV */
+
+.nuzzo-brand-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.nz-mobile-wordmark {
+  height: 30px;
+  width: auto;
+  display: block;
+}
+
+/* BUBBLE CAHT  */
+
+.nz-bubble--mine,
+.nz-bubble--mine .MuiTypography-root {
+  color: var(--nz-on-brand) !important;
+}
+
+.nz-bubble--mine .nz-bubble__time {
+  color: var(--nz-on-brand) !important;
+  opacity: 0.8;
+}
+
+.nz-bubble--theirs,
+.nz-bubble--theirs .MuiTypography-root {
+  color: var(--nz-ink) !important;
+}
+
+.nz-bubble--theirs .nz-bubble__time {
+  color: var(--nz-ink-muted) !important;
 }

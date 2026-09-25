@@ -13,6 +13,7 @@ import {
 
 const EMPTY_PET = {
     name: '',
+    bio: '',
     species: '',
     gender: '',
     breed: '',
@@ -48,6 +49,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
             species: data.species,
             gender: data.gender,
             profilePicture: profilePicture,
+            bio: data.bio.trim(),
             breed: data.breed.trim(),
             weight: Number(data.weight),
             isSpayed: !!data.isSpayed,
@@ -112,6 +114,19 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                             <FormHelperText>{errors.gender?.message}</FormHelperText>
                         </FormControl>
                     )}
+                />
+
+                <TextField
+                    label="About your pet (optional)"
+                    placeholder="Manias, historial, o que quiseres contar"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    {...register('bio', {
+                        maxLength: { value: 2000, message: 'The bio is too long.' },
+                    })}
+                    error={!!errors.bio}
+                    helperText={errors.bio?.message}
                 />
 
                 <TextField

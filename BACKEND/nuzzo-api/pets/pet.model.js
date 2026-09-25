@@ -50,6 +50,11 @@ const PetSchema = new Schema({
         },
         required: [true, "Choose your pet's gender."],
     },
+    bio: {
+        type: String,
+        trim: true,
+        maxLength: [10000, 'The bio is too long.'],
+    },
     profilePicture: {
         type: Schema.Types.ObjectId,
         ref: 'image',

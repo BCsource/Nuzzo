@@ -1,6 +1,7 @@
+
 import apiClient from './apiClient';
 
-// Perfil user 
+// perfil user 
 
 export async function fetchUserById(userId) {
     const { data } = await apiClient.get(`/users/${userId}`);
@@ -12,26 +13,26 @@ export async function updateProfile(userId, payload) {
     return data;
 }
 
-// Soft delete-> a conta fica desativada, não é apagada
+// softdelete-> a conta fica desativada, não é apagada
 export async function disableAccount(userId) {
     const { data } = await apiClient.put(`/users/${userId}/disable`);
     return data;
 }
 
-// Só admin
+// admin
 export async function reactivateAccount(userId) {
     const { data } = await apiClient.put(`/users/${userId}/reactivate`);
     return data;
 }
 
-// Pedido Badges
+// pedido Badges
 
 export async function submitBadgeRequest(formData) {
     const { data } = await apiClient.post('/users/badge-requests', formData);
     return data;
 }
 
-// Só admin
+// admin
 export async function fetchCertificate(requestId) {
     const response = await apiClient.get(`/users/badge-requests/${requestId}/certificate`, {
         responseType: 'blob',
@@ -58,5 +59,16 @@ export async function reviewBadgeRequest(requestId, approved, rejectReason) {
 
 export async function promoteToAdmin(userId) {
     const { data } = await apiClient.put(`/users/${userId}/promote-admin`);
+    return data;
+}
+
+// perfil publico
+export async function fetchUserPosts(userId) {
+    const { data } = await apiClient.get(`/users/${userId}/posts`);
+    return data;
+}
+
+export async function fetchUserPets(userId) {
+    const { data } = await apiClient.get(`/users/${userId}/pets`);
     return data;
 }

@@ -1,18 +1,36 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { fetchPetById } from '../services/petProfileService';
 import HealthHistoryList from '../components/HealthHistoryList';
+import ProfileHeader from '../components/ProfileHeader';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 import { GENDER_LABELS } from '../utils/petOptions';
-import UserAvatar from '../components/UserAvatar';
 
 import {
-    Box, Typography, Chip, Stack, Card, CardContent, Button,
-    CircularProgress, Alert, IconButton,
+    Box, Typography, Chip, Button, CircularProgress, Alert, IconButton, Paper, Link,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+
+
+//se idd inferior a 1y, mostra meses
+
+function petAge(dateOfBirth) {
+    const birth = new Date(dateOfBirth);
+    const today = new Date();
+    let years = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        years--;
+    }
+    if (years >= 1) {
+        return years === 1 ? '1 year' : `${years} years`;
+    }
+    const months = Math.max(0, years * 12 + monthDiff);
+    return months === 1 ? '1 month' : `${months} months`;
+}
 
 function ViewPetProfile() {
     const { petId } = useParams();
@@ -46,7 +64,7 @@ function ViewPetProfile() {
 
     if (!pet) {
         return (
-            <Box sx={{ maxWidth: 480, mx: 'auto', mt: 4, px: 2 }}>
+            <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, px: 2 }}>
                 <Alert severity="error">{error || 'Pet not found.'}</Alert>
             </Box>
         );
@@ -54,48 +72,52 @@ function ViewPetProfile() {
 
     const { canEdit, canViewHealthHistory, canWriteHealthHistory } = pet.permissions;
 
+    const chips = [
+        <Chip key="species" label={pet.species} className="nz-chip nz-chip--species" />,
+        <Chip key="breed" label={pet.breed} variant="outlined" className="nz-chip nz-chip--category" />,
+        <Chip key="gender" label={GENDER_LABELS[pet.gender] || pet.gender} className={`nz-chip nz-chip--${pet.gender}`} />,
+        <Chip key="spayed" label={pet.isSpayed ? 'Spayed' : 'Not spayed'} variant="outlined" className="nz-chip nz-chip--category" />,
+        <Chip key="vaccinated" label={pet.isVaccinated ? 'Vaccinated' : 'Not vaccinated'} className={`nz-chip ${pet.isVaccinated ? 'nz-chip--approved' : 'nz-chip--pending'}`} />,
+    ];
+
     return (
-        <Box sx={{ maxWidth: 560, mx: 'auto', mt: 2, px: 2, mb: 6 }}>
+        <Box sx={{ maxWidth: 800, mx: 'auto', px: 2, py: 3 }}>
             <IconButton onClick={() => navigate(-1)} aria-label="go back" sx={{ mb: 1 }}>
                 <ArrowBackIcon />
             </IconButton>
 
-            <Card sx={{ mb: 2 }}>
-                <CardContent>
-                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1 }}>
-                            <UserAvatar user={pet} size={72} />
-                            <Typography variant="h4">{pet.name}</Typography>
-                        </Stack>
-                        {canEdit && (
-                            <Button component={RouterLink} to={`/pets/${pet.id}/edit`} startIcon={<EditIcon />} size="small">
-                                Edit
-                            </Button>
-                        )}
-                    </Stack>
+            <ProfileHeader
+                subject={pet}
+                title={pet.name}
+                subtitle={
+                    pet.owner && pet.owner.fName
+                        ? <>Owned by <Link component={RouterLink} to={`/users/${pet.owner.id}`}>{pet.owner.fName} {pet.owner.lName}</Link></>
+                        : null
+                }
+                chips={chips}
+                facts={[
+                    { label: 'Age', value: petAge(pet.dateOfBirth) },
+                    { label: 'Weight', value: `${pet.weight} kg` },
+                    { label: 'Date of birth', value: formatDate(pet.dateOfBirth) },
+                ]}
+                actions={canEdit ? [
+                    <Button key="edit" variant="contained" startIcon={<EditIcon />} component={RouterLink} to={`/pets/${pet.id}/edit`}>
+                        Edit
+                    </Button>,
+                ] : null}
+            />
 
-                    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                        <Chip label={pet.species} className="nz-chip nz-chip--species" />
-                        <Chip label={GENDER_LABELS[pet.gender] || pet.gender} className={`nz-chip nz-chip--${pet.gender}`} />
-                        <Chip label={pet.breed} variant="outlined" />
-                        <Chip label={pet.isSpayed ? 'Spayed' : 'Not spayed'} variant="outlined" />
-                        <Chip label={pet.isVaccinated ? 'Vaccinated' : 'Not vaccinated'} variant="outlined" />
-                    </Stack>
-
-                    <Typography variant="body2" color="text.secondary">Weight: {pet.weight} kg</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Date of birth: {formatDate(pet.dateOfBirth)}
-                    </Typography>
-                    {pet.owner?.fName && (
-                        <Typography variant="body2" color="text.secondary">
-                            Owner: {pet.owner.fName} {pet.owner.lName}
-                        </Typography>
-                    )}
-                </CardContent>
-            </Card>
+            {pet.bio && (
+                <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
+                    <Typography variant="h6" gutterBottom>About {pet.name}</Typography>
+                    <Typography variant="body1" className="nz-user-text">{pet.bio}</Typography>
+                </Paper>
+            )}
 
             {canViewHealthHistory && (
-                <HealthHistoryList petId={pet.id} canWrite={canWriteHealthHistory} />
+                <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
+                    <HealthHistoryList petId={pet.id} canWrite={canWriteHealthHistory} />
+                </Paper>
             )}
         </Box>
     );

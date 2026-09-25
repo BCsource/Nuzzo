@@ -1,4 +1,5 @@
-import { Link as RouterLink } from 'react-router-dom';
+
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
     Card, CardContent, CardActions, CardMedia, Typography, Stack,
     IconButton, Tooltip, Button, Box, Chip,
@@ -8,6 +9,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import UserAvatar from './UserAvatar';
 import PostTypeChip from './PostTypeChip';
@@ -17,13 +19,27 @@ import { getVideoEmbedUrl } from '../utils/videoEmbed';
 import { formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
 
 function PostCard({ post, onToggleFavourite, onDelete }) {
+    const navigate = useNavigate();
+
+    function openPost() {
+        navigate(`/posts/${post.id}`);
+    }
+
+    function stop(event) {
+        event.stopPropagation();
+    }
+
     const videoEmbedUrl = getVideoEmbedUrl(post.videoUrl);
     const isProduct = post.postType === 'product';
 
     return (
-        <Card className="nz-post-card" sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Card
+            className="nz-post-card"
+            onClick={openPost}
+            sx={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}
+        >
             {videoEmbedUrl && (
-                <Box className="nz-post-card__video">
+                <Box className="nz-post-card__video" onClick={stop}>
                     <iframe
                         src={videoEmbedUrl}
                         title={post.title}
@@ -58,9 +74,17 @@ function PostCard({ post, onToggleFavourite, onDelete }) {
                     <PostTypeChip postType={post.postType} />
                     {post.category && <CategoryChip category={post.category} />}
                     {post.isOwner && <Chip label="Yours" size="small" variant="outlined" className="nz-chip nz-chip--yours" />}
+                    {post.hasNewActivity && (
+                        <Chip
+                            icon={<NotificationsActiveIcon />}
+                            label="New activity"
+                            size="small"
+                            className="nz-chip nz-chip--new-activity"
+                        />
+                    )}
                 </Stack>
 
-                <Typography variant="body2" color="text.secondary" className="nz-post-card__text">
+                <Typography variant="body2" color="text.secondary" className="nz-post-card__text" sx={{ whiteSpace: 'pre-wrap' }}>
                     {post.description}
                 </Typography>
 
@@ -72,7 +96,7 @@ function PostCard({ post, onToggleFavourite, onDelete }) {
             </CardContent>
 
             <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }} onClick={stop}>
                     <Button size="small" component={RouterLink} to={`/posts/${post.id}`} startIcon={<VisibilityIcon />}>
                         View
                     </Button>
@@ -89,8 +113,12 @@ function PostCard({ post, onToggleFavourite, onDelete }) {
                     )}
                 </Stack>
 
-                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }} onClick={stop}>
                     <Typography variant="caption" color="text.secondary">{post.views ?? 0} views</Typography>
+                    <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center', ml: 1 }}>
+                        <FavoriteIcon fontSize="inherit" color="error" />
+                        <Typography variant="caption" color="text.secondary">{post.favouritesCount ?? 0}</Typography>
+                    </Stack>
 
                     {onDelete && post.canEdit && (
                         <>

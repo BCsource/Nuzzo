@@ -1,5 +1,7 @@
 const express = require('express');
 const userController = require('./user.controller');
+const postController = require('../posts/post.controller');
+const petController = require('../pets/pet.controller');
 const { authenticate, authorize } = require('../../shared/auth-middleware');
 const multer = require('multer');
 
@@ -19,6 +21,9 @@ userRouter.get('/badge-requests/:requestId/certificate', authenticate, authorize
 userRouter.put('/badge-requests/:requestId', authenticate, authorize('admin', 'masterAdmin'), userController.reviewBadgeRequest);
 
 userRouter.get('/:id', authenticate, userController.getUserById);
+
+userRouter.get('/:id/posts', authenticate, postController.getPostsByUser);
+userRouter.get('/:id/pets', authenticate, petController.getPetsByOwner);
 userRouter.put('/:id', authenticate, userController.updateUser);
 userRouter.put('/:id/disable', authenticate, userController.disableUser);
 userRouter.put('/:id/reactivate', authenticate, authorize('admin', 'masterAdmin'), userController.reactivateUser);

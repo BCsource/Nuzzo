@@ -7,6 +7,8 @@ import {
     MenuItem, Button, Collapse, Stack, Typography,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 import { SORT_OPTIONS, EMPTY_FILTERS } from '../utils/postFilters';
 import { POST_TYPES, POST_TYPE_LABELS, POST_CATEGORIES } from '../utils/postOptions';
 
@@ -20,7 +22,24 @@ function PostFilters({ value, onChange }) {
     return (
         <Box sx={{ mb: 3 }}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ alignItems: { sm: 'center' } }}>
-                <FormControl size="small" fullWidth>
+                <TextField
+                    placeholder="Search posts…"
+                    size="small"
+                    fullWidth
+                    value={value.search}
+                    onChange={(e) => update('search', e.target.value)}
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        },
+                    }}
+                />
+
+                <FormControl size="small" sx={{ minWidth: 170, flexShrink: 0 }}>
                     <InputLabel id="filter-category-label">Category</InputLabel>
                     <Select
                         labelId="filter-category-label"

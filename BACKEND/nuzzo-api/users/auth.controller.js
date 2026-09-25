@@ -2,6 +2,8 @@ const UserModel = require('./user.model');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRATION } = require('../../shared/config');
 const { getUserPermissions } = require('../../shared/permissions');
+const crypto = require('crypto');
+const { sendPasswordResetEmail } = require('../../shared/mailer');
 
 const generateToken = (user) => {
     return jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
@@ -127,4 +129,82 @@ exports.me = (req, res) => {
         profilePicture: user.profilePicture,
         permissions: getUserPermissions(user),
     });
+};
+
+
+exports.forgotPassword = (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    const sameAnswer = { message: 'If that email is registered, we have sent a link to reset your password.' };
+
+    UserModel.findOne({ email })
+        .then((user) => {
+            if (!user || user.disabled) {
+                res.status(200).json(sameAnswer);
+                return null;
+            }
+
+            // VER COM NUNO
+            user.resetToken = crypto.randomBytes(32).toString('hex');
+            user.resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+            return user.save();
+        })
+        .then((user) => {
+            if (!user) return null;
+            return sendPasswordResetEmail(user.email, user.resetToken)
+                .then(() => res.status(200).json(sameAnswer));
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        });
+};
+
+exports.resetPassword = (req, res) => {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+        return res.status(400).json({ message: 'Token and new password are required.' });
+    }
+
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+    if (password.length < 6 || !hasLetter || !hasNumber || !hasSpecial) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters long and contain letters, numbers and a special character.' });
+    }
+
+    UserModel.findOne({ resetToken: token })
+        .then((user) => {
+            if (!user) {
+                res.status(400).json({ message: 'This link is no longer valid. Please ask for a new one.' });
+                return null;
+            }
+            if (!user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
+                res.status(400).json({ message: 'This link has expired. Please ask for a new one.' });
+                return null;
+            }
+
+            user.password = password; // o pre('save') do model encripta-a
+            user.resetToken = null;
+            user.resetTokenExpiresAt = null;
+            user.updatedAt = new Date();
+            user.updatedBy = user._id;
+
+            return user.save();
+        })
+        .then((user) => {
+            if (!user) return;
+            res.status(200).json({ message: 'Password updated. You can log in now.' });
+        })
+        .catch((error) => {
+            if (error.name === 'ValidationError') {
+                return res.status(400).json({ message: error.message });
+            }
+            res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+        });
 };

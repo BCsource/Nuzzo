@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import {
     Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead,
@@ -152,8 +153,8 @@ function AllUsersAdminOnly() {
                     <CircularProgress />
                 </Box>
             ) : (
-                <TableContainer component={Paper}>
-                    <Table size="small">
+                <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                    <Table size="small" sx={{ minWidth: 760 }}>
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>

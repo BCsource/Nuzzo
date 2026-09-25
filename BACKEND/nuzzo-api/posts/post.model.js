@@ -23,7 +23,7 @@ const PostSchema = new Schema({
         required: [true, 'Description is required.'],
         trim: true,
         minLength: [10, 'Description must be at least 10 characters long.'],
-        maxLength: [5000, 'Description too long! Please summarize.'],
+        maxLength: [10000, 'Post too long!'],
     },
     category: {
         type: String,
@@ -36,6 +36,15 @@ const PostSchema = new Schema({
     price: {
         type: Number,
         min: [0, "Price can't be negative."],
+    },
+    favouritesCount: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0,
+    },
+    lastActivityAt: {
+        type: Date,
     },
     image: {
         type: Schema.Types.ObjectId,

@@ -1,27 +1,33 @@
+
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { disableAccount } from '../services/userService';
-
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
+import { isHighContrast, applyHighContrast } from '../utils/contrastMode';
 import ConfirmDialog from '../components/ConfirmDialog';
-import UserAvatar from '../components/UserAvatar';
+import ProfileHeader from '../components/ProfileHeader';
 import BadgeChip from '../components/BadgeChip';
 import AdminChip from '../components/AdminChip';
 
-import { Box, Typography, Card, CardContent, Stack, Button, Alert } from '@mui/material';
+import {
+    Box, Typography, Button, Alert, Paper, Stack,
+    FormControlLabel, Switch, Divider,
+} from '@mui/material';
+import ContrastIcon from '@mui/icons-material/Contrast';
 
 function Profile() {
     const { currentUser, permissions, logout } = useAuth();
     const navigate = useNavigate();
-    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [confirmDisable, setConfirmDisable] = useState(false);
     const [error, setError] = useState('');
+    const [highContrast, setHighContrast] = useState(() => isHighContrast());
 
     if (!currentUser) return null;
 
-    async function handleDeleteAccount() {
-        setConfirmDelete(false);
+    async function handleDisableAccount() {
+        setConfirmDisable(false);
         try {
             await disableAccount(currentUser.id);
             logout();
@@ -31,56 +37,80 @@ function Profile() {
         }
     }
 
-    return (
-        <Box sx={{ maxWidth: 520, mx: 'auto', px: 2, py: 3 }}>
-            <Typography variant="h4" gutterBottom>Profile</Typography>
+    function handleContrastChange(enabled) {
+        setHighContrast(enabled);
+        applyHighContrast(enabled);
+    }
 
+    const chips = [
+        ...(permissions.canManageUsers
+            ? [<AdminChip key="admin" isMasterAdmin={permissions.canPromoteAdmins} />]
+            : []),
+        ...(currentUser.badges || []).map((badge) => <BadgeChip key={badge} badge={badge} />),
+    ];
+
+    return (
+        <Box sx={{ maxWidth: 800, mx: 'auto', px: 2, py: 3 }}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-            <Card sx={{ mb: 2 }}>
-                <CardContent>
-                    <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1.5 }}>
-                        <UserAvatar user={currentUser} size={72} />
-                        <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="h6">
-                                {currentUser.fName} {currentUser.lName}
-                            </Typography>
-                            {permissions.canManageUsers && (
-                                <AdminChip isMasterAdmin={permissions.canPromoteAdmins} />
-                            )}
-                        </Box>
-                    </Stack>
-                    <Typography variant="body2" color="text.secondary">{currentUser.email}</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                        Date of birth: {formatDate(currentUser.dateOfBirth)}
-                    </Typography>
+            <ProfileHeader
+                subject={currentUser}
+                title={`${currentUser.fName} ${currentUser.lName}`}
+                subtitle={currentUser.email}
+                chips={chips}
+                facts={[
+                    { label: 'Date of birth', value: formatDate(currentUser.dateOfBirth) },
+                    { label: 'Member since', value: formatDate(currentUser.createdAt) },
+                ]}
+                actions={[
+                    <Button key="edit" variant="contained" component={RouterLink} to="/profile/edit">
+                        Edit Profile
+                    </Button>,
+                    <Button key="badges" variant="outlined" component={RouterLink} to="/profile/badges">
+                        Request Badges
+                    </Button>,
+                ]}
+            />
 
-                    {currentUser.bio && (
-                        <Typography variant="body1" sx={{ mb: 1.5 }}>{currentUser.bio}</Typography>
-                    )}
+            {currentUser.bio && (
+                <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
+                    <Typography variant="h6" gutterBottom>About me</Typography>
+                    <Typography variant="body1" className="nz-user-text">{currentUser.bio}</Typography>
+                </Paper>
+            )}
 
-                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
-                        {(currentUser.badges || []).map((badge) => (
-                            <BadgeChip key={badge} badge={badge} />
-                        ))}
-                    </Stack>
-                </CardContent>
-            </Card>
+            <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
+                <Typography variant="h6" gutterBottom>Accessibility</Typography>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={highContrast}
+                            onChange={(e) => handleContrastChange(e.target.checked)}
+                        />
+                    }
+                    label={
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                            <ContrastIcon fontSize="small" />
+                            <span>High contrast mode</span>
+                        </Stack>
+                    }
+                />
+                <Typography variant="body2" color="text.secondary">
+                    Stronger colours and clearer outlines. Your choice is remembered on this device.
+                </Typography>
+            </Paper>
 
-            <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-                <Button component={RouterLink} to="/profile/edit" variant="contained">Edit Profile</Button>
-                <Button component={RouterLink} to="/profile/badges" variant="outlined">Request Badges</Button>
-            </Stack>
+            <Divider sx={{ my: 3 }} />
 
-            <Button color="error" onClick={() => setConfirmDelete(true)}>Deactivate Account</Button>
+            <Button color="error" onClick={() => setConfirmDisable(true)}>Deactivate Account</Button>
 
             <ConfirmDialog
-                open={confirmDelete}
+                open={confirmDisable}
                 title="Deactivate your account?"
-                message="You won't be able to log in anymore and only an admin can reactivate your account."
+                message="You won't be able to log in anymore. Your posts and pets stay saved, and an admin can reactivate your account."
                 confirmLabel="Deactivate"
-                onConfirm={handleDeleteAccount}
-                onCancel={() => setConfirmDelete(false)}
+                onConfirm={handleDisableAccount}
+                onCancel={() => setConfirmDisable(false)}
             />
         </Box>
     );

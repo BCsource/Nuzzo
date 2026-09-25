@@ -1,3 +1,4 @@
+
 import { Chip } from '@mui/material';
 
 function CategoryChip({ category, size = 'small' }) {

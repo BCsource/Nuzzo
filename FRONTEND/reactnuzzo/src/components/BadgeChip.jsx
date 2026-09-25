@@ -1,3 +1,4 @@
+
 import { Chip, Avatar } from '@mui/material';
 import { BADGE_LABELS, BADGE_IMAGES, BADGE_COLORS } from '../utils/badgeOptions';
 

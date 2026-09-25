@@ -1,0 +1,70 @@
+/* HIGH CONSTRAST MODE */
+
+[data-contrast='high'] {
+  --nz-bg-page: #000000;
+  --nz-surface: #000000;
+  --nz-surface-field: #1A1A1A;
+  --nz-border: #FFFFFF;
+
+  --nz-ink: #FFFFFF;
+  --nz-ink-muted: #E0E0E0;
+
+  --nz-brand: #FFE600;
+  --nz-brand-hover: #FFF04D;
+  --nz-brand-pressed: #E6CF00;
+  --nz-brand-tint: #333300;
+  --nz-on-brand: #000000;
+
+  --nz-accent: #00E5FF;
+  --nz-accent-hover: #4DECFF;
+  --nz-accent-tint: #003D45;
+  --nz-on-accent: #000000;
+
+  --nz-earth: #FF8A00;
+  --nz-earth-hover: #FFA340;
+  --nz-earth-pressed: #CC6E00;
+  --nz-earth-tint: #3D2100;
+  --nz-on-earth: #000000;
+
+  --nz-success: #00E676;
+  --nz-success-tint: #00351B;
+  --nz-on-success: #000000;
+
+  --nz-warning: #FFC400;
+  --nz-warning-tint: #3D2E00;
+  --nz-on-warning: #000000;
+
+  --nz-danger: #FF5252;
+  --nz-danger-tint: #450000;
+  --nz-on-danger: #000000;
+}
+
+[data-contrast='high'] .MuiPaper-root,
+[data-contrast='high'] .MuiCard-root,
+[data-contrast='high'] .MuiTableContainer-root,
+[data-contrast='high'] .nz-post-card {
+  border: 2px solid var(--nz-border) !important;
+  box-shadow: none !important;
+}
+
+[data-contrast='high'] .MuiOutlinedInput-notchedOutline {
+  border-color: var(--nz-border) !important;
+  border-width: 2px !important;
+}
+
+[data-contrast='high'] *:focus-visible {
+  outline: 3px solid var(--nz-brand) !important;
+  outline-offset: 2px !important;
+}
+
+[data-contrast='high'] .MuiDivider-root {
+  border-color: var(--nz-border) !important;
+}
+
+[data-contrast='high'] .nz-chip {
+  border: 1px solid var(--nz-border) !important;
+}
+
+[data-contrast='high'] a {
+  text-decoration: underline !important;
+}

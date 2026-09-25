@@ -114,7 +114,7 @@ function ChatWindow({ postId, participantId, onMessageSent }) {
                             >
                                 {!message.isMine && <UserAvatar user={message.sender} size={28} />}
                                 <Box className={`nz-bubble ${message.isMine ? 'nz-bubble--mine' : 'nz-bubble--theirs'}`}>
-                                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{message.content}</Typography>
+                                    <Typography variant="body2" className="nz-user-text">{message.content}</Typography>
                                     <Typography variant="caption" className="nz-bubble__time">
                                         {formatDate(message.createdAt, true)}
                                     </Typography>

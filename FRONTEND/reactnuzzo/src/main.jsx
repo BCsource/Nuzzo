@@ -4,12 +4,16 @@ import './styles/nuzzo-tokens.css';
 import './styles/nuzzo-base.css';
 import './styles/nuzzo-components.css';
 import './styles/nuzzo-mui.css';
+import './styles/nuzzo-high-contrast.css';
 
 import { StrictMode } from 'react';
+import { isHighContrast, applyHighContrast } from './utils/contrastMode';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import App from './App.jsx';
+
+applyHighContrast(isHighContrast());
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

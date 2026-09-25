@@ -1,6 +1,7 @@
 // Filtragem e ordenação do feed feita em be. func traduz os params que o user escolheu para query no be
 
 export const EMPTY_FILTERS = {
+    search: '',
     category: '',
     postType: '',
     priceMin: '',
@@ -21,6 +22,8 @@ export const SORT_OPTIONS = [
 
 export function buildPostQuery(filters) {
     const params = { sort: filters.sort };
+
+    if (filters.search) params.search = filters.search;
 
     if (filters.category) params.category = filters.category;
     if (filters.postType) params.postType = filters.postType;

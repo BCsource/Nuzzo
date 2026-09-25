@@ -1,14 +1,18 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import {
     AppBar, Toolbar, Button, Box, IconButton,
     Drawer, List, ListItem, ListItemButton, ListItemText, Divider,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    Badge, Typography,
+    Badge, Typography, ListItemIcon,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { useAuth } from '../context/useAuth';
 import logo from '../assets/img/Final Logo.png';
+import wordmark from '../assets/img/nuzzo-wordmark.png';
 import UserAvatar from './UserAvatar';
 import { fetchNotifications } from '../services/notificationService';
 
@@ -70,6 +74,9 @@ function NavBar() {
 
     const links = currentUser ? loggedInLinks : loggedOutLinks;
 
+    //notification sum mobile
+    const totalNotifications = links.reduce((total, link) => total + (link.count || 0), 0);
+
     const navList = (
         <List className="nuzzo-nav-list">
             {links.map((link) => (
@@ -97,6 +104,9 @@ function NavBar() {
                             className="nuzzo-nav-item"
                             onClick={() => { setDrawerOpen(false); setConfirmLogout(true); }}
                         >
+                            <ListItemIcon sx={{ minWidth: 36 }}>
+                                <LogoutIcon fontSize="small" />
+                            </ListItemIcon>
                             <ListItemText primary="Log Off" />
                         </ListItemButton>
                     </ListItem>
@@ -152,11 +162,25 @@ function NavBar() {
 
             {/*TELEMOVEL*/}
             <AppBar position="sticky" className="nuzzo-navbar" sx={{ display: { xs: 'block', md: 'none' } }}>
-                <Toolbar sx={{ minHeight: 64 }}>
-                    <Box sx={{ flexGrow: 1 }}>{brand}</Box>
-                    <IconButton color="inherit" onClick={() => setDrawerOpen(true)} aria-label="open menu">
-                        <MenuIcon />
-                    </IconButton>
+                <Toolbar sx={{ minHeight: 64, justifyContent: 'space-between' }}>
+                    <Box sx={{ width: 88, flexShrink: 0 }} />
+
+                    <Box component={RouterLink} to="/" className="nuzzo-brand-mobile">
+                        <img src={wordmark} alt="Nuzzo" className="nz-mobile-wordmark" />
+                    </Box>
+
+                    <Box sx={{ width: 88, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                        {currentUser && totalNotifications > 0 && (
+                            <IconButton color="inherit" onClick={() => setDrawerOpen(true)} aria-label="notifications">
+                                <Badge badgeContent={totalNotifications} color="error">
+                                    <NotificationsActiveIcon />
+                                </Badge>
+                            </IconButton>
+                        )}
+                        <IconButton color="inherit" onClick={() => setDrawerOpen(true)} aria-label="open menu">
+                            <MenuIcon />
+                        </IconButton>
+                    </Box>
                 </Toolbar>
             </AppBar>
 

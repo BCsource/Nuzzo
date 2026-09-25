@@ -16,7 +16,7 @@ const addPetPermissions = (pet, user) => {
 
 // pets
 exports.createPet = (req, res) => {
-    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture } = req.body;
+    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture, bio } = req.body;
 
 
     if (!name || !species || !breed || !gender || !weight || !dateOfBirth) {
@@ -36,7 +36,7 @@ exports.createPet = (req, res) => {
         return res.status(400).json({ message: 'Your pet cannot be born in the future.' });
     }
 
-    const newPet = new PetModel({ name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture });
+    const newPet = new PetModel({ name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture, bio });
     newPet.owner = req.user._id;
     newPet.createdAt = new Date();
     newPet.createdBy = req.user._id;
@@ -85,7 +85,7 @@ exports.getPetById = (req, res) => {
 };
 
 exports.updatePet = (req, res) => {
-    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture } = req.body;
+    const { name, species, breed, gender, weight, isSpayed, isVaccinated, dateOfBirth, profilePicture, bio } = req.body;
 
 
     if (!name || !species || !breed || !gender || !weight || !dateOfBirth) {
@@ -126,6 +126,7 @@ exports.updatePet = (req, res) => {
             pet.isVaccinated = isVaccinated;
             pet.dateOfBirth = dateOfBirth;
             pet.profilePicture = profilePicture;
+            pet.bio = bio;
             pet.updatedAt = new Date();
             pet.updatedBy = req.user._id;
             return pet.save();
@@ -223,5 +224,23 @@ exports.addHealthHistoryEntry = (req, res) => {
                 return res.status(400).json({ message: error.message });
             }
             res.status(500).json({ message: 'Could not add this entry.' });
+        });
+};
+
+// other users pets
+
+exports.getPetsByOwner = (req, res) => {
+    PetModel.find({ owner: req.params.id })
+        .select('-healthHistory')
+        .sort({ createdAt: 'desc' })
+        .then((pets) => {
+            const result = [];
+            pets.forEach((pet) => {
+                result.push(addPetPermissions(pet, req.user));
+            });
+            res.status(200).json(result);
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not load these pets.' });
         });
 };

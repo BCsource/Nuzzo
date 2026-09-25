@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import {
@@ -8,7 +9,7 @@ import {
 
 import {
     Box, Typography, TextField, Button, Alert, Stack,
-    InputAdornment, IconButton, Link,
+    InputAdornment, IconButton, Link, Checkbox, FormControlLabel, FormHelperText,
 } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -22,10 +23,13 @@ function Register() {
     const {
         register,
         handleSubmit,
+        control,
         watch,
         formState: { errors },
     } = useForm({
         defaultValues: {
+            acceptTerms: false,
+            acceptPrivacy: false,
             fName: '',
             lName: '',
             email: '',
@@ -44,7 +48,7 @@ function Register() {
         setServerError('');
         setLoading(true);
         try {
-            // badge aficionado é default na criação de user
+            // badge aficionado default na criação de user
             await registerUser({
                 fName: data.fName.trim(),
                 lName: data.lName.trim(),
@@ -154,6 +158,50 @@ function Register() {
                         })}
                         error={!!errors.dateOfBirth}
                         helperText={errors.dateOfBirth?.message}
+                    />
+
+                    <Controller
+                        name="acceptTerms"
+                        control={control}
+                        rules={{ required: 'You must accept the Terms of Service.' }}
+                        render={({ field }) => (
+                            <Box>
+                                <FormControlLabel
+                                    control={<Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+                                    label={
+                                        <Typography variant="body2">
+                                            I accept the{' '}
+                                            <Link component={RouterLink} to="/terms" target="_blank" rel="noreferrer">
+                                                Terms of Service
+                                            </Link>
+                                        </Typography>
+                                    }
+                                />
+                                {errors.acceptTerms && <FormHelperText error>{errors.acceptTerms.message}</FormHelperText>}
+                            </Box>
+                        )}
+                    />
+
+                    <Controller
+                        name="acceptPrivacy"
+                        control={control}
+                        rules={{ required: 'You must accept the Privacy Policy.' }}
+                        render={({ field }) => (
+                            <Box>
+                                <FormControlLabel
+                                    control={<Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+                                    label={
+                                        <Typography variant="body2">
+                                            I accept the{' '}
+                                            <Link component={RouterLink} to="/privacy" target="_blank" rel="noreferrer">
+                                                Privacy Policy
+                                            </Link>
+                                        </Typography>
+                                    }
+                                />
+                                {errors.acceptPrivacy && <FormHelperText error>{errors.acceptPrivacy.message}</FormHelperText>}
+                            </Box>
+                        )}
                     />
 
                     {serverError && <Alert severity="error">{serverError}</Alert>}

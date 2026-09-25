@@ -1,4 +1,3 @@
-const CommentModel = require('../comments/comment.model');
 const MessageModel = require('../messages/message.model');
 const PostModel = require('../posts/post.model');
 const UserModel = require('../users/user.model');
@@ -29,24 +28,15 @@ exports.getNotifications = (req, res) => {
                     notifications.messages = notifications.messages + 1;
                 }
             });
-
             return PostModel.find({ author: user._id });
         })
         .then((posts) => {
-            const myPostIds = [];
+            const lastSeen = seenSince(user.lastSeenCommentsAt);
             posts.forEach((post) => {
-                myPostIds.push(post._id.toString());
+                if (post.lastActivityAt && post.lastActivityAt > lastSeen) {
+                    notifications.comments = notifications.comments + 1;
+                }
             });
-
-            return CommentModel.find({ createdAt: { $gt: seenSince(user.lastSeenCommentsAt) } })
-                .then((comments) => {
-                    comments.forEach((comment) => {
-                        const isMine = comment.author.toString() === user.id;
-                        if (!isMine && myPostIds.includes(comment.post.toString())) {
-                            notifications.comments = notifications.comments + 1;
-                        }
-                    });
-                });
         })
         .then(() => {
             if (!isAdmin(user)) {

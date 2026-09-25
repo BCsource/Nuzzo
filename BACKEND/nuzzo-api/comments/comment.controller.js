@@ -49,7 +49,12 @@ exports.addComment = (req, res) => {
             newComment.post = post._id;
             newComment.author = req.user._id;
             newComment.createdAt = new Date();
-            return newComment.save();
+
+            // para o user ver nova actv
+            post.lastActivityAt = new Date();
+
+            return post.save()
+                .then(() => newComment.save());
         })
         .then((comment) => {
             if (!comment) return;

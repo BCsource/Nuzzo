@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { fetchPostById, addFavourite, removeFavourite } from '../services/postService';
@@ -12,7 +13,7 @@ import { imageUrl } from '../services/apiClient';
 import { getVideoEmbedUrl } from '../utils/videoEmbed';
 
 import {
-    Box, Typography, Stack, Card, CardContent, Button,
+    Box, Typography, Stack, Card, CardContent, Button, Link,
     CircularProgress, Alert, IconButton, Tooltip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -106,7 +107,10 @@ function ViewPost() {
                     <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 2 }}>
                         <UserAvatar user={post.author} size={40} />
                         <Typography variant="body2" color="text.secondary">
-                            Published by {authorLabel(post.author)} • {formatDate(post.createdAt)}
+                            Published by{' '}
+                            {post.author
+                                ? <Link component={RouterLink} to={`/users/${post.author.id}`}>{authorLabel(post.author)}</Link>
+                                : authorLabel(post.author)} • {formatDate(post.createdAt)}
                             {post.updatedAt && ` • edited ${formatDate(post.updatedAt)}`}
                         </Typography>
                     </Stack>
@@ -135,7 +139,7 @@ function ViewPost() {
                         {post.category && <CategoryChip category={post.category} />}
                     </Stack>
 
-                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
+                    <Typography variant="body1" className="nz-user-text" sx={{ mb: 1 }}>
                         {post.description}
                     </Typography>
 

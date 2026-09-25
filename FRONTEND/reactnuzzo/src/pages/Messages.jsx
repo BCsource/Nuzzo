@@ -51,14 +51,21 @@ function Messages() {
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
+            {!isOpen && (
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Choose a conversation to read it.
+                </Typography>
+            )}
+
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                 <Paper
                     variant="outlined"
                     sx={{
-                        width: { xs: '100%', md: 340 },
+                        width: { xs: '100%', md: 400 },
                         flexShrink: 0,
                         display: { xs: isOpen ? 'none' : 'block', md: 'block' },
                         maxHeight: '65vh',
+                        borderWidth: 2,
                         overflowY: 'auto',
                     }}
                 >
@@ -93,9 +100,9 @@ function Messages() {
                             />
                         </>
                     ) : (
-                        <Paper variant="outlined" sx={{ p: 4, textAlign: 'center' }}>
-                            <Typography color="text.secondary">Choose a conversation to read it.</Typography>
-                        </Paper>
+                        <Typography variant="body2" color="text.secondary" sx={{ px: 1, py: 1.5 }}>
+                            Choose a conversation to read it.
+                        </Typography>
                     )}
                 </Box>
             </Box>

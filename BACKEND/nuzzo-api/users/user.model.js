@@ -115,6 +115,12 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'image',
     },
+    resetToken: {
+        type: String,
+    },
+    resetTokenExpiresAt: {
+        type: Date,
+    },
 
     lastSeenMessagesAt: {
         type: Date,

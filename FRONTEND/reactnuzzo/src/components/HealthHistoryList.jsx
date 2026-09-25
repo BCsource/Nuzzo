@@ -1,6 +1,6 @@
 /* Pet health history -> appendix to pet Profile
 Pet owner can read their pet history
-health and care professional can read and edit on pet history -- canWrite--
+health and care professional can read and edit on pet history 
 admin access */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -89,7 +89,7 @@ function HealthHistoryList({ petId, canWrite }) {
                 <Stack spacing={1.5}>
                     {entries.map((entry) => (
                         <Paper key={entry.id} variant="outlined" sx={{ p: 1.5 }}>
-                            <Typography variant="body2">{entry.content}</Typography>
+                            <Typography variant="body2" className="nz-user-text">{entry.content}</Typography>
                             <Typography variant="caption" color="text.secondary">
                                 {authorLabel(entry.author)} • {formatDate(entry.createdAt, true)}
                             </Typography>

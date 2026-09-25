@@ -1,3 +1,4 @@
+
 import { Typography, Button, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import StaticPage from './StaticPage';

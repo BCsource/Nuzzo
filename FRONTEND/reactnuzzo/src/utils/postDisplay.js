@@ -1,3 +1,4 @@
+
 import { POST_TYPE_LABELS } from './postOptions';
 
 export function postTypeLabel(postType) {

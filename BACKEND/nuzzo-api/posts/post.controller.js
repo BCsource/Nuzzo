@@ -11,6 +11,11 @@ const addPostFlags = (post, user) => {
     postObject.isOwner = post.author._id.toString() === user.id;
     postObject.canEdit = postObject.isOwner || isAdmin(user);
     postObject.isFavourite = favouriteIds.includes(post._id.toString());
+    postObject.hasNewActivity = false;
+    if (postObject.isOwner && post.lastActivityAt) {
+        const lastSeen = user.lastSeenCommentsAt || new Date(0);
+        postObject.hasNewActivity = post.lastActivityAt > lastSeen;
+    }
 
     return postObject;
 };
@@ -19,6 +24,12 @@ const addPostFlags = (post, user) => {
 exports.getAllPosts = (req, res) => {
     const { limit, page } = preparePagination(req.query);
     const filter = prepareFilter(req.query, PostModel);
+
+    if (req.query.search) {
+        const term = new RegExp(req.query.search, 'i');
+        filter.$or = [{ title: term }, { description: term }];
+        delete filter.search;
+    }
     let sort = prepareSort(req.query);
 
     if (Object.keys(sort).length === 0) {
@@ -201,8 +212,11 @@ exports.addFavourite = (req, res) => {
             }
             if (!favouriteIds.includes(post._id.toString())) {
                 user.favourites.push(post._id);
+                post.favouritesCount = post.favouritesCount + 1;
+                post.lastActivityAt = new Date();
             }
-            return user.save();
+            return post.save()
+                .then(() => user.save());
         })
         .then((savedUser) => {
             if (!savedUser) return;
@@ -215,14 +229,46 @@ exports.addFavourite = (req, res) => {
 
 exports.removeFavourite = (req, res) => {
     const user = req.user;
+    const wasFavourite = user.favourites.some((id) => id.toString() === req.params.id);
 
     user.favourites = user.favourites.filter((id) => id.toString() !== req.params.id);
 
     user.save()
         .then(() => {
+            if (!wasFavourite) {
+                return null;
+            }
+            return PostModel.findById(req.params.id)
+                .then((post) => {
+                    if (!post || post.favouritesCount === 0) {
+                        return null;
+                    }
+                    post.favouritesCount = post.favouritesCount - 1;
+                    return post.save();
+                });
+        })
+        .then(() => {
             res.status(200).json({ message: 'Removed from favourites.' });
         })
         .catch(() => {
             res.status(500).json({ message: 'Could not remove from favourites.' });
+        });
+};
+
+//para ir buscar post s de outro user
+
+exports.getPostsByUser = (req, res) => {
+    PostModel.find({ author: req.params.id })
+        .populate('author', 'fName lName profilePicture')
+        .sort({ createdAt: 'desc' })
+        .then((posts) => {
+            const result = [];
+            posts.forEach((post) => {
+                result.push(addPostFlags(post, req.user));
+            });
+            res.status(200).json(result);
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not load these posts.' });
         });
 };

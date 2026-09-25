@@ -135,7 +135,7 @@ function CommentThread({ postId }) {
                                         </Stack>
                                     </Box>
                                 ) : (
-                                    <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{comment.content}</Typography>
+                                    <Typography variant="body2" className="nz-user-text">{comment.content}</Typography>
                                 )}
 
                                 <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mt: 0.5 }}>

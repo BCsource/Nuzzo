@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CssBaseline, Box } from '@mui/material';
 
@@ -20,6 +21,9 @@ import EditPetProfile from './pages/EditPetProfile';
 import MyPets from './pages/MyPets';
 import Messages from './pages/Messages';
 import RequestActivation from './pages/RequestActivation';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import UserProfile from './pages/UserProfile';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ComingSoon from './pages/ComingSoon';
@@ -32,7 +36,8 @@ import SessionTimeout from './components/SessionTimeout';
 
 function App() {
     const { pathname } = useLocation();
-    const hideNav = pathname === '/login' || pathname === '/register' || pathname === '/request-activation';
+    const hideNav = pathname === '/login' || pathname === '/register' || pathname === '/request-activation'
+        || pathname === '/forgot-password' || pathname === '/reset-password';
 
     return (
 
@@ -42,7 +47,7 @@ function App() {
             <SessionTimeout />
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
 
-                {/* Espaco para a herozone*/}
+                {/* Espaco para a herozone se der tempo*/}
 
                 <Box component="main" sx={{ flex: 1, pt: hideNav ? 0 : { xs: 4, md: 8 } }}>
                     <Routes>
@@ -50,6 +55,8 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/request-activation" element={<RequestActivation />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/privacy" element={<Privacy />} />
@@ -71,6 +78,7 @@ function App() {
 
                         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                         <Route path="/messages/:postId/:participantId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+                        <Route path="/users/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
                         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />

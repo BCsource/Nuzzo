@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -92,6 +93,10 @@ function Login() {
                     <Typography variant="body2" align="center">
                         Not registered?{' '}
                         <Link component={RouterLink} to="/register">Register</Link>
+                    </Typography>
+
+                    <Typography variant="body2" align="center">
+                        <Link component={RouterLink} to="/forgot-password">Forgot your password?</Link>
                     </Typography>
 
                     <Typography variant="body2" align="center">
