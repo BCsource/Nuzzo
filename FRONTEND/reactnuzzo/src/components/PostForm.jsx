@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import {
     POST_TYPES, POST_TYPE_LABELS, POST_CATEGORIES,
-    MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH,
+    MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_DESCRIPTION_LENGTH
 } from '../utils/postOptions';
 import { formatPrice, postTypeLabel } from '../utils/postDisplay';
 import ImageUploadField from './ImageUploadField';
@@ -126,8 +126,7 @@ function PostForm({
                     minRows={3}
                     {...register('description', {
                         required: 'Write a description.',
-                        minLength: { value: MIN_DESCRIPTION_LENGTH, message: `Must contain at least ${MIN_DESCRIPTION_LENGTH} characters.` },
-                        maxLength: { value: MAX_DESCRIPTION_LENGTH, message: `Description must be shorter than ${MAX_DESCRIPTION_LENGTH} characters.` },
+                        minLength: { value: MIN_DESCRIPTION_LENGTH, message: `Must contain at least ${MIN_DESCRIPTION_LENGTH} characters.` }
                     })}
                     error={!!errors.description}
                     helperText={errors.description?.message}
