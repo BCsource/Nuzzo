@@ -36,7 +36,7 @@ function BadgeRequest() {
             setError('Tell us about your experience.');
             return;
         }
-        // As mesmas regras do backend, para o alerta aparecer logo.
+        // As mesmas regras do backend, para o alerta aparecer logo
         if (!certificate) {
             setError('Upload your certificate (PDF or image).');
             return;
@@ -52,7 +52,7 @@ function BadgeRequest() {
 
         setSubmitting(true);
         try {
-            // Com um ficheiro o pedido vai como form-data em vez de JSON.
+            // Com um ficheiro o pedido vai como form-data em vez de JSON
             const formData = new FormData();
             requestedBadges.forEach((badge) => formData.append('requestedBadges', badge));
             formData.append('message', message.trim());
@@ -113,9 +113,14 @@ function BadgeRequest() {
                 {error && <Alert severity="error">{error}</Alert>}
                 {success && <Alert severity="success">{success}</Alert>}
 
-                <Button type="submit" variant="contained" disabled={submitting}>
-                    {submitting ? 'Sending…' : 'Submit Request'}
-                </Button>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" variant="contained" disabled={submitting}>
+                        {submitting ? 'Sending…' : 'Submit Request'}
+                    </Button>
+                    <Button variant="outlined" onClick={() => navigate(-1)} disabled={submitting}>
+                        Cancel
+                    </Button>
+                </Stack>
             </Stack>
         </Box>
     );

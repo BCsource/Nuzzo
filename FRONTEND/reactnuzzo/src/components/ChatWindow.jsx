@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import { fetchConversation, sendMessage } from '../services/messageService';
 import { useAuth } from '../context/useAuth';
+import UserAvatar from './UserAvatar';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 
@@ -105,24 +106,20 @@ function ChatWindow({ postId, participantId, onMessageSent }) {
                 ) : (
                     <Stack spacing={1.5}>
                         {conversation.messages.map((message) => (
-                            <Box
+                            <Stack
                                 key={message.id}
-                                sx={{ display: 'flex', justifyContent: message.isMine ? 'flex-end' : 'flex-start' }}
+                                direction={message.isMine ? 'row-reverse' : 'row'}
+                                spacing={1}
+                                sx={{ alignItems: 'flex-end' }}
                             >
-                                <Paper
-                                    variant="outlined"
-                                    sx={{
-                                        p: 1.25,
-                                        maxWidth: '75%',
-                                        bgcolor: message.isMine ? 'var(--nz-brand-tint)' : 'transparent',
-                                    }}
-                                >
+                                {!message.isMine && <UserAvatar user={message.sender} size={28} />}
+                                <Box className={`nz-bubble ${message.isMine ? 'nz-bubble--mine' : 'nz-bubble--theirs'}`}>
                                     <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>{message.content}</Typography>
-                                    <Typography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" className="nz-bubble__time">
                                         {formatDate(message.createdAt, true)}
                                     </Typography>
-                                </Paper>
-                            </Box>
+                                </Box>
+                            </Stack>
                         ))}
                     </Stack>
                 )}

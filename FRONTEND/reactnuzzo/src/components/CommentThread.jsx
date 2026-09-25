@@ -1,8 +1,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-    Box, Typography, TextField, Button, Stack, Alert, CircularProgress, Paper, Avatar,
+    Box, Typography, TextField, Button, Stack, Alert, CircularProgress, Paper,
 } from '@mui/material';
+import UserAvatar from './UserAvatar';
 import { fetchComments, addComment, updateComment, deleteComment } from '../services/commentService';
 import ConfirmDialog from './ConfirmDialog';
 import { getErrorMessage } from '../utils/apiErrors';
@@ -113,9 +114,7 @@ function CommentThread({ postId }) {
                 <Stack spacing={1.5}>
                     {comments.map((comment) => (
                         <Paper key={comment.id} variant="outlined" sx={{ p: 1.5, display: 'flex', gap: 1.5 }}>
-                            <Avatar sx={{ width: 36, height: 36 }}>
-                                {authorLabel(comment.author)[0]?.toUpperCase() ?? '?'}
-                            </Avatar>
+                            <UserAvatar user={comment.author} size={36} />
                             <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                                 <Typography sx={{ fontWeight: 700 }}>
                                     {authorLabel(comment.author)}

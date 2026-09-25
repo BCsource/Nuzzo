@@ -19,6 +19,10 @@ import ViewPetProfile from './pages/ViewPetProfile';
 import EditPetProfile from './pages/EditPetProfile';
 import MyPets from './pages/MyPets';
 import Messages from './pages/Messages';
+import RequestActivation from './pages/RequestActivation';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import ComingSoon from './pages/ComingSoon';
 
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -28,7 +32,7 @@ import SessionTimeout from './components/SessionTimeout';
 
 function App() {
     const { pathname } = useLocation();
-    const hideNav = pathname === '/login' || pathname === '/register';
+    const hideNav = pathname === '/login' || pathname === '/register' || pathname === '/request-activation';
 
     return (
 
@@ -45,6 +49,11 @@ function App() {
 
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/request-activation" element={<RequestActivation />} />
+
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/coming-soon" element={<ProtectedRoute><ComingSoon /></ProtectedRoute>} />
 
 
                         <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />

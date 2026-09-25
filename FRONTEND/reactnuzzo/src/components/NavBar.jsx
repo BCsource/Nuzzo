@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
     AppBar, Toolbar, Button, Box, IconButton,
     Drawer, List, ListItem, ListItemButton, ListItemText, Divider,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+    Badge, Typography,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuth } from '../context/useAuth';
 import logo from '../assets/img/Final Logo.png';
+import UserAvatar from './UserAvatar';
+import { fetchNotifications } from '../services/notificationService';
 
 export const SIDEBAR_WIDTH = 280;
 
@@ -19,6 +22,22 @@ function NavBar() {
 
     const [confirmLogout, setConfirmLogout] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [notifications, setNotifications] = useState({});
+    const loadNotifications = useCallback(async () => {
+        if (!currentUser) return;
+        try {
+            const data = await fetchNotifications();
+            setNotifications(data);
+        } catch (error) {
+            console.error('Could not load notifications:', error);
+        }
+    }, [currentUser]);
+
+    useEffect(() => {
+        (async () => { await loadNotifications(); })();
+        const timer = setInterval(() => { loadNotifications(); }, 30000);
+        return () => clearInterval(timer);
+    }, [loadNotifications, pathname]);
 
     function handleLogout() {
         setConfirmLogout(false);
@@ -30,16 +49,16 @@ function NavBar() {
     const loggedInLinks = [
         { to: '/', label: 'Feed' },
         { to: '/posts/new', label: 'New Post' },
-        { to: '/my-posts', label: 'My Posts' },
+        { to: '/my-posts', label: 'My Posts', count: notifications.comments },
         { to: '/my-pets', label: 'My Pets' },
         { to: '/favorites', label: 'Favorites' },
-        { to: '/messages', label: 'Messages' },
+        { to: '/messages', label: 'Messages', count: notifications.messages },
         { to: '/profile', label: 'Profile' },
         //admin link
         ...(permissions.canManageUsers
             ? [
-                { to: '/users', label: 'Users' },
-                { to: '/admin/badge-requests', label: 'Badge Requests' },
+                { to: '/users', label: 'Users', count: notifications.activationRequests },
+                { to: '/admin/badge-requests', label: 'Badge Requests', count: notifications.badgeRequests },
             ]
             : []),
     ];
@@ -63,6 +82,9 @@ function NavBar() {
                         onClick={() => setDrawerOpen(false)}
                     >
                         <ListItemText primary={link.label} />
+                        {link.count > 0 && (
+                            <Badge badgeContent={link.count} color="error" sx={{ mr: 1.5 }} />
+                        )}
                     </ListItemButton>
                 </ListItem>
             ))}
@@ -94,6 +116,19 @@ function NavBar() {
         </Box>
     );
 
+
+    const welcome = currentUser ? (
+        <Box className="nuzzo-welcome">
+            <UserAvatar user={currentUser} size={40} />
+            <Box sx={{ minWidth: 0 }}>
+                <Typography variant="caption" color="text.secondary">Welcome</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 700 }} noWrap>
+                    {currentUser.fName} {currentUser.lName}
+                </Typography>
+            </Box>
+        </Box>
+    ) : null;
+
     return (
         <>
             {/*DESKTOP*/}
@@ -111,6 +146,7 @@ function NavBar() {
                 }}
             >
                 {brand}
+                {welcome}
                 {navList}
             </Drawer>
 
@@ -132,6 +168,7 @@ function NavBar() {
             >
                 <Box sx={{ width: '80vw', maxWidth: SIDEBAR_WIDTH }} role="presentation">
                     {brand}
+                    {welcome}
                     {navList}
                 </Box>
             </Drawer>

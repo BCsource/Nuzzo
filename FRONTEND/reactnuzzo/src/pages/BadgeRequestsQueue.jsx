@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-    Box, Typography, Paper, Stack, Chip, Button, CircularProgress,
+    Box, Typography, Paper, Stack, Button, CircularProgress,
     Alert, TextField, Divider,
 } from '@mui/material';
 import { fetchPendingBadgeRequests, reviewBadgeRequest, fetchCertificate } from '../services/userService';
-import { BADGE_LABELS } from '../utils/badgeOptions';
+import BadgeChip from '../components/BadgeChip';
+import UserAvatar from '../components/UserAvatar';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 
@@ -67,12 +68,15 @@ function BadgeRequestsQueue() {
                 <Stack spacing={2}>
                     {requests.map((request) => (
                         <Paper key={request.id} variant="outlined" sx={{ p: 2 }}>
-                            <Typography sx={{ fontWeight: 700 }}>
-                                {request.user.fName} {request.user.lName} ({request.user.email})
-                            </Typography>
+                            <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                                <UserAvatar user={request.user} size={40} />
+                                <Typography sx={{ fontWeight: 700 }}>
+                                    {request.user.fName} {request.user.lName} ({request.user.email})
+                                </Typography>
+                            </Stack>
                             <Stack direction="row" sx={{ my: 1, flexWrap: 'wrap', gap: 1 }}>
                                 {request.requestedBadges.map((badge) => (
-                                    <Chip key={badge} label={BADGE_LABELS[badge] || badge} size="small" />
+                                    <BadgeChip key={badge} badge={badge} />
                                 ))}
                             </Stack>
                             <Typography variant="body2" sx={{ mb: 1 }}>{request.message}</Typography>

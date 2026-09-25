@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
 import PostFilters from '../components/PostFilters';
-import PostTable from '../components/PostTable';
+import PostCardList from '../components/PostCardList';
 import { EMPTY_FILTERS, buildPostQuery } from '../utils/postFilters';
 import { fetchPosts, addFavourite, removeFavourite } from '../services/postService';
 import { getErrorMessage } from '../utils/apiErrors';
@@ -54,7 +54,7 @@ function HomePage() {
             ) : posts.length === 0 ? (
                 <Typography color="text.secondary">No posts to show.</Typography>
             ) : (
-                <PostTable posts={posts} onToggleFavourite={handleToggleFavourite} />
+                <PostCardList posts={posts} onToggleFavourite={handleToggleFavourite} />
             )}
         </Box>
     );

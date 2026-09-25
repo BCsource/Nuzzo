@@ -9,6 +9,7 @@ import {
 } from '../utils/validators';
 
 import { Box, Typography, TextField, Button, Alert, Stack } from '@mui/material';
+import ImageUploadField from '../components/ImageUploadField';
 
 function EditProfile() {
     const { currentUser, refreshUserData } = useAuth();
@@ -31,6 +32,7 @@ function EditProfile() {
     });
 
     const newPassword = watch('password', '');
+    const [profilePicture, setProfilePicture] = useState(currentUser?.profilePicture || null);
     const [serverError, setServerError] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
@@ -43,6 +45,7 @@ function EditProfile() {
                 lName: data.lName.trim(),
                 bio: data.bio.trim(),
                 dateOfBirth: data.dateOfBirth,
+                profilePicture: profilePicture,
             };
             // no caso do user quiser alterar pw
             if (data.password) {
@@ -63,6 +66,12 @@ function EditProfile() {
             <Typography variant="h4" gutterBottom>Edit Profile</Typography>
 
             <Stack spacing={2}>
+                <ImageUploadField
+                    label="Profile picture"
+                    value={profilePicture}
+                    onChange={setProfilePicture}
+                />
+
                 <TextField
                     label="First Name"
                     fullWidth

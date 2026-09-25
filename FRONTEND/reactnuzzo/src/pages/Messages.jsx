@@ -6,6 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ConversationList from '../components/ConversationList';
 import ChatWindow from '../components/ChatWindow';
 import { fetchMyConversations } from '../services/messageService';
+import { markMessagesSeen } from '../services/notificationService';
 import { getErrorMessage } from '../utils/apiErrors';
 
 const REFRESH_EVERY_MS = 5000;
@@ -22,6 +23,7 @@ function Messages() {
         try {
             const data = await fetchMyConversations();
             setConversations(data);
+            await markMessagesSeen();
             setError('');
         } catch (error) {
             setError(getErrorMessage(error, 'Could not load your conversations.'));

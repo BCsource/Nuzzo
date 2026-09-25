@@ -4,6 +4,8 @@ import { fetchPetById } from '../services/petProfileService';
 import HealthHistoryList from '../components/HealthHistoryList';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
+import { GENDER_LABELS } from '../utils/petOptions';
+import UserAvatar from '../components/UserAvatar';
 
 import {
     Box, Typography, Chip, Stack, Card, CardContent, Button,
@@ -61,7 +63,10 @@ function ViewPetProfile() {
             <Card sx={{ mb: 2 }}>
                 <CardContent>
                     <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Typography variant="h4" gutterBottom>{pet.name}</Typography>
+                        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1 }}>
+                            <UserAvatar user={pet} size={72} />
+                            <Typography variant="h4">{pet.name}</Typography>
+                        </Stack>
                         {canEdit && (
                             <Button component={RouterLink} to={`/pets/${pet.id}/edit`} startIcon={<EditIcon />} size="small">
                                 Edit
@@ -70,7 +75,8 @@ function ViewPetProfile() {
                     </Stack>
 
                     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                        <Chip label={pet.species} color="primary" />
+                        <Chip label={pet.species} className="nz-chip nz-chip--species" />
+                        <Chip label={GENDER_LABELS[pet.gender] || pet.gender} className={`nz-chip nz-chip--${pet.gender}`} />
                         <Chip label={pet.breed} variant="outlined" />
                         <Chip label={pet.isSpayed ? 'Spayed' : 'Not spayed'} variant="outlined" />
                         <Chip label={pet.isVaccinated ? 'Vaccinated' : 'Not vaccinated'} variant="outlined" />

@@ -5,8 +5,10 @@ import {
     Card, CardContent, CardActions, Chip,
 } from '@mui/material';
 import ConfirmDialog from '../components/ConfirmDialog';
+import UserAvatar from '../components/UserAvatar';
 import { fetchMyPets, deletePet } from '../services/petProfileService';
 import { getErrorMessage } from '../utils/apiErrors';
+import { GENDER_LABELS } from '../utils/petOptions';
 
 function MyPets() {
     const [pets, setPets] = useState([]);
@@ -59,10 +61,16 @@ function MyPets() {
                     {pets.map((pet) => (
                         <Card key={pet.id}>
                             <CardContent>
-                                <Typography variant="h6">{pet.name}</Typography>
-                                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                                    <Chip label={pet.species} size="small" />
-                                    <Chip label={pet.breed} size="small" variant="outlined" />
+                                <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                                    <UserAvatar user={pet} size={56} />
+                                    <Box>
+                                        <Typography variant="h6">{pet.name}</Typography>
+                                        <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 0.5 }}>
+                                            <Chip label={pet.species} size="small" className="nz-chip nz-chip--species" />
+                                            <Chip label={pet.breed} size="small" variant="outlined" className="nz-chip nz-chip--category" />
+                                            <Chip label={GENDER_LABELS[pet.gender] || pet.gender} size="small" className={`nz-chip nz-chip--${pet.gender}`} />
+                                        </Stack>
+                                    </Box>
                                 </Stack>
                             </CardContent>
                             <CardActions>

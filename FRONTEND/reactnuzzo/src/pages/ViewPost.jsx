@@ -4,10 +4,15 @@ import { fetchPostById, addFavourite, removeFavourite } from '../services/postSe
 import CommentThread from '../components/CommentThread';
 import { useAuth } from '../context/useAuth';
 import { getErrorMessage } from '../utils/apiErrors';
-import { postTypeLabel, formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
+import { formatPrice, formatDate, authorLabel } from '../utils/postDisplay';
+import UserAvatar from '../components/UserAvatar';
+import PostTypeChip from '../components/PostTypeChip';
+import CategoryChip from '../components/CategoryChip';
+import { imageUrl } from '../services/apiClient';
+import { getVideoEmbedUrl } from '../utils/videoEmbed';
 
 import {
-    Box, Typography, Chip, Stack, Card, CardContent, Button,
+    Box, Typography, Stack, Card, CardContent, Button,
     CircularProgress, Alert, IconButton, Tooltip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -15,6 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 function ViewPost() {
     const { postId } = useParams();
@@ -97,22 +103,50 @@ function ViewPost() {
                         </Stack>
                     </Stack>
 
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Published by {authorLabel(post.author)} • {formatDate(post.createdAt)}
-                        {post.updatedAt && ` • edited ${formatDate(post.updatedAt)}`}
-                    </Typography>
+                    <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 2 }}>
+                        <UserAvatar user={post.author} size={40} />
+                        <Typography variant="body2" color="text.secondary">
+                            Published by {authorLabel(post.author)} • {formatDate(post.createdAt)}
+                            {post.updatedAt && ` • edited ${formatDate(post.updatedAt)}`}
+                        </Typography>
+                    </Stack>
+
+                    {getVideoEmbedUrl(post.videoUrl) && (
+                        <Box className="nz-post-video" sx={{ mb: 2 }}>
+                            <iframe
+                                src={getVideoEmbedUrl(post.videoUrl)}
+                                title={post.title}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                                allowFullScreen
+                            />
+                        </Box>
+                    )}
+                    {post.image && (
+                        <Box
+                            component="img"
+                            src={imageUrl(post.image)}
+                            alt={post.title}
+                            sx={{ width: '100%', borderRadius: 2, mb: 2, display: 'block' }}
+                        />
+                    )}
 
                     <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                        <Chip label={postTypeLabel(post.postType)} color="primary" />
-                        {post.category && <Chip label={post.category} variant="outlined" />}
-                        {post.price !== null && post.price !== undefined && (
-                            <Chip label={formatPrice(post.price)} variant="outlined" />
-                        )}
+                        <PostTypeChip postType={post.postType} />
+                        {post.category && <CategoryChip category={post.category} />}
                     </Stack>
 
                     <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 1 }}>
                         {post.description}
                     </Typography>
+
+                    {post.postType === 'product' && post.price !== null && post.price !== undefined && (
+                        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', my: 2 }}>
+                            <Typography className="nz-price nz-price--lg">{formatPrice(post.price)}</Typography>
+                            <Button variant="contained" startIcon={<ShoppingCartIcon />} component={RouterLink} to="/coming-soon">
+                                Buy
+                            </Button>
+                        </Stack>
+                    )}
 
                     <Typography variant="caption" color="text.secondary">
                         {post.views ?? 0} views

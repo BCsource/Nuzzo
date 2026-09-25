@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { disableAccount } from '../services/userService';
-import { BADGE_LABELS } from '../utils/badgeOptions';
+
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 import ConfirmDialog from '../components/ConfirmDialog';
+import UserAvatar from '../components/UserAvatar';
+import BadgeChip from '../components/BadgeChip';
+import AdminChip from '../components/AdminChip';
 
-import { Box, Typography, Card, CardContent, Stack, Chip, Button, Alert } from '@mui/material';
+import { Box, Typography, Card, CardContent, Stack, Button, Alert } from '@mui/material';
 
 function Profile() {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, permissions, logout } = useAuth();
     const navigate = useNavigate();
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [error, setError] = useState('');
@@ -36,9 +39,17 @@ function Profile() {
 
             <Card sx={{ mb: 2 }}>
                 <CardContent>
-                    <Typography variant="h6">
-                        {currentUser.fName} {currentUser.lName}
-                    </Typography>
+                    <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1.5 }}>
+                        <UserAvatar user={currentUser} size={72} />
+                        <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="h6">
+                                {currentUser.fName} {currentUser.lName}
+                            </Typography>
+                            {permissions.canManageUsers && (
+                                <AdminChip isMasterAdmin={permissions.canPromoteAdmins} />
+                            )}
+                        </Box>
+                    </Stack>
                     <Typography variant="body2" color="text.secondary">{currentUser.email}</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                         Date of birth: {formatDate(currentUser.dateOfBirth)}
@@ -50,7 +61,7 @@ function Profile() {
 
                     <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
                         {(currentUser.badges || []).map((badge) => (
-                            <Chip key={badge} label={BADGE_LABELS[badge] || badge} size="small" />
+                            <BadgeChip key={badge} badge={badge} />
                         ))}
                     </Stack>
                 </CardContent>

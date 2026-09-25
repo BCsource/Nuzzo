@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Box, Typography, CircularProgress, Alert } from '@mui/material';
-import PostTable from '../components/PostTable';
+import PostCardList from '../components/PostCardList';
 import { fetchFavouritePosts, removeFavourite } from '../services/postService';
 import { getErrorMessage } from '../utils/apiErrors';
 
@@ -46,7 +46,7 @@ function Favorites() {
             ) : posts.length === 0 ? (
                 <Typography color="text.secondary">You have no favourite posts yet.</Typography>
             ) : (
-                <PostTable posts={posts} onToggleFavourite={handleRemove} />
+                <PostCardList posts={posts} onToggleFavourite={handleRemove} />
             )}
         </Box>
     );

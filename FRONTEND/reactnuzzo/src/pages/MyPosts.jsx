@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Typography, Button, CircularProgress, Alert, Stack } from '@mui/material';
-import PostTable from '../components/PostTable';
+import PostCardList from '../components/PostCardList';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { fetchMyPosts, deletePost } from '../services/postService';
+import { markCommentsSeen } from '../services/notificationService';
 import { getErrorMessage } from '../utils/apiErrors';
 
 function MyPosts() {
@@ -16,6 +17,7 @@ function MyPosts() {
         try {
             const data = await fetchMyPosts();
             setPosts(data);
+            await markCommentsSeen();
             setError('');
         } catch (error) {
             setError(getErrorMessage(error, 'Could not load your posts.'));
@@ -53,7 +55,7 @@ function MyPosts() {
             ) : posts.length === 0 ? (
                 <Typography color="text.secondary">You haven't published any posts yet.</Typography>
             ) : (
-                <PostTable posts={posts} onDelete={(postId) => setPendingDeleteId(postId)} />
+                <PostCardList posts={posts} onDelete={(postId) => setPendingDeleteId(postId)} />
             )}
 
             <ConfirmDialog

@@ -193,8 +193,6 @@
   color: var(--nz-danger);
 }
 
-/* a favourited heart */
-
 /* TAGS AND BADGES*/
 
 .nz-tag {
@@ -216,7 +214,7 @@
   color: var(--nz-on-accent);
 }
 
-/* Health and Care — the record-keeping post types */
+/* Health and Care  */
 .nz-tag--health {
   background: var(--nz-success-tint);
   color: var(--nz-success);
@@ -635,4 +633,206 @@
     font-size: 24px;
     line-height: 30px;
   }
+}
+
+/* CHIPS*/
+
+.nz-chip {
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+/* Tipos de post */
+.nz-chip--regular {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-ink) !important;
+}
+
+.nz-chip--health {
+  background-color: var(--nz-danger-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+.nz-chip--care {
+  background-color: var(--nz-accent-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+.nz-chip--product {
+  background-color: var(--nz-warning-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+.nz-chip--adoption {
+  background-color: var(--nz-earth-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+.nz-chip--poll {
+  background-color: var(--nz-success-tint) !important;
+  color: var(--nz-brand-pressed) !important;
+}
+
+/* Badges */
+.nz-chip--aficionado {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-ink) !important;
+}
+
+.nz-chip--health.nz-chip,
+.nz-chip--supplier {
+  font-weight: 600;
+}
+
+.nz-chip--supplier {
+  background-color: var(--nz-warning-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+/* Admins */
+.nz-chip--admin {
+  background-color: var(--nz-brand) !important;
+  color: var(--nz-on-brand) !important;
+}
+
+.nz-chip--admin .MuiChip-icon,
+.nz-chip--master-admin .MuiChip-icon {
+  color: inherit !important;
+}
+
+.nz-chip--master-admin {
+  background-color: var(--nz-earth) !important;
+  color: var(--nz-on-earth) !important;
+}
+
+/* states */
+.nz-chip--approved {
+  background-color: var(--nz-success) !important;
+  color: var(--nz-on-success) !important;
+}
+
+.nz-chip--rejected {
+  background-color: var(--nz-danger) !important;
+  color: var(--nz-on-danger) !important;
+}
+
+.nz-chip--pending {
+  background-color: var(--nz-warning-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+/* Pets */
+.nz-chip--species {
+  background-color: var(--nz-brand) !important;
+  color: var(--nz-on-brand) !important;
+}
+
+.nz-chip--female {
+  background-color: var(--nz-earth-tint) !important;
+  color: var(--nz-earth-pressed) !important;
+}
+
+.nz-chip--male {
+  background-color: var(--nz-brand-tint) !important;
+  color: var(--nz-brand-pressed) !important;
+}
+
+.nz-chip--unknown {
+  background-color: var(--nz-surface-field) !important;
+  color: var(--nz-ink-muted) !important;
+}
+
+.nz-chip--category,
+.nz-chip--yours {
+  border-color: var(--nz-border) !important;
+  color: var(--nz-ink-muted) !important;
+}
+
+/* POST CARDS*/
+
+.nz-post-card__title {
+  display: block;
+  color: var(--nz-ink);
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.nz-post-card__title:hover {
+  color: var(--nz-brand);
+  text-decoration: underline;
+}
+
+.nz-post-card__text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nz-post-card__video,
+.nz-post-video {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background-color: var(--nz-ink);
+}
+
+.nz-post-card__video iframe,
+.nz-post-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* PRICES */
+
+.nz-price {
+  font-family: var(--nz-font-display);
+  font-size: 1.25rem;
+  color: var(--nz-brand);
+}
+
+.nz-price--lg {
+  font-size: 1.75rem;
+}
+
+/* CAHT BUBBLES */
+
+.nz-bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 16px;
+}
+
+.nz-bubble--mine {
+  background-color: var(--nz-brand);
+  color: var(--nz-on-brand);
+  border-bottom-right-radius: 4px;
+}
+
+.nz-bubble--theirs {
+  background-color: var(--nz-surface);
+  color: var(--nz-ink);
+  border: 1px solid var(--nz-border);
+  border-bottom-left-radius: 4px;
+}
+
+.nz-bubble__time {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* USER SALUTATION */
+
+.nuzzo-welcome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 var(--nz-space-3) var(--nz-space-3);
+  border-bottom: 1px solid var(--nz-border);
+  margin-bottom: var(--nz-space-2);
 }

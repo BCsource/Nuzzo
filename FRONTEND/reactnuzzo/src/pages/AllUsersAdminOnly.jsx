@@ -7,7 +7,11 @@ import {
 import { fetchAllUsers, promoteToAdmin, disableAccount, reactivateAccount } from '../services/userService';
 import { useAuth } from '../context/useAuth';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { BADGE_LABELS } from '../utils/badgeOptions';
+import UserAvatar from '../components/UserAvatar';
+import BadgeChip from '../components/BadgeChip';
+import AdminChip from '../components/AdminChip';
+import { fetchPendingActivationRequests, markActivationHandled } from '../services/activationService';
+
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
 
@@ -27,6 +31,7 @@ function AllUsersAdminOnly() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [pendingDisableId, setPendingDisableId] = useState(null);
+    const [activationRequests, setActivationRequests] = useState([]);
 
     const load = useCallback(async () => {
         try {
@@ -41,6 +46,26 @@ function AllUsersAdminOnly() {
     }, [sort]);
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
+
+    const loadActivationRequests = useCallback(async () => {
+        try {
+            const data = await fetchPendingActivationRequests();
+            setActivationRequests(data);
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not load activation requests.'));
+        }
+    }, []);
+
+    useEffect(() => { (async () => { await loadActivationRequests(); })(); }, [loadActivationRequests]);
+
+    async function handleActivationHandled(requestId) {
+        try {
+            await markActivationHandled(requestId);
+            setActivationRequests((prev) => prev.filter((request) => request.id !== requestId));
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not update this request.'));
+        }
+    }
 
     async function handlePromote(userId) {
         setSuccess('');
@@ -92,6 +117,34 @@ function AllUsersAdminOnly() {
             </FormControl>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            {activationRequests.length > 0 && (
+                <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+                    <Typography variant="h6" gutterBottom>Account activation requests</Typography>
+                    <Stack spacing={1}>
+                        {activationRequests.map((request) => (
+                            <Stack
+                                key={request.id}
+                                direction="row"
+                                spacing={2}
+                                sx={{ alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}
+                            >
+                                <Box sx={{ minWidth: 0 }}>
+                                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{request.email}</Typography>
+                                    {request.message && (
+                                        <Typography variant="body2" color="text.secondary">{request.message}</Typography>
+                                    )}
+                                    <Typography variant="caption" color="text.secondary">
+                                        {formatDate(request.createdAt, true)}
+                                    </Typography>
+                                </Box>
+                                <Button size="small" onClick={() => handleActivationHandled(request.id)}>
+                                    Mark as handled
+                                </Button>
+                            </Stack>
+                        ))}
+                    </Stack>
+                </Paper>
+            )}
             {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
             {loading ? (
@@ -115,21 +168,26 @@ function AllUsersAdminOnly() {
                         <TableBody>
                             {users.map((user) => (
                                 <TableRow key={user.id} hover>
-                                    <TableCell>{user.fName} {user.lName}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                                            <UserAvatar user={user} size={32} />
+                                            <span>{user.fName} {user.lName}</span>
+                                        </Stack>
+                                    </TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{formatDate(user.dateOfBirth)}</TableCell>
                                     <TableCell>
                                         <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
                                             {user.badges.map((badge) => (
-                                                <Chip key={badge} label={BADGE_LABELS[badge] || badge} size="small" variant="outlined" />
+                                                <BadgeChip key={badge} badge={badge} />
                                             ))}
                                         </Stack>
                                     </TableCell>
-                                    <TableCell>{user.isAdmin ? <Chip label="Admin" size="small" color="primary" /> : '—'}</TableCell>
+                                    <TableCell>{user.isAdmin ? <AdminChip /> : '—'}</TableCell>
                                     <TableCell>
                                         {user.disabled
-                                            ? <Chip label="Deactivated" size="small" color="error" variant="outlined" />
-                                            : <Chip label="Active" size="small" variant="outlined" />}
+                                            ? <Chip label="Deactivated" size="small" className="nz-chip nz-chip--rejected" />
+                                            : <Chip label="Active" size="small" className="nz-chip nz-chip--approved" />}
                                     </TableCell>
                                     <TableCell>
                                         <Stack direction="row" spacing={1}>

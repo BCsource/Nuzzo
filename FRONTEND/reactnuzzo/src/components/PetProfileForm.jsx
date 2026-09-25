@@ -2,7 +2,9 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { SPECIES_OPTIONS, MIN_WEIGHT_KG, MAX_WEIGHT_KG } from '../utils/petOptions';
+import { SPECIES_OPTIONS, GENDER_OPTIONS, MIN_WEIGHT_KG, MAX_WEIGHT_KG } from '../utils/petOptions';
+import ImageUploadField from './ImageUploadField';
+import { useState } from 'react';
 
 import {
     Box, Typography, TextField, Button, FormControl, InputLabel, Select,
@@ -12,6 +14,7 @@ import {
 const EMPTY_PET = {
     name: '',
     species: '',
+    gender: '',
     breed: '',
     weight: '',
     isSpayed: false,
@@ -25,6 +28,7 @@ function todayISO() {
 
 function PetProfileForm({ mode = 'create', defaultValues, submitting = false, serverError = '', onSubmit }) {
     const navigate = useNavigate();
+    const [profilePicture, setProfilePicture] = useState(defaultValues?.profilePicture || null);
     const {
         register,
         handleSubmit,
@@ -42,6 +46,8 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
         onSubmit({
             name: data.name.trim(),
             species: data.species,
+            gender: data.gender,
+            profilePicture: profilePicture,
             breed: data.breed.trim(),
             weight: Number(data.weight),
             isSpayed: !!data.isSpayed,
@@ -57,10 +63,19 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
             </Typography>
 
             <Stack spacing={2}>
+                <ImageUploadField
+                    label="Pet photo"
+                    value={profilePicture}
+                    onChange={setProfilePicture}
+                />
+
                 <TextField
                     label="Name"
                     fullWidth
-                    {...register('name', { required: 'Your pet needs a name.' })}
+                    {...register('name', {
+                        required: 'Your pet needs a name.',
+                        minLength: { value: 2, message: "Your pet's name must be at least 2 characters long." },
+                    })}
                     error={!!errors.name}
                     helperText={errors.name?.message}
                 />
@@ -78,6 +93,23 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
                                 ))}
                             </Select>
                             <FormHelperText>{errors.species?.message}</FormHelperText>
+                        </FormControl>
+                    )}
+                />
+
+                <Controller
+                    name="gender"
+                    control={control}
+                    rules={{ required: "Choose your pet's gender." }}
+                    render={({ field }) => (
+                        <FormControl fullWidth error={!!errors.gender}>
+                            <InputLabel id="gender-label">Gender</InputLabel>
+                            <Select labelId="gender-label" label="Gender" {...field}>
+                                {GENDER_OPTIONS.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>{errors.gender?.message}</FormHelperText>
                         </FormControl>
                     )}
                 />
@@ -155,3 +187,4 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
 }
 
 export default PetProfileForm;
+

@@ -32,3 +32,10 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
+
+export function imageUrl(imageId) {
+    if (!imageId) {
+        return null;
+    }
+    return `${API_URL}/images/${imageId}`;
+}

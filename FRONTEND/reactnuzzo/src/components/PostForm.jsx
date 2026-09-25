@@ -1,5 +1,6 @@
 // Formulário partilhado entre New Post e Edit Post
 
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
@@ -8,6 +9,8 @@ import {
     MIN_TITLE_LENGTH, MAX_TITLE_LENGTH, MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH,
 } from '../utils/postOptions';
 import { formatPrice, postTypeLabel } from '../utils/postDisplay';
+import ImageUploadField from './ImageUploadField';
+import { getVideoEmbedUrl } from '../utils/videoEmbed';
 
 import {
     Box, Typography, TextField, Button, FormControl, InputLabel, Select,
@@ -20,6 +23,7 @@ const EMPTY_POST = {
     description: '',
     category: '',
     price: '',
+    videoUrl: '',
 };
 
 
@@ -33,6 +37,7 @@ function PostForm({
     onSubmit,
 }) {
     const navigate = useNavigate();
+    const [image, setImage] = useState(defaultValues?.image || null);
     const { permissions } = useAuth();
     const typeOptions = permissions.allowedPostTypes || [];
     const isEdit = mode === 'edit';
@@ -62,6 +67,8 @@ function PostForm({
             description: data.description.trim(),
             category: data.category,
             price: !isProduct || data.price === '' ? null : Number(data.price),
+            image: image,
+            videoUrl: data.videoUrl.trim(),
         });
     }
 
@@ -142,6 +149,29 @@ function PostForm({
                                 <FormHelperText>{errors.category?.message}</FormHelperText>
                             </FormControl>
                         )}
+                    />
+                )}
+
+                {!isEdit && (
+                    <ImageUploadField
+                        label="Post image (optional)"
+                        value={image}
+                        onChange={setImage}
+                        round={false}
+                    />
+                )}
+
+                {!isEdit && (
+                    <TextField
+                        label="Video link (optional)"
+                        placeholder="https://www.youtube.com/watch?v=…"
+                        fullWidth
+                        {...register('videoUrl', {
+                            validate: (value) => !value || getVideoEmbedUrl(value) !== null
+                                || 'Paste a YouTube or Vimeo link.',
+                        })}
+                        error={!!errors.videoUrl}
+                        helperText={errors.videoUrl?.message || 'The video stays on YouTube or Vimeo; we only save the link.'}
                     />
                 )}
 

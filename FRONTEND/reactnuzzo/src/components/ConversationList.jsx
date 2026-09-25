@@ -1,5 +1,6 @@
 
-import { List, ListItemButton, ListItemText, Typography, Divider, Box } from '@mui/material';
+import { List, ListItemButton, ListItemText, Typography, Divider, Box, ListItemAvatar } from '@mui/material';
+import UserAvatar from './UserAvatar';
 import { formatDate } from '../utils/postDisplay';
 
 function ConversationList({ conversations, selectedKey, onSelect }) {
@@ -24,6 +25,9 @@ function ConversationList({ conversations, selectedKey, onSelect }) {
                     <Box key={key}>
                         {index > 0 && <Divider />}
                         <ListItemButton selected={key === selectedKey} onClick={() => onSelect(conversation)}>
+                            <ListItemAvatar>
+                                <UserAvatar user={other} size={40} />
+                            </ListItemAvatar>
                             <ListItemText
                                 primary={other ? `${other.fName} ${other.lName}` : 'Removed user'}
                                 secondary={
