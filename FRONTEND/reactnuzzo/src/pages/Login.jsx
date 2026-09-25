@@ -92,7 +92,7 @@ function Login() {
 
                     <Typography variant="body2" align="center">
                         Not registered?{' '}
-                        <Link component={RouterLink} to="/register">Register</Link>
+                        <Link component={RouterLink} to="/register">Register.</Link>
                     </Typography>
 
                     <Typography variant="body2" align="center">
@@ -101,7 +101,7 @@ function Login() {
 
                     <Typography variant="body2" align="center">
                         Can&apos;t log in?{' '}
-                        <Link component={RouterLink} to="/request-activation">Request account activation</Link>
+                        <Link component={RouterLink} to="/request-activation">Request account activation.</Link>
                     </Typography>
                 </Stack>
             </Box>

@@ -118,7 +118,7 @@ function PetProfileForm({ mode = 'create', defaultValues, submitting = false, se
 
                 <TextField
                     label="About your pet (optional)"
-                    placeholder="Manias, historial, o que quiseres contar"
+                    placeholder="Habits, personality type..."
                     fullWidth
                     multiline
                     minRows={3}

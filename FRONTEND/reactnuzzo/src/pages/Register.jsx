@@ -172,7 +172,7 @@ function Register() {
                                         <Typography variant="body2">
                                             I accept the{' '}
                                             <Link component={RouterLink} to="/terms" target="_blank" rel="noreferrer">
-                                                Terms of Service
+                                                Terms of Service.
                                             </Link>
                                         </Typography>
                                     }
@@ -194,7 +194,7 @@ function Register() {
                                         <Typography variant="body2">
                                             I accept the{' '}
                                             <Link component={RouterLink} to="/privacy" target="_blank" rel="noreferrer">
-                                                Privacy Policy
+                                                Privacy Policy.
                                             </Link>
                                         </Typography>
                                     }

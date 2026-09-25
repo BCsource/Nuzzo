@@ -59,8 +59,7 @@ function Profile() {
                 subtitle={currentUser.email}
                 chips={chips}
                 facts={[
-                    { label: 'Date of birth', value: formatDate(currentUser.dateOfBirth) },
-                    { label: 'Member since', value: formatDate(currentUser.createdAt) },
+                    { label: 'Date of birth', value: formatDate(currentUser.dateOfBirth) }
                 ]}
                 actions={[
                     <Button key="edit" variant="contained" component={RouterLink} to="/profile/edit">
