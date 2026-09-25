@@ -27,5 +27,28 @@ exports.sendPasswordResetEmail = (email, resetToken) => {
         to: email,
         subject: 'Reset your Nuzzo password',
         text: `Hi!\n\nTo choose a new password, open this link:\n${resetLink}\n\nThe link works for one hour. If it wasn't you, just ignore this email.\n\nNuzzo`,
-    });
+    },
+
+    );
 };
+
+/* var transport = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+  }
+});
+
+transport.sendMail({
+  from: process.env.SMTP_FROM || 'Nuzzo <no-reply@nuzzo.pt>',
+  to: email,
+  subject: 'Reset your Nuzzo password',
+  text: `Hi!\n\nTo choose a new password, open this link:\n${resetLink}\n\nThe link works for one hour. If it wasn't you, just ignore this email.\n\nNuzzo`,
+}, (error, info) => {
+  if (error) {
+    return console.log(error);
+  }
+  console.log("Message sent: %s", info.messageId);
+}); */
