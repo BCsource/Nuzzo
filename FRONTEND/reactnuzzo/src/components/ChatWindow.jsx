@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
     Box, Typography, TextField, Button, Stack, Alert, CircularProgress, Paper, Link,
 } from '@mui/material';
-import { fetchConversation, sendMessage } from '../services/messageService';
+import { fetchConversation, sendMessage, markConversationSeen } from '../services/messageService';
 import { useAuth } from '../context/useAuth';
 import UserAvatar from './UserAvatar';
 import { getErrorMessage } from '../utils/apiErrors';
@@ -28,6 +28,7 @@ function ChatWindow({ postId, participantId, onMessageSent }) {
             const data = await fetchConversation(postId, participantId);
             setConversation(data);
             setError('');
+            await markConversationSeen(postId, participantId);
         } catch (error) {
             setError(getErrorMessage(error, 'Could not load this conversation.'));
         } finally {

@@ -55,6 +55,12 @@ const PetSchema = new Schema({
         trim: true,
         maxLength: [10000, 'The bio is too long.'],
     },
+    favouritesCount: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0,
+    },
     profilePicture: {
         type: Schema.Types.ObjectId,
         ref: 'image',

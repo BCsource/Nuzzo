@@ -115,6 +115,10 @@ function Footer() {
                 <Link component={RouterLink} to="/privacy" variant="caption" underline="hover" color="text.secondary">
                     Privacy Policy
                 </Link>
+                <Typography component="span" variant="caption" color="text.secondary">·</Typography>
+                <Link component={RouterLink} to="/contact" variant="caption" underline="hover" color="text.secondary">
+                    Contact us
+                </Link>
             </Stack>
         </Box>
     );

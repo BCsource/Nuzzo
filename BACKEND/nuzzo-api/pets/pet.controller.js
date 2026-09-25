@@ -4,6 +4,10 @@ const { isAdmin, isProfessional } = require('../../shared/permissions');
 const addPetPermissions = (pet, user) => {
     const petObject = pet.toJSON();
     const isOwner = pet.owner.toString() === user.id;
+    const favouriteIds = user.favouritePets.map((id) => id.toString());
+
+    petObject.isOwner = isOwner;
+    petObject.isFavourite = favouriteIds.includes(pet._id.toString());
 
     petObject.permissions = {
         canEdit: isOwner || isAdmin(user),
@@ -242,5 +246,79 @@ exports.getPetsByOwner = (req, res) => {
         })
         .catch(() => {
             res.status(500).json({ message: 'Could not load these pets.' });
+        });
+};
+
+exports.addPetFavourite = (req, res) => {
+    const user = req.user;
+    const favouriteIds = user.favouritePets.map((id) => id.toString());
+
+    PetModel.findById(req.params.id)
+        .then((pet) => {
+            if (!pet) {
+                res.status(404).json({ message: 'Pet not found.' });
+                return null;
+            }
+            if (!favouriteIds.includes(pet._id.toString())) {
+                user.favouritePets.push(pet._id);
+                pet.favouritesCount = pet.favouritesCount + 1;
+            }
+            return pet.save()
+                .then(() => user.save());
+        })
+        .then((savedUser) => {
+            if (!savedUser) return;
+            res.status(200).json({ message: 'Added to favourites.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not add to favourites.' });
+        });
+};
+
+exports.removePetFavourite = (req, res) => {
+    const user = req.user;
+    const wasFavourite = user.favouritePets.some((id) => id.toString() === req.params.id);
+
+    user.favouritePets = user.favouritePets.filter((id) => id.toString() !== req.params.id);
+
+    user.save()
+        .then(() => {
+            if (!wasFavourite) {
+                return null;
+            }
+            return PetModel.findById(req.params.id)
+                .then((pet) => {
+                    if (!pet || pet.favouritesCount === 0) {
+                        return null;
+                    }
+                    pet.favouritesCount = pet.favouritesCount - 1;
+                    return pet.save();
+                });
+        })
+        .then(() => {
+            res.status(200).json({ message: 'Removed from favourites.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not remove from favourites.' });
+        });
+};
+
+exports.getFavouritePets = (req, res) => {
+    const favouriteIds = req.user.favouritePets.map((id) => id.toString());
+
+    PetModel.find()
+        .select('-healthHistory')
+        .sort({ createdAt: 'desc' })
+        .then((pets) => {
+            const result = [];
+            pets.forEach((pet) => {
+                if (favouriteIds.includes(pet._id.toString())) {
+                    result.push(addPetPermissions(pet, req.user));
+                }
+            });
+            res.status(200).json(result);
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not load your favourite pets.' });
         });
 };

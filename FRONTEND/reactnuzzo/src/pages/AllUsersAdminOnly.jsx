@@ -9,9 +9,11 @@ import { fetchAllUsers, promoteToAdmin, disableAccount, reactivateAccount } from
 import { useAuth } from '../context/useAuth';
 import ConfirmDialog from '../components/ConfirmDialog';
 import UserAvatar from '../components/UserAvatar';
+import { useMediaQuery, useTheme, Card, CardContent, CardActions } from '@mui/material';
 import BadgeChip from '../components/BadgeChip';
 import AdminChip from '../components/AdminChip';
 import { fetchPendingActivationRequests, markActivationHandled } from '../services/activationService';
+import { fetchPendingContactMessages, markContactHandled } from '../services/contactService';
 
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
@@ -25,6 +27,9 @@ const USER_SORT_OPTIONS = [
 ];
 
 function AllUsersAdminOnly() {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     const { currentUser, permissions } = useAuth();
     const [users, setUsers] = useState([]);
     const [sort, setSort] = useState('fName:asc');
@@ -33,6 +38,7 @@ function AllUsersAdminOnly() {
     const [success, setSuccess] = useState('');
     const [pendingDisableId, setPendingDisableId] = useState(null);
     const [activationRequests, setActivationRequests] = useState([]);
+    const [contactMessages, setContactMessages] = useState([]);
 
     const load = useCallback(async () => {
         try {
@@ -58,6 +64,27 @@ function AllUsersAdminOnly() {
     }, []);
 
     useEffect(() => { (async () => { await loadActivationRequests(); })(); }, [loadActivationRequests]);
+
+    // mensagens da pg contact us.
+    const loadContactMessages = useCallback(async () => {
+        try {
+            const data = await fetchPendingContactMessages();
+            setContactMessages(data);
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not load contact messages.'));
+        }
+    }, []);
+
+    useEffect(() => { (async () => { await loadContactMessages(); })(); }, [loadContactMessages]);
+
+    async function handleContactHandled(messageId) {
+        try {
+            await markContactHandled(messageId);
+            setContactMessages((prev) => prev.filter((message) => message.id !== messageId));
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not update this message.'));
+        }
+    }
 
     async function handleActivationHandled(requestId) {
         try {
@@ -146,6 +173,41 @@ function AllUsersAdminOnly() {
                     </Stack>
                 </Paper>
             )}
+
+            {contactMessages.length > 0 && (
+                <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+                    <Typography variant="h6" gutterBottom>Contact messages</Typography>
+                    <Stack spacing={2}>
+                        {contactMessages.map((message) => (
+                            <Box key={message.id}>
+                                <Stack
+                                    direction="row"
+                                    spacing={2}
+                                    sx={{ alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap' }}
+                                >
+                                    <Box sx={{ minWidth: 0 }}>
+                                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                            {message.subject}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary" display="block">
+                                            {message.sender
+                                                ? `${message.sender.fName} ${message.sender.lName} · ${message.sender.email}`
+                                                : 'Removed user'}
+                                            {' · '}{message.reason}{' · '}{formatDate(message.createdAt, true)}
+                                        </Typography>
+                                        <Typography variant="body2" className="nz-user-text" sx={{ mt: 0.5 }}>
+                                            {message.content}
+                                        </Typography>
+                                    </Box>
+                                    <Button size="small" onClick={() => handleContactHandled(message.id)}>
+                                        Mark as handled
+                                    </Button>
+                                </Stack>
+                            </Box>
+                        ))}
+                    </Stack>
+                </Paper>
+            )}
             {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
             {loading ? (
@@ -153,61 +215,100 @@ function AllUsersAdminOnly() {
                     <CircularProgress />
                 </Box>
             ) : (
-                <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-                    <Table size="small" sx={{ minWidth: 760 }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Date of birth</TableCell>
-                                <TableCell>Badges</TableCell>
-                                <TableCell>Admin</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {users.map((user) => (
-                                <TableRow key={user.id} hover>
-                                    <TableCell>
-                                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                                            <UserAvatar user={user} size={32} />
-                                            <span>{user.fName} {user.lName}</span>
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>{formatDate(user.dateOfBirth)}</TableCell>
-                                    <TableCell>
-                                        <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
-                                            {user.badges.map((badge) => (
-                                                <BadgeChip key={badge} badge={badge} />
-                                            ))}
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell>{user.isAdmin ? <AdminChip /> : '—'}</TableCell>
-                                    <TableCell>
+                isMobile ? (
+                    <Stack spacing={2}>
+                        {users.map((user) => (
+                            <Card key={user.id} variant="outlined">
+                                <CardContent>
+                                    <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                                        <UserAvatar user={user} size={40} />
+                                        <Box sx={{ minWidth: 0 }}>
+                                            <Typography sx={{ fontWeight: 700 }}>{user.fName} {user.lName}</Typography>
+                                            <Typography variant="caption" color="text.secondary">{user.email}</Typography>
+                                        </Box>
+                                    </Stack>
+
+                                    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5, mt: 1.5 }}>
+                                        {user.isAdmin && <AdminChip isMasterAdmin={user.isMasterAdmin} />}
+                                        {user.badges.map((badge) => (
+                                            <BadgeChip key={badge} badge={badge} />
+                                        ))}
                                         {user.disabled
                                             ? <Chip label="Deactivated" size="small" className="nz-chip nz-chip--rejected" />
                                             : <Chip label="Active" size="small" className="nz-chip nz-chip--approved" />}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Stack direction="row" spacing={1}>
-                                            {permissions.canPromoteAdmins && !user.isAdmin && (
-                                                <Button size="small" onClick={() => handlePromote(user.id)}>Make admin</Button>
-                                            )}
-                                            {user.id !== currentUser.id && !user.disabled && (
-                                                <Button size="small" color="error" onClick={() => setPendingDisableId(user.id)}>Deactivate</Button>
-                                            )}
-                                            {user.disabled && (
-                                                <Button size="small" onClick={() => handleReactivate(user.id)}>Reactivate</Button>
-                                            )}
-                                        </Stack>
-                                    </TableCell>
+                                    </Stack>
+                                </CardContent>
+                                <CardActions>
+                                    {permissions.canPromoteAdmins && !user.isAdmin && (
+                                        <Button size="small" onClick={() => handlePromote(user.id)}>Make admin</Button>
+                                    )}
+                                    {user.id !== currentUser.id && !user.disabled && (
+                                        <Button size="small" color="error" onClick={() => setPendingDisableId(user.id)}>Deactivate</Button>
+                                    )}
+                                    {user.disabled && (
+                                        <Button size="small" onClick={() => handleReactivate(user.id)}>Reactivate</Button>
+                                    )}
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </Stack>
+                ) : (
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                        <Table size="small" sx={{ minWidth: 760 }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Date of birth</TableCell>
+                                    <TableCell>Badges</TableCell>
+                                    <TableCell>Admin</TableCell>
+                                    <TableCell>Status</TableCell>
+                                    <TableCell>Actions</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                            </TableHead>
+                            <TableBody>
+                                {users.map((user) => (
+                                    <TableRow key={user.id} hover>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                                                <UserAvatar user={user} size={32} />
+                                                <span>{user.fName} {user.lName}</span>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>{formatDate(user.dateOfBirth)}</TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
+                                                {user.badges.map((badge) => (
+                                                    <BadgeChip key={badge} badge={badge} />
+                                                ))}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>{user.isAdmin ? <AdminChip isMasterAdmin={user.isMasterAdmin} /> : '—'}</TableCell>
+                                        <TableCell>
+                                            {user.disabled
+                                                ? <Chip label="Deactivated" size="small" className="nz-chip nz-chip--rejected" />
+                                                : <Chip label="Active" size="small" className="nz-chip nz-chip--approved" />}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1}>
+                                                {permissions.canPromoteAdmins && !user.isAdmin && (
+                                                    <Button size="small" onClick={() => handlePromote(user.id)}>Make admin</Button>
+                                                )}
+                                                {user.id !== currentUser.id && !user.disabled && (
+                                                    <Button size="small" color="error" onClick={() => setPendingDisableId(user.id)}>Deactivate</Button>
+                                                )}
+                                                {user.disabled && (
+                                                    <Button size="small" onClick={() => handleReactivate(user.id)}>Reactivate</Button>
+                                                )}
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )
             )}
 
             <ConfirmDialog

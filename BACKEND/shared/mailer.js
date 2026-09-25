@@ -52,3 +52,28 @@ transport.sendMail({
   }
   console.log("Message sent: %s", info.messageId);
 }); */
+// Email enviado aos admins quando alguém usa a página "Contact us".
+// Vai para CONTACT_EMAIL (ou para o SMTP_FROM, se não estiver definido).
+exports.sendContactEmail = (sender, subject, reason, content) => {
+    if (!isConfigured()) {
+        console.log('SMTP not configured. Contact message from', sender.email, '-', subject);
+        return Promise.resolve();
+    }
+
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+    });
+
+    return transporter.sendMail({
+        from: process.env.SMTP_FROM || 'Nuzzo <no-reply@nuzzo.pt>',
+        to: process.env.CONTACT_EMAIL || process.env.SMTP_FROM || 'no-reply@nuzzo.pt',
+        replyTo: sender.email,
+        subject: `[Nuzzo · ${reason}] ${subject}`,
+        text: `From: ${sender.fName} ${sender.lName} (${sender.email})\nReason: ${reason}\n\n${content}`,
+    });
+};

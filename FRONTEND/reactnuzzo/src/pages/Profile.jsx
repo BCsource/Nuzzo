@@ -1,14 +1,15 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { disableAccount } from '../services/userService';
+import { disableAccount, updatePreferences, fetchMyBadgeRequests, markBadgeRequestSeen } from '../services/userService';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
-import { isHighContrast, applyHighContrast } from '../utils/contrastMode';
+import { applyHighContrast } from '../utils/contrastMode';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ProfileHeader from '../components/ProfileHeader';
 import BadgeChip from '../components/BadgeChip';
+import { BADGE_LABELS } from '../utils/badgeOptions';
 import AdminChip from '../components/AdminChip';
 
 import {
@@ -18,11 +19,23 @@ import {
 import ContrastIcon from '@mui/icons-material/Contrast';
 
 function Profile() {
-    const { currentUser, permissions, logout } = useAuth();
+    const { currentUser, setCurrentUser, permissions, logout } = useAuth();
     const navigate = useNavigate();
     const [confirmDisable, setConfirmDisable] = useState(false);
     const [error, setError] = useState('');
-    const [highContrast, setHighContrast] = useState(() => isHighContrast());
+    const [highContrast, setHighContrast] = useState(Boolean(currentUser?.highContrast));
+    const [badgeResults, setBadgeResults] = useState([]);
+
+    const loadBadgeResults = useCallback(async () => {
+        try {
+            const requests = await fetchMyBadgeRequests();
+            setBadgeResults(requests.filter((request) => request.status !== 'pending' && !request.seenByUser));
+        } catch (loadError) {
+            console.error('Could not load your badge requests:', loadError);
+        }
+    }, []);
+
+    useEffect(() => { (async () => { await loadBadgeResults(); })(); }, [loadBadgeResults]);
 
     if (!currentUser) return null;
 
@@ -37,9 +50,24 @@ function Profile() {
         }
     }
 
-    function handleContrastChange(enabled) {
+    async function handleContrastChange(enabled) {
         setHighContrast(enabled);
         applyHighContrast(enabled);
+        try {
+            await updatePreferences({ highContrast: enabled });
+            setCurrentUser((previous) => ({ ...previous, highContrast: enabled }));
+        } catch (preferenceError) {
+            setError(getErrorMessage(preferenceError, 'Could not save your preference.'));
+        }
+    }
+
+    async function dismissBadgeResult(requestId) {
+        try {
+            await markBadgeRequestSeen(requestId);
+            setBadgeResults((previous) => previous.filter((request) => request.id !== requestId));
+        } catch (dismissError) {
+            setError(getErrorMessage(dismissError, 'Could not update this request.'));
+        }
     }
 
     const chips = [
@@ -52,6 +80,25 @@ function Profile() {
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', px: 2, py: 3 }}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+            {badgeResults.map((request) => (
+                <Alert
+                    key={request.id}
+                    severity={request.status === 'approved' ? 'success' : 'warning'}
+                    onClose={() => dismissBadgeResult(request.id)}
+                    sx={{ mb: 2 }}
+                >
+                    <strong>
+                        {request.status === 'approved' ? 'Badge request approved: ' : 'Badge request rejected: '}
+                        {request.requestedBadges.map((badge) => BADGE_LABELS[badge] || badge).join(', ')}
+                    </strong>
+                    {request.status === 'rejected' && (
+                        <Typography variant="body2" className="nz-user-text" sx={{ mt: 0.5 }}>
+                            {request.rejectReason || 'No reason was given. You can contact us for more details.'}
+                        </Typography>
+                    )}
+                </Alert>
+            ))}
 
             <ProfileHeader
                 subject={currentUser}

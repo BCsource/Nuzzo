@@ -180,16 +180,27 @@ exports.getMyConversations = (req, res) => {
                     if (iAmParticipant) {
                         otherUser = message.postAuthor;
                     }
+                    const seen = req.user.seenConversations.find((entry) => {
+                        return entry.post && entry.participant
+                            && entry.post.toString() === message.post._id.toString()
+                            && entry.participant.toString() === message.participant._id.toString();
+                    });
+                    const iSentTheLast = message.sender.toString() === req.user.id;
+                    let hasNewMessages = false;
+                    if (!iSentTheLast) {
+                        hasNewMessages = !seen || !seen.seenAt || message.createdAt > seen.seenAt;
+                    }
 
                     conversations.push({
                         key: key,
                         post: { id: message.post._id, title: message.post.title },
                         participantId: message.participant._id,
                         otherUser: otherUser,
+                        hasNewMessages: hasNewMessages,
                         lastMessage: {
                             content: message.content,
                             createdAt: message.createdAt,
-                            isMine: message.sender.toString() === req.user.id,
+                            isMine: iSentTheLast,
                         },
                     });
                 }
@@ -199,5 +210,31 @@ exports.getMyConversations = (req, res) => {
         })
         .catch(() => {
             res.status(500).json({ message: 'Could not load your conversations.' });
+        });
+};
+
+exports.markConversationSeen = (req, res) => {
+    const user = req.user;
+    const postId = req.params.postId;
+    const participantId = req.params.senderId;
+
+    const existing = user.seenConversations.find((entry) => {
+        return entry.post && entry.participant
+            && entry.post.toString() === postId
+            && entry.participant.toString() === participantId;
+    });
+
+    if (existing) {
+        existing.seenAt = new Date();
+    } else {
+        user.seenConversations.push({ post: postId, participant: participantId, seenAt: new Date() });
+    }
+
+    user.save()
+        .then(() => {
+            res.status(200).json({ message: 'Conversation marked as seen.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not update this conversation.' });
         });
 };

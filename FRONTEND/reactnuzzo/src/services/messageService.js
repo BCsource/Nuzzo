@@ -15,3 +15,7 @@ export async function sendMessage(postId, content, participantId) {
     const { data } = await apiClient.post(`/posts/${postId}/messages`, { content, participantId });
     return data;
 }
+
+export async function markConversationSeen(postId, participantId) {
+    await apiClient.put(`/posts/${postId}/messages/${participantId}/seen`);
+}

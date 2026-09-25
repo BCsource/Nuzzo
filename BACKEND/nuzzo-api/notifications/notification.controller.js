@@ -2,6 +2,7 @@ const MessageModel = require('../messages/message.model');
 const PostModel = require('../posts/post.model');
 const UserModel = require('../users/user.model');
 const ActivationRequestModel = require('../activation/activation.model');
+const ContactMessageModel = require('../contact/contact.model');
 const { isAdmin } = require('../../shared/permissions');
 
 
@@ -15,19 +16,51 @@ const seenSince = (date) => {
 
 exports.getNotifications = (req, res) => {
     const user = req.user;
-    const notifications = { messages: 0, comments: 0, badgeRequests: 0, activationRequests: 0 };
+    const notifications = {
+        messages: 0,
+        comments: 0,
+        badgeRequests: 0,
+        activationRequests: 0,
+        contactMessages: 0,
+        badgeResults: 0,
+    };
+
+    user.badgeRequests.forEach((request) => {
+        if (request.status !== 'pending' && !request.seenByUser) {
+            notifications.badgeResults = notifications.badgeResults + 1;
+        }
+    });
 
 
-    MessageModel.find({ createdAt: { $gt: seenSince(user.lastSeenMessagesAt) } })
+    MessageModel.find()
         .then((messages) => {
+            const conversationsWithNews = [];
+
             messages.forEach((message) => {
                 const isMine = message.sender.toString() === user.id;
                 const inMyConversation = message.participant.toString() === user.id
                     || message.postAuthor.toString() === user.id;
-                if (!isMine && inMyConversation) {
-                    notifications.messages = notifications.messages + 1;
+                if (isMine || !inMyConversation) {
+                    return;
+                }
+
+                const seen = user.seenConversations.find((entry) => {
+                    return entry.post && entry.participant
+                        && entry.post.toString() === message.post.toString()
+                        && entry.participant.toString() === message.participant.toString();
+                });
+                if (seen && seen.seenAt && message.createdAt <= seen.seenAt) {
+                    return;
+                }
+
+                const key = message.post.toString() + '-' + message.participant.toString();
+                if (!conversationsWithNews.includes(key)) {
+                    conversationsWithNews.push(key);
                 }
             });
+
+            notifications.messages = conversationsWithNews.length;
+
             return PostModel.find({ author: user._id });
         })
         .then((posts) => {
@@ -56,6 +89,10 @@ exports.getNotifications = (req, res) => {
                 })
                 .then((count) => {
                     notifications.activationRequests = count;
+                    return ContactMessageModel.countDocuments({ status: 'pending' });
+                })
+                .then((count) => {
+                    notifications.contactMessages = count;
                 });
         })
         .then(() => {

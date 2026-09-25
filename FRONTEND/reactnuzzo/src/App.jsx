@@ -27,6 +27,7 @@ import UserProfile from './pages/UserProfile';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import ComingSoon from './pages/ComingSoon';
+import Contact from './pages/Contact';
 
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
@@ -61,6 +62,7 @@ function App() {
                         <Route path="/terms" element={<Terms />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/coming-soon" element={<ProtectedRoute><ComingSoon /></ProtectedRoute>} />
+                        <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
 
 
                         <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />

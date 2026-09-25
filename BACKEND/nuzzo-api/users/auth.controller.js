@@ -68,6 +68,7 @@ exports.register = (req, res) => {
                     dateOfBirth: user.dateOfBirth,
                     badges: user.badges,
                     profilePicture: user.profilePicture,
+                    highContrast: user.highContrast,
                     permissions: getUserPermissions(user),
                 },
             });
@@ -107,6 +108,7 @@ exports.login = (req, res) => {
                     dateOfBirth: user.dateOfBirth,
                     badges: user.badges,
                     profilePicture: user.profilePicture,
+                    highContrast: user.highContrast,
                     permissions: getUserPermissions(user),
                 },
             });
@@ -127,6 +129,7 @@ exports.me = (req, res) => {
         dateOfBirth: user.dateOfBirth,
         badges: user.badges,
         profilePicture: user.profilePicture,
+        highContrast: user.highContrast,
         permissions: getUserPermissions(user),
     });
 };
@@ -189,7 +192,7 @@ exports.resetPassword = (req, res) => {
                 return null;
             }
 
-            user.password = password; // o pre('save') do model encripta-a
+            user.password = password;
             user.resetToken = null;
             user.resetTokenExpiresAt = null;
             user.updatedAt = new Date();

@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { AuthContext } from './useAuth';
 import { loginUser, registerUser, getCurrentUser } from '../services/authService';
 import { saveToken, clearToken, getToken } from '../utils/tokenStorage';
+import { applyHighContrast } from '../utils/contrastMode';
 
 // o be manda as permissões ja calculadas em currentUser.permissions
 
@@ -50,8 +51,13 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
+    useEffect(() => {
+        applyHighContrast(Boolean(currentUser && currentUser.highContrast));
+    }, [currentUser]);
+
     const value = {
         currentUser,
+        setCurrentUser,
         permissions: currentUser?.permissions || {},
         loading,
         login,

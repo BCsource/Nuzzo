@@ -24,3 +24,16 @@ export async function updatePet(petId, payload) {
 export async function deletePet(petId) {
     await apiClient.delete(`/pets/${petId}`);
 }
+
+export async function fetchFavouritePets() {
+    const { data } = await apiClient.get('/pets/favourites');
+    return data;
+}
+
+export async function addPetFavourite(petId) {
+    await apiClient.post(`/pets/${petId}/favourite`);
+}
+
+export async function removePetFavourite(petId) {
+    await apiClient.delete(`/pets/${petId}/favourite`);
+}

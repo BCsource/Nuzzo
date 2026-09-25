@@ -72,3 +72,18 @@ export async function fetchUserPets(userId) {
     const { data } = await apiClient.get(`/users/${userId}/pets`);
     return data;
 }
+
+export async function updatePreferences(preferences) {
+    const { data } = await apiClient.put('/users/preferences', preferences);
+    return data;
+}
+
+export async function fetchMyBadgeRequests() {
+    const { data } = await apiClient.get('/users/badge-requests/mine');
+    return data;
+}
+
+export async function markBadgeRequestSeen(requestId) {
+    const { data } = await apiClient.put(`/users/badge-requests/${requestId}/seen`);
+    return data;
+}

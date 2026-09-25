@@ -1,19 +1,18 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-    Box, Typography, Button, Alert, CircularProgress, Paper, Stack,
-    Card, CardContent, CardActions, Chip, IconButton,
+    Box, Typography, Alert, CircularProgress, Paper, IconButton,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchUserById, fetchUserPosts, fetchUserPets } from '../services/userService';
+import { addPetFavourite, removePetFavourite } from '../services/petProfileService';
 import { getErrorMessage } from '../utils/apiErrors';
 import { formatDate } from '../utils/postDisplay';
-import { GENDER_LABELS } from '../utils/petOptions';
 import ProfileHeader from '../components/ProfileHeader';
 import BadgeChip from '../components/BadgeChip';
 import PostCardList from '../components/PostCardList';
-import UserAvatar from '../components/UserAvatar';
+import PetCardList from '../components/PetCardList';
 
 function UserProfile() {
     const { userId } = useParams();
@@ -44,6 +43,27 @@ function UserProfile() {
     }, [userId]);
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
+
+    async function handleTogglePetFavourite(pet) {
+        try {
+            if (pet.isFavourite) {
+                await removePetFavourite(pet.id);
+            } else {
+                await addPetFavourite(pet.id);
+            }
+            setPets((prev) => prev.map((current) => {
+                if (current.id !== pet.id) {
+                    return current;
+                }
+                const favouritesCount = current.isFavourite
+                    ? current.favouritesCount - 1
+                    : current.favouritesCount + 1;
+                return { ...current, isFavourite: !current.isFavourite, favouritesCount };
+            }));
+        } catch (favouriteError) {
+            setError(getErrorMessage(favouriteError, 'Could not update your favourites.'));
+        }
+    }
 
     if (loading) {
         return (
@@ -88,31 +108,7 @@ function UserProfile() {
             {pets.length > 0 && (
                 <Box sx={{ mt: 3 }}>
                     <Typography variant="h5" gutterBottom>Pets</Typography>
-                    <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 2 }}>
-                        {pets.map((pet) => (
-                            <Card key={pet.id} sx={{ width: 240 }}>
-                                <CardContent>
-                                    <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-                                        <UserAvatar user={pet} size={56} />
-                                        <Box sx={{ minWidth: 0 }}>
-                                            <Typography variant="h6" noWrap>{pet.name}</Typography>
-                                            <Stack direction="row" sx={{ flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-                                                <Chip label={pet.species} size="small" className="nz-chip nz-chip--species" />
-                                                <Chip
-                                                    label={GENDER_LABELS[pet.gender] || pet.gender}
-                                                    size="small"
-                                                    className={`nz-chip nz-chip--${pet.gender}`}
-                                                />
-                                            </Stack>
-                                        </Box>
-                                    </Stack>
-                                </CardContent>
-                                <CardActions>
-                                    <Button size="small" component={RouterLink} to={`/pets/${pet.id}`}>View</Button>
-                                </CardActions>
-                            </Card>
-                        ))}
-                    </Stack>
+                    <PetCardList pets={pets} onToggleFavourite={handleTogglePetFavourite} />
                 </Box>
             )}
 

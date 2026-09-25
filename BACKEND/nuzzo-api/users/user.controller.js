@@ -20,6 +20,7 @@ exports.getAllUsers = (req, res) => {
             users.forEach((user) => {
                 const userObject = user.toJSON();
                 userObject.isAdmin = isAdmin(user);
+                userObject.isMasterAdmin = user.userType === 'masterAdmin';
                 delete userObject.userType;
                 result.push(userObject);
             });
@@ -345,5 +346,62 @@ exports.reviewBadgeRequest = (req, res) => {
         })
         .catch(() => {
             res.status(500).json({ message: 'Could not review this request.' });
+        });
+};
+
+exports.updatePreferences = (req, res) => {
+    const { highContrast } = req.body;
+
+    if (highContrast !== true && highContrast !== false) {
+        return res.status(400).json({ message: 'Choose whether to turn high contrast on or off.' });
+    }
+
+    const user = req.user;
+    user.highContrast = highContrast;
+
+    user.save()
+        .then(() => {
+            res.status(200).json({ message: 'Preferences updated.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not save your preferences.' });
+        });
+};
+
+exports.getMyBadgeRequests = (req, res) => {
+    const result = [];
+
+    req.user.badgeRequests.forEach((request) => {
+        result.push({
+            id: request._id,
+            requestedBadges: request.requestedBadges,
+            message: request.message,
+            status: request.status,
+            rejectReason: request.rejectReason,
+            seenByUser: request.seenByUser,
+            createdAt: request.createdAt,
+            reviewedAt: request.reviewedAt,
+        });
+    });
+
+    res.status(200).json(result);
+};
+
+exports.markBadgeRequestSeen = (req, res) => {
+    const user = req.user;
+    const request = user.badgeRequests.id(req.params.requestId);
+
+    if (!request) {
+        return res.status(404).json({ message: 'Badge request not found.' });
+    }
+
+    request.seenByUser = true;
+
+    user.save()
+        .then(() => {
+            res.status(200).json({ message: 'Marked as seen.' });
+        })
+        .catch(() => {
+            res.status(500).json({ message: 'Could not update this request.' });
         });
 };

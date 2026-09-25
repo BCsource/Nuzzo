@@ -1,5 +1,5 @@
 
-import { List, ListItemButton, ListItemText, Typography, Divider, Box, ListItemAvatar } from '@mui/material';
+import { List, ListItemButton, ListItemText, Typography, Divider, Box, ListItemAvatar, Badge } from '@mui/material';
 import UserAvatar from './UserAvatar';
 import { formatDate } from '../utils/postDisplay';
 
@@ -26,10 +26,13 @@ function ConversationList({ conversations, selectedKey, onSelect }) {
                         {index > 0 && <Divider />}
                         <ListItemButton selected={key === selectedKey} onClick={() => onSelect(conversation)}>
                             <ListItemAvatar>
-                                <UserAvatar user={other} size={40} />
+                                <Badge color="error" variant="dot" invisible={!conversation.hasNewMessages}>
+                                    <UserAvatar user={other} size={40} />
+                                </Badge>
                             </ListItemAvatar>
                             <ListItemText
                                 primary={other ? `${other.fName} ${other.lName}` : 'Removed user'}
+                                primaryTypographyProps={{ fontWeight: conversation.hasNewMessages ? 700 : 400 }}
                                 secondary={
                                     <>
                                         <Typography component="span" variant="caption" sx={{ display: 'block', fontWeight: 600 }}>

@@ -15,7 +15,11 @@ const userRouter = express.Router();
 
 userRouter.get('/', authenticate, authorize('admin', 'masterAdmin'), userController.getAllUsers);
 
+userRouter.put('/preferences', authenticate, userController.updatePreferences);
+
 userRouter.post('/badge-requests', authenticate, upload.single('certificate'), userController.submitBadgeRequest);
+userRouter.get('/badge-requests/mine', authenticate, userController.getMyBadgeRequests);
+userRouter.put('/badge-requests/:requestId/seen', authenticate, userController.markBadgeRequestSeen);
 userRouter.get('/badge-requests/pending', authenticate, authorize('admin', 'masterAdmin'), userController.getPendingBadgeRequests);
 userRouter.get('/badge-requests/:requestId/certificate', authenticate, authorize('admin', 'masterAdmin'), userController.getCertificate);
 userRouter.put('/badge-requests/:requestId', authenticate, authorize('admin', 'masterAdmin'), userController.reviewBadgeRequest);

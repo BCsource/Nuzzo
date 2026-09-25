@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { fetchPetById } from '../services/petProfileService';
+import { fetchPetById, addPetFavourite, removePetFavourite } from '../services/petProfileService';
 import HealthHistoryList from '../components/HealthHistoryList';
 import ProfileHeader from '../components/ProfileHeader';
 import { getErrorMessage } from '../utils/apiErrors';
@@ -13,6 +13,8 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 //se idd inferior a 1y, mostra meses
@@ -53,6 +55,25 @@ function ViewPetProfile() {
     }, [petId]);
 
     useEffect(() => { (async () => { await load(); })(); }, [load]);
+
+    async function toggleFavourite() {
+        try {
+            if (pet.isFavourite) {
+                await removePetFavourite(pet.id);
+            } else {
+                await addPetFavourite(pet.id);
+            }
+            setPet((previous) => ({
+                ...previous,
+                isFavourite: !previous.isFavourite,
+                favouritesCount: previous.isFavourite
+                    ? previous.favouritesCount - 1
+                    : previous.favouritesCount + 1,
+            }));
+        } catch (error) {
+            setError(getErrorMessage(error, 'Could not update your favourites.'));
+        }
+    }
 
     if (loading) {
         return (
@@ -100,11 +121,23 @@ function ViewPetProfile() {
                     { label: 'Weight', value: `${pet.weight} kg` },
                     { label: 'Date of birth', value: formatDate(pet.dateOfBirth) },
                 ]}
-                actions={canEdit ? [
-                    <Button key="edit" variant="contained" startIcon={<EditIcon />} component={RouterLink} to={`/pets/${pet.id}/edit`}>
-                        Edit
-                    </Button>,
-                ] : null}
+                actions={[
+                    ...(pet.isOwner ? [] : [
+                        <Button
+                            key="favourite"
+                            variant="outlined"
+                            startIcon={pet.isFavourite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+                            onClick={toggleFavourite}
+                        >
+                            {pet.isFavourite ? 'Saved' : 'Save'} ({pet.favouritesCount ?? 0})
+                        </Button>,
+                    ]),
+                    ...(canEdit ? [
+                        <Button key="edit" variant="contained" startIcon={<EditIcon />} component={RouterLink} to={`/pets/${pet.id}/edit`}>
+                            Edit
+                        </Button>,
+                    ] : []),
+                ]}
             />
 
             {pet.bio && (

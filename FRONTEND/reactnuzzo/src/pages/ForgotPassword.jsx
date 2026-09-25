@@ -61,7 +61,7 @@ function ForgotPassword() {
                     </Button>
 
                     <Typography variant="body2" align="center">
-                        <Link component={RouterLink} to="/login">Back to log in</Link>
+                        <Link component={RouterLink} to="/login">Back to log in.</Link>
                     </Typography>
                 </Stack>
             </Box>

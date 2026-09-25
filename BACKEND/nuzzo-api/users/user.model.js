@@ -35,6 +35,10 @@ const BadgeRequestSchema = new Schema({
     rejectReason: {
         type: String,
     },
+    seenByUser: {
+        type: Boolean,
+        default: false,
+    },
     createdAt: {
         type: Date,
         required: true,
@@ -121,6 +125,27 @@ const UserSchema = new Schema({
     resetTokenExpiresAt: {
         type: Date,
     },
+    highContrast: {
+        type: Boolean,
+        default: false,
+    },
+    favouritePets: [{
+        type: Schema.Types.ObjectId,
+        ref: 'pet',
+    }],
+    seenConversations: [{
+        post: {
+            type: Schema.Types.ObjectId,
+            ref: 'post',
+        },
+        participant: {
+            type: Schema.Types.ObjectId,
+            ref: 'user',
+        },
+        seenAt: {
+            type: Date,
+        },
+    }],
 
     lastSeenMessagesAt: {
         type: Date,
